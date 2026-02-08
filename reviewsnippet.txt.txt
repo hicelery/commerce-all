@@ -1,0 +1,10 @@
+<!-- reviews is a list of all the reviews for the viewed event -->
+{% for review in reviews %}
+  <p>{{review.reviewer}}'s review:</p>
+  <p class="{% if review.rating == 5 %}green
+    {% elif review.rating == 1 %}red
+    {% endif %}">Rating: {{review.rating}}/5</p>
+  <div>
+      {{ review.body | linebreaks }}
+  </div>
+{% endfor %}
