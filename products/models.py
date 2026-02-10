@@ -46,7 +46,6 @@ class Category(models.Model):
     """Category model representing a product category."""
     category_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    description = models.TextField()
 
     class Meta:
         ordering = ['name']
