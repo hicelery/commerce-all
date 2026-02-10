@@ -32,7 +32,8 @@ Built in python and JS using django framework. Python dependencies listed in req
 To aid development, I created a custom copilot agent inspired by u/burkeholland 's gpt beastmode agent. The aim of this was to increase the contextual understanding of free and less-than-premium usage models (which often struggle with more complex and persistent conversations due to a reduced context window) to allow for greater usage within my premium requests budget. To achieve this, I defined three main goals: be opinionated, break down tasks into to-do lists, ask for user input before moving to next steps.
 It's worth noting that using custom agents with premium request models will drastically increase the rate at which context window is filled due to additional tool definitions.
 
-I used AI to create initial HTML boilerplates from wireframes.
+I used AI to create a project checklist to ensure I had considered all bases, to debug, discuss functionality and for light code creation.
+I created initial HTML boilerplates from wireframes, thought this did require manual intervention.
 
 Test pack creation was augmented - I defined a test suite and asked AI to expand coverage: to create tests for missed edge cases; alongside validating the created tests were behaving as expected.
 
