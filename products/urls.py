@@ -5,8 +5,6 @@ app_name = 'products'
 
 urlpatterns = [
     path('', views.ProductListView.as_view(), name='home'),
-    path('product/<int:pk>/', views.ProductDetailView.as_view(),
-         name='product_detail'),
-    path('product/<int:product_id>/review/',
-         views.product_detail, name='review'),
+    path('product/<int:product_id>/', views.product_detail, name='product_detail'),
+
 ]

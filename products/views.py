@@ -27,12 +27,6 @@ class ProductDetailView(DetailView):
 # does this need to call a template?
 
 
-class ProductReView(ListView):
-    model = ProductReview
-    template_name = 'products/product_reviews.html'
-    context_object_name = 'reviews'
-
-
 def product_detail(request, product_id):
 
     # Get the product

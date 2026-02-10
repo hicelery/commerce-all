@@ -35,6 +35,7 @@ class ProductReview(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='userreviews')
     rating = models.IntegerField()
+    title = models.CharField(max_length=255)
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)

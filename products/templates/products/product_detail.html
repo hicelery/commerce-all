@@ -102,37 +102,7 @@
             <p class="text-muted">{{ product.description|safe }}</p>
         </div>
 
-        <!-- Product Details -->
-        <div class="mb-4">
-            <h6 class="fw-bold mb-3">Product Details</h6>
-            <table class="table table-sm">
-                <tbody>
-                    <tr>
-                        <td class="fw-semibold">Category</td>
-                        <td>
-                            <a href="{% url 'products:home' %}?category={{ product.category.id }}" class="text-decoration-none">
-                                {{ product.category.category_description }}
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Availability</td>
-                        <td>
-                            {% if product.quantity > 0 %}
-                                <span class="badge bg-success">In Stock</span>
-                            {% else %}
-                                <span class="badge bg-danger">Out of Stock</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Product ID</td>
-                        <td>#{{ product.id }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
+     
         <hr>
 
         <!-- Quantity & Add to Cart -->
@@ -199,7 +169,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <div>
-                                <h6 class="card-title mb-1">{{ review.review_title }}</h6>
+                                <h6 class="card-title mb-1">{{ review.title }}</h6>
                                 <div class="text-warning small mb-2">
                                     {% for star in review.get_star_range %}
                                         <i class="fas fa-star"></i>
@@ -212,7 +182,7 @@
                             </div>
                             <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
                         </div>
-                        <p class="card-text text-muted mb-2">{{ review.review_body }}</p>
+                        <p class="card-text text-muted mb-2">{{ review.comment|striptags}}</p>
                         <small class="text-muted d-block">by <strong>{{ review.user.username }}</strong></small>
                     </div>
                 </div>
@@ -230,10 +200,10 @@
                     <h6 class="card-title mb-0">Write a Review</h6>
                 </div>
                 <div class="card-body">
-                    <form id="reviewForm" method="post" action="{% url 'products:review' product_id=product.product_id %}">
+                    <form id="reviewForm" method="post">
                         {{ review_form.non_field_errors | crispy}}
                         {% csrf_token %}
-                        
+                        <!--Stars-->
                         <div class="mb-3">
                             <label for="rating" class="form-label fw-semibold">Rating</label>
                             <div>
@@ -248,16 +218,16 @@
                                 </div>
                             </div>
                         </div>
-
+                        <!--Review Title-->
                         <div class="mb-3">
                             <label for="review_title" class="form-label fw-semibold">Review Title</label>
                             <input type="text" class="form-control" id="review_title" name="review_title" 
                                    placeholder="Summary of your review" required>
                         </div>
-
+                        <!--Review Comment-->
                         <div class="mb-3">
-                            <label for="review_body" class="form-label fw-semibold">Review</label>
-                            <textarea class="form-control" id="review_body" name="review_body" rows="4" 
+                            <label for="review_comment" class="form-label fw-semibold">Review</label>
+                            <textarea class="form-control" id="review_comment" name="review_comment" rows="4" 
                                       placeholder="Share your experience with this product" required></textarea>
                         </div>
 
