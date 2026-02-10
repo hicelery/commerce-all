@@ -17,13 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('allauth.socialaccount.urls')),
     path('summernote/', include('django_summernote.urls')),
-
-
+    path('', include('products.urls', namespace='products')),
+    path('cart/', include('cart.urls', namespace='cart')),
 ]
 
 # path('', include('my_app.urls'), name='home'),
+# namespace rather than name lets django know which app to
+# look in for the url patterns when there are multiple apps with the same url names.
