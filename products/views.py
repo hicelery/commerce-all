@@ -59,3 +59,52 @@ def product_detail(request, product_id):
         "products/product_detail.html",
         context,
     )
+
+
+def review_edit(request, product_id, review_id):
+    """View to edit a comment.
+
+    """
+    if request.method == "POST":
+        # Get the comment to edit
+        queryset = Product.objects.filter(status=1)
+        product = get_object_or_404(queryset, product_id=product_id)
+        review = get_object_or_404(ProductReview, pk=review_id)
+        review_form = ReviewForm(data=request.POST, instance=review)
+        # check if the user is the author of the comment and form valid
+        if review.user == request.user and review_form.is_valid():
+
+            # If the user is the author, update the comment with the new content and save it
+            review = review_form.save(commit=False)
+            review.product = product
+            review.approved = False
+            review.save()
+            messages.add_message(
+                request, messages.SUCCESS,
+                'Review updated successfully'
+            )
+        else:
+            messages.add_message(
+                request, messages.ERROR,
+                'You are not authorized to edit this review'
+            )
+        # Redirect the user back to the post detail page
+        return HttpResponseRedirect(reverse('products:product_detail', kwargs={'product_id': product.product_id}))
+
+
+def review_delete(request, product_id, review_id):
+    """
+    view to delete review
+    """
+    queryset = Product.objects.filter(status=1)
+    product = get_object_or_404(queryset, product_id=product_id)
+    review = get_object_or_404(ProductReview, pk=review_id)
+
+    if review.user == request.user:
+        review.delete()
+        messages.add_message(request, messages.SUCCESS, 'Review deleted!')
+    else:
+        messages.add_message(request, messages.ERROR,
+                             'You can only delete your own reviews!')
+
+    return HttpResponseRedirect(reverse('products:product_detail', kwargs={'product_id': product.product_id}))
