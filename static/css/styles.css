@@ -32,6 +32,9 @@ main {
     font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: 1px;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
 }
 
 /* Product Cards */
@@ -243,12 +246,6 @@ footer a {
 
 footer a:hover {
     color: var(--primary-color) !important;
-}
-
-/* Sticky Top */
-.sticky-top {
-    top: 76px;
-    z-index: 980;
 }
 
 /* Loading Animation */

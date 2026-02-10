@@ -6,6 +6,7 @@
     <title>{% block title %}IFA Fashion Store{% endblock %}</title>
     
     {% load static %}
+    <link rel="icon" href="{% static 'images/icon.ico' %}" type="image/x-icon">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
@@ -17,17 +18,19 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid"> 
+            <!-- Toggle Button for Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
             <!-- Logo -->
             <a class="navbar-brand fw-bold fs-5" href="{% url 'products:home' %}">
                 <i class="fas fa-shopping-bag me-2"></i>IFA
             </a>
             
-            <!-- Toggle Button for Mobile -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+           
             
             <!-- Navigation Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -79,7 +82,7 @@
     {% endif %}
 
     <!-- Main Content -->
-    <main class="py-4">
+    <main class= "pt-4" style="width: 100%;">
         <div class="container-fluid">
             {% block content %}{% endblock %}
         </div>
@@ -102,8 +105,7 @@
                     </ul>
                 </div>
             </div>
-            <hr class="bg-secondary">
-            <div class="text-center text-muted">
+            <div class="col text-center text-white">
                 <p>&copy; 2026 MHW. All rights reserved.</p>
             </div>
         </div>

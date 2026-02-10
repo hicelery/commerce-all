@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load static %}
+{% extends "base.html" %} {% load static %} {% load crispy_forms_tags %}
 
 {% block title %}{{ product.name }} - IFA Fashion Store{% endblock %}
 
@@ -238,6 +238,7 @@
                             <label for="rating" class="form-label fw-semibold">Rating</label>
                             <div>
                                 <div class="btn-group" role="group">
+                                    <!--Add a star button for each rating value from 1 to 5 -->
                                     {% for i in "12345" %}
                                         <input type="radio" class="btn-check" name="rating" id="rating{{ i }}" value="{{ i }}">
                                         <label class="btn btn-outline-warning" for="rating{{ i }}">
