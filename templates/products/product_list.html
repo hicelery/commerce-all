@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Products - IFA Fashion Store{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Sidebar Filters (Desktop) -->
+    <div class="col-lg-3 d-none d-lg-block">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-filter me-2"></i>Filters
+                </h5>
+                <hr>
+                
+                <!-- Search -->
+                <form method="get" action="{% url 'products:home' %}" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search products" 
+                               value="{{ request.GET.q }}">
+                        <button class="btn btn-outline-secondary btn-sm" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Categories -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Categories</h6>
+                    {% for category in categories %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="cat_{{ category.id }}" 
+                                   name="category" value="{{ category.id }}"
+                                   {% if category.id in selected_categories %}checked{% endif %}>
+                            <label class="form-check-label" for="cat_{{ category.id }}">
+                                {{ category.category_description }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Price Range -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Price Range</h6>
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="number" class="form-control form-control-sm" placeholder="Min" min="0" 
+                               name="price_min" value="{{ request.GET.price_min }}">
+                        <input type="number" class="form-control form-control-sm" placeholder="Max" min="0" 
+                               name="price_max" value="{{ request.GET.price_max }}">
+                    </div>
+                </div>
+
+                <!-- Sort -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Sort By</h6>
+                    <select class="form-select form-select-sm" name="sort">
+                        <option value="">Newest</option>
+                        <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Name: A-Z</option>
+                        <option value="popular" {% if request.GET.sort == 'popular' %}selected{% endif %}>Most Popular</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 btn-sm mb-2">Apply Filters</button>
+                <a href="{% url 'products:home' %}" class="btn btn-outline-secondary btn-sm w-100">Clear Filters</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Filter Toggle -->
+    <div class="col-12 d-lg-none mb-3">
+        <button class="btn btn-outline-secondary w-100" data-bs-toggle="offcanvas" data-bs-target="#mobileFilters" aria-controls="mobileFilters">
+            <i class="fas fa-filter me-2"></i>Filters
+        </button>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="col-lg-9">
+        <!-- Header with count and view options -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">
+                <i class="fas fa-th me-2"></i>Our Collection
+            </h3>
+            <div class="text-muted small">
+                Showing {{ products|length }} products
+            </div>
+        </div>
+
+        {% if products %}
+            <!-- Product Grid -->
+            <div class="row g-4">
+                {% for product in products %}
+                    <div class="col-sm-6 col-lg-4">
+                        <div class="card h-100 product-card hover-shadow">
+                            <!-- Product Image -->
+                            <div class="position-relative overflow-hidden bg-light">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="aspect-ratio: 1/1; object-fit: cover;">
+                                {% else %}
+                                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 250px;">
+                                        <i class="fas fa-image text-white fa-3x"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if product.quantity <= 0 %}
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                    </div>
+                                {% elif product.discount %}
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <span class="badge bg-success">{{ product.discount.discount_pct }}% OFF</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Product Info -->
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-truncate">{{ product.name }}</h5>
+                                
+                                <p class="card-text text-muted small flex-grow-1">
+                                    {{ product.description|truncatewords:10 }}
+                                </p>
+
+                                <!-- Rating (if reviews exist) -->
+                                <div class="mb-2">
+                                    <div class="text-warning small">
+                                        {% if product.avg_rating %}
+                                            <i class="fas fa-star"></i>
+                                            <span>{{ product.avg_rating|floatformat:1 }} / 5.0</span>
+                                            <span class="text-muted">({{ product.review_count }} reviews)</span>
+                                        {% else %}
+                                            <span class="text-muted">No ratings yet</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Price -->
+                                <div class="mb-3">
+                                    <span class="fs-5 fw-bold text-primary">
+                                        ${{ product.price|floatformat:2 }}
+                                    </span>
+                                    {% if product.original_price %}
+                                        <span class="text-muted text-decoration-line-through small">
+                                            ${{ product.original_price|floatformat:2 }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Card Footer -->
+                            <div class="card-footer bg-white border-top">
+                                <a href="{% url 'products:product_detail' product.id %}" class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-eye me-1"></i>View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+                <nav class="mt-5" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <!-- No Products Message -->
+            <div class="alert alert-info text-center py-5" role="alert">
+                <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                <h5>No products found</h5>
+                <p class="mb-0">Try adjusting your filters or search terms.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Mobile Filter Offcanvas -->
+<div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileFilters" aria-labelledby="mobileFiltersLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="mobileFiltersLabel">Filters</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="get" action="{% url 'products:home' %}">
+            <!-- Search -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Search</label>
+                <input type="text" name="q" class="form-control" placeholder="Search products" 
+                       value="{{ request.GET.q }}">
+            </div>
+
+            <!-- Categories -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Categories</label>
+                {% for category in categories %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="mobile_cat_{{ category.id }}" 
+                               name="category" value="{{ category.id }}"
+                               {% if category.id in selected_categories %}checked{% endif %}>
+                        <label class="form-check-label" for="mobile_cat_{{ category.id }}">
+                            {{ category.category_description }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Price Range -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Price Range</label>
+                <div class="d-flex gap-2">
+                    <input type="number" class="form-control" placeholder="Min" min="0" 
+                           name="price_min" value="{{ request.GET.price_min }}">
+                    <input type="number" class="form-control" placeholder="Max" min="0" 
+                           name="price_max" value="{{ request.GET.price_max }}">
+                </div>
+            </div>
+
+            <!-- Sort -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Sort By</label>
+                <select class="form-select" name="sort">
+                    <option value="">Newest</option>
+                    <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                    <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Name: A-Z</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-2">Apply Filters</button>
+            <a href="{% url 'products:home' %}" class="btn btn-outline-secondary w-100">Clear Filters</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

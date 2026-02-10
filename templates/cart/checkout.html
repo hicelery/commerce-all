@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - IFA Fashion Store{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'products:home' %}">Shop</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'cart:view_cart' %}">Cart</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+    </ol>
+</nav>
+
+<!-- Checkout Progress -->
+<div class="row mb-4">
+    <div class="col-md-8 offset-md-2">
+        <ul class="list-unstyled d-flex justify-content-between">
+            <li class="text-center">
+                <div class="badge bg-primary p-3 mb-2 d-inline-block">1</div>
+                <p class="small fw-semibold">Shipping</p>
+            </li>
+            <li class="text-center text-muted">
+                <div class="badge bg-light text-dark p-3 mb-2 d-inline-block">2</div>
+                <p class="small">Payment</p>
+            </li>
+            <li class="text-center text-muted">
+                <div class="badge bg-light text-dark p-3 mb-2 d-inline-block">3</div>
+                <p class="small">Confirmation</p>
+            </li>
+        </ul>
+        <div class="progress mb-4">
+            <div class="progress-bar" role="progressbar" style="width: 33%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Checkout Form -->
+    <div class="col-lg-8">
+        <form method="post" action="{% url 'cart:process_checkout' %}" id="checkoutForm">
+            {% csrf_token %}
+
+            <!-- Shipping Information Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>Shipping Address
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                        <!-- Use existing address or enter new -->
+                        <div class="mt-3">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="use_saved_address" id="newAddress" value="no" checked>
+                                <label class="form-check-label" for="newAddress">
+                                    Enter a new address
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="use_saved_address" id="savedAddress" value="yes">
+                                <label class="form-check-label" for="savedAddress">
+                                    Use my saved address
+                                </label>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Address Form -->
+                    <div id="addressForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="first_name" 
+                                       value="{{ user.first_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" name="last_name" 
+                                       value="{{ user.last_name }}" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ user.email }}" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="(123) 456-7890" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address" name="address" 
+                                       placeholder="1234 Main St" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="state" name="state" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="zipcode" class="form-label">ZIP Code</label>
+                                <input type="text" class="form-control" id="zipcode" name="zipcode" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Method Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-truck me-2"></i>Shipping Method
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="shipping_method" id="standard" 
+                               value="standard" checked>
+                        <label class="form-check-label w-100" for="standard">
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Standard Shipping</strong><br><small class="text-muted">5-7 business days</small></span>
+                                <span class="text-primary">Free</span>
+                            </div>
+                        </label>
+                    </div>
+                    <hr>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="shipping_method" id="express" 
+                               value="express">
+                        <label class="form-check-label w-100" for="express">
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Express Shipping</strong><br><small class="text-muted">2-3 business days</small></span>
+                                <span class="text-primary">$14.99</span>
+                            </div>
+                        </label>
+                    </div>
+                    <hr>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="shipping_method" id="overnight" 
+                               value="overnight">
+                        <label class="form-check-label w-100" for="overnight">
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Overnight Shipping</strong><br><small class="text-muted">1 business day</small></span>
+                                <span class="text-primary">$29.99</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing Address Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-file-invoice me-2"></i>Billing Address
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="sameAsShipping" name="same_as_shipping" checked>
+                        <label class="form-check-label" for="sameAsShipping">
+                            Same as shipping address
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terms & Conditions -->
+            <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" id="termsCheck" name="agree_terms" required>
+                <label class="form-check-label" for="termsCheck">
+                    I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and 
+                    <a href="#" class="text-decoration-none">Privacy Policy</a>
+                </label>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2">
+                <a href="{% url 'cart:view_cart' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Cart
+                </a>
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="fas fa-arrow-right me-2"></i>Continue to Payment
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Order Summary Sidebar -->
+    <div class="col-lg-4">
+        <div class="card sticky-top">
+            <div class="card-header bg-light">
+                <h6 class="card-title mb-0">Order Summary</h6>
+            </div>
+            <div class="card-body p-0">
+                <!-- Items List -->
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                            {% for item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <small>{{ item.product.name }}</small>
+                                        <br>
+                                        <small class="text-muted">Qty: {{ item.quantity }}</small>
+                                    </td>
+                                    <td class="text-end">
+                                        <small class="fw-semibold">${{ item.subtotal|floatformat:2 }}</small>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-body border-top">
+                <!-- Price Breakdown -->
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span>Subtotal:</span>
+                    <span>${{ subtotal|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small text-muted">
+                    <span>Shipping:</span>
+                    <span id="shippingCost">Free</span>
+                </div>
+                {% if tax_amount %}
+                    <div class="d-flex justify-content-between mb-2 small text-muted">
+                        <span>Tax:</span>
+                        <span>${{ tax_amount|floatformat:2 }}</span>
+                    </div>
+                {% endif %}
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <span class="fw-bold">Total:</span>
+                    <span class="fw-bold text-primary">${{ total|floatformat:2 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Update shipping cost based on method selection
+    document.querySelectorAll('input[name="shipping_method"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            let cost = 'Free';
+            if (this.value === 'express') cost = '$14.99';
+            if (this.value === 'overnight') cost = '$29.99';
+            document.getElementById('shippingCost').textContent = cost;
+        });
+    });
+
+    // Toggle address form based on saved address option
+    const newAddressRadio = document.getElementById('newAddress');
+    const savedAddressRadio = document.getElementById('savedAddress');
+    const addressForm = document.getElementById('addressForm');
+
+    if (newAddressRadio) {
+        newAddressRadio.addEventListener('change', () => addressForm.style.display = 'block');
+        savedAddressRadio.addEventListener('change', () => addressForm.style.display = 'none');
+    }
+</script>
+{% endblock %}
