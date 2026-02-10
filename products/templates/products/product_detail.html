@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% load static %}
 
 {% block title %}{{ product.name }} - IFA Fashion Store{% endblock %}
 
@@ -99,7 +99,7 @@
         <!-- Description -->
         <div class="mb-4">
             <h6 class="fw-bold mb-2">Description</h6>
-            <p class="text-muted">{{ product.description }}</p>
+            <p class="text-muted">{{ product.description|safe }}</p>
         </div>
 
         <!-- Product Details -->
@@ -136,8 +136,9 @@
         <hr>
 
         <!-- Quantity & Add to Cart -->
+        <!--replace action with add to cart url:  url 'cart:add_to_cart' product.id  -->
         <div class="mb-4">
-            <form method="post" action="{% url 'cart:add_to_cart' product.id %}" class="row g-2 align-items-end">
+            <form method="post" action="" class="row g-2 align-items-end">
                 {% csrf_token %}
                 
                 <div class="col-12 col-sm-auto">
@@ -229,7 +230,8 @@
                     <h6 class="card-title mb-0">Write a Review</h6>
                 </div>
                 <div class="card-body">
-                    <form method="post" action="{% url 'products:add_review' product.id %}">
+                    <form id="reviewForm" method="post">
+                        {{ review_form.non_field_errors | crispy}}
                         {% csrf_token %}
                         
                         <div class="mb-3">
@@ -270,43 +272,7 @@
             </div>
         {% endif %}
     </div>
-
-    <!-- Sidebar - Related Products -->
-    <div class="col-lg-4">
-        <div class="card sticky-top">
-            <div class="card-header">
-                <h6 class="card-title mb-0">Related Products</h6>
-            </div>
-            <div class="card-body">
-                {% if related_products %}
-                    {% for related in related_products %}
-                        <div class="mb-3 pb-3 border-bottom">
-                            <div class="row g-2 align-items-center">
-                                <div class="col-4">
-                                    {% if related.image %}
-                                        <img src="{{ related.image.url }}" class="img-fluid rounded" alt="{{ related.name }}" style="aspect-ratio: 1/1; object-fit: cover;">
-                                    {% else %}
-                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="aspect-ratio: 1/1;">
-                                            <i class="fas fa-image text-secondary"></i>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <div class="col-8">
-                                    <h6 class="mb-1 text-truncate">{{ related.name }}</h6>
-                                    <p class="mb-1 fw-bold text-primary">${{ related.price|floatformat:2 }}</p>
-                                    <a href="{% url 'products:product_detail' related.id %}" class="btn btn-sm btn-outline-primary w-100">
-                                        View
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-muted text-center py-4">No related products</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+    
 </div>
 
 {% endblock %}
