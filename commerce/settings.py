@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
-    'django-summernote',
+    'django_summernote',
     'cloudinary_storage',
     'cloudinary',
     'products',
