@@ -34,10 +34,13 @@ class ProductReView(ListView):
 
 
 def product_detail(request, product_id):
+
+    # Get the product
     queryset = Product.objects.all()
     product = get_object_or_404(queryset, product_id=product_id)
-    reviews = product.review.all().order_by("-created_on")
-    review_count = product.review.filter(approved=True).count()
+    reviews = product.reviews.order_by("-created_at")
+    review_count = product.reviews.filter(approved=True).count()
+
     # Post request for comment forms
     if request.method == "POST":
         review_form = ReviewForm(data=request.POST)

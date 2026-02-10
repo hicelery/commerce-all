@@ -230,7 +230,7 @@
                     <h6 class="card-title mb-0">Write a Review</h6>
                 </div>
                 <div class="card-body">
-                    <form id="reviewForm" method="post">
+                    <form id="reviewForm" method="post" action="{% url 'products:review' product_id=product.product_id %}">
                         {{ review_form.non_field_errors | crispy}}
                         {% csrf_token %}
                         
