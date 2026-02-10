@@ -120,10 +120,10 @@
                             </a>
                             <!-- Product Info -->
                             <div class="card-body d-flex flex-column">
-                                <h5 class="card-title text-truncate">{{ product.name }}</h5>
+                                <h5 class="card-title text-truncate">{{ product.brand }}</h5>
                                     
                                 <p class="card-text text-muted small flex-grow-1">
-                                    {{ product.description|safe|truncatechars_html:100 }}
+                                    {{ product.name }}
                                 </p>
 
                                     <!-- Rating (if reviews exist) -->
@@ -132,7 +132,7 @@
                                             {% if product.avg_rating %}
                                                 <i class="fas fa-star"></i>
                                                 <span>{{ product.avg_rating|floatformat:1 }} / 5.0</span>
-                                                <span class="text-muted">({{ product.review_count }} reviews)</span>
+                                                <span class="text-muted">({{ productreview.review_count }} reviews)</span>
                                             {% else %}
                                                 <span class="text-muted">No ratings yet</span>
                                             {% endif %}

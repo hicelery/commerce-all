@@ -1,9 +1,10 @@
 /* ============================================
-   Custom Styles for IFA Fashion Store
+   Custom Styles
    ============================================ */
 
 :root {
-    --primary-color: #007bff;
+    --bs-primary: #bb0000 !important;
+    --bs-primary-rgb: 187, 0, 0 !important;
     --secondary-color: #6c757d;
     --success-color: #28a745;
     --danger-color: #dc3545;

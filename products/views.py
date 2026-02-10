@@ -9,6 +9,8 @@ from .forms import ReviewForm
 
 # Create your views here.
 
+# update to add reviews to the product list view,
+
 
 class ProductListView(ListView):
     model = Product
@@ -16,11 +18,6 @@ class ProductListView(ListView):
     context_object_name = 'products'
     paginate_by = 24
 
-
-class ProductDetailView(DetailView):
-    model = Product
-    template_name = 'products/product_detail.html'
-    context_object_name = 'product'
 
 # does this need a get_context_data method to add the reviews to the context?
 # does this need a post method to handle the review form submission?

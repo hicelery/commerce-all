@@ -3,17 +3,20 @@
 {% block title %}{{ product.name }} - IFA Fashion Store{% endblock %}
 
 {% block content %}
+
+
 <!-- Breadcrumb -->
+ <!--
 <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'products:home' %}">Shop</a></li>
         <li class="breadcrumb-item"><a href="{% url 'products:home' %}?category={{ product.category.id }}">{{ product.category.category_description }}</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
     </ol>
-</nav>
+</nav> -->
 
 <!-- Product Detail Section -->
-<div class="row g-4">
+<div class="row g-4 mt-3">
     <!-- Product Image Section -->
     <div class="col-lg-6 mb-4">
         <div class="position-relative">
@@ -134,7 +137,7 @@
             </form>
         </div>
 
-        <!-- Trust Indicators -->
+        <!-- Trust Indicators - maybe replace with reviews -->
         <div class="alert alert-light border">
             <div class="row g-3">
                 <div class="col-6 col-sm-4 text-center">
@@ -165,20 +168,15 @@
         {% if reviews %}
             <!-- Reviews List -->
             {% for review in reviews %}
-            <div id="comment{{ comment.id }}">
-            {{ comment.body | linebreaks }}
+            <div id="comment{{ review.id }}">
+            {{ review.body | linebreaks }}
           </div>
-          {% if not comment.approved and comment.author == user %}
+          {% if not review.approved and review.user == user %}
           <p class="approval">
             This comment is awaiting approval
           </p>
           {% endif %}
-          {% if user.is_authenticated and comment.author == user %}
-          <button class="btn btn-delete"
-            comment_id="{{ comment.id }}">Delete</button>
-            <button class="btn btn-edit"
-            comment_id="{{ comment.id }}">Edit</button>
-          {% endif %}
+          
                 <div class="card mb-3 ">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2 {% if not review.approved and review.user == user %}
@@ -205,7 +203,13 @@
                         </div>
                         <p class="card-text text-muted mb-2">{{ review.comment|striptags}}</p>
                         <small class="text-muted d-block">by <strong>{{ review.user.username }}</strong></small>
-                        
+                        {% if user.is_authenticated and review.user == user %}
+                        <span>
+                        <button class="btn btn-delete"
+                            review_id="{{ review.id }}">Delete</button>
+                            <button class="btn btn-edit"
+                            review_id="{{ review.id }}">Edit</button></span>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
