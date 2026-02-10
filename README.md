@@ -9,6 +9,13 @@ Deployed link:
 E-commerce sites are incredibly information-dense, and almost exclusively present data for the user to interactive with. Ease of navigation is essential for this application, so as not to introduce any barriers to a user completing a transaction.
 To accomplish this, and allow the site to become scaleable, a logical and modular DB schema is essential.
 
+DB Schema:
+<img width="1054" height="757" alt="image" src="https://github.com/user-attachments/assets/9486ffb0-3a1c-4557-95ca-be1187deb9dc" />
+
+Users will be able to add products to a cart and upon purchase cart details will be added to order tables and deleted from cart tables.
+Users will be able to add reviews to products, and perform CRUD operations on their reviews.
+
+
 ## Features
 
 User roles implemented with registration and deletion of accounts, and user panel to view activity history.
