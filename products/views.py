@@ -48,6 +48,7 @@ def product_detail(request, product_id):
                 request, messages.SUCCESS,
                 'Review submitted and awaiting approval'
             )
+            return HttpResponseRedirect(reverse('products:product_detail', kwargs={'product_id': product.product_id}))
     review_form = ReviewForm()
 
     context = {
