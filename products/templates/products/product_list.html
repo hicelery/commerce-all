@@ -4,35 +4,44 @@
 
 {% block content %}
 <div class="row">
-    <!-- Sidebar Filters (Desktop) -->
-    <div class="col-lg-3 d-none d-lg-block">
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-filter me-2"></i>Filters
-                </h5>
-                <hr>
-                
+   
+<!-- 
+    =======================================================================================
+    Filters and Quick Links
+    - Show as offcanvas on mobile and sidebar on large screens
+    =======================================================================================   
+-->
+    <!-- Filter Toggle -->
+    <div class="col-12 d-lg-none mb-3">
+        <button class="btn btn-outline-secondary w-100" data-bs-toggle="offcanvas" data-bs-target="#mobileFilters" aria-controls="mobileFilters">
+            <i class="fas fa-filter me-2"></i>Filters
+        </button>
+    </div>
+
+    <!-- Filters Offcanvas-->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileFilters" aria-labelledby="mobileFiltersLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileFiltersLabel">Filters</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form method="get" action="{% url 'products:home' %}">
                 <!-- Search -->
-                <form method="get" action="{% url 'products:home' %}" class="mb-4">
-                    <div class="input-group">
-                        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search products" 
-                               value="{{ request.GET.q }}">
-                        <button class="btn btn-outline-secondary btn-sm" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </form>
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Search</label>
+                    <input type="text" name="q" class="form-control" placeholder="Search products" 
+                        value="{{ request.GET.q }}">
+                </div>
 
                 <!-- Categories -->
                 <div class="mb-4">
-                    <h6 class="fw-bold mb-3">Categories</h6>
+                    <label class="form-label fw-bold">Categories</label>
                     {% for category in categories %}
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="cat_{{ category.id }}" 
-                                   name="category" value="{{ category.id }}"
-                                   {% if category.id in selected_categories %}checked{% endif %}>
-                            <label class="form-check-label" for="cat_{{ category.id }}">
+                            <input class="form-check-input" type="checkbox" id="mobile_cat_{{ category.id }}" 
+                                name="category" value="{{ category.id }}"
+                                {% if category.id in selected_categories %}checked{% endif %}>
+                            <label class="form-check-label" for="mobile_cat_{{ category.id }}">
                                 {{ category.category_description }}
                             </label>
                         </div>
@@ -41,42 +50,97 @@
 
                 <!-- Price Range -->
                 <div class="mb-4">
-                    <h6 class="fw-bold mb-3">Price Range</h6>
-                    <div class="d-flex gap-2 mb-3">
-                        <input type="number" class="form-control form-control-sm" placeholder="Min" min="0" 
-                               name="price_min" value="{{ request.GET.price_min }}">
-                        <input type="number" class="form-control form-control-sm" placeholder="Max" min="0" 
-                               name="price_max" value="{{ request.GET.price_max }}">
+                    <label class="form-label fw-bold">Price Range</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" class="form-control" placeholder="Min" min="0" 
+                            name="price_min" value="{{ request.GET.price_min }}">
+                        <input type="number" class="form-control" placeholder="Max" min="0" 
+                            name="price_max" value="{{ request.GET.price_max }}">
                     </div>
                 </div>
 
                 <!-- Sort -->
                 <div class="mb-4">
-                    <h6 class="fw-bold mb-3">Sort By</h6>
-                    <select class="form-select form-select-sm" name="sort">
+                    <label class="form-label fw-bold">Sort By</label>
+                    <select class="form-select" name="sort">
                         <option value="">Newest</option>
                         <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
                         <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
                         <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Name: A-Z</option>
-                        <option value="popular" {% if request.GET.sort == 'popular' %}selected{% endif %}>Most Popular</option>
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100 btn-sm mb-2">Apply Filters</button>
-                <a href="{% url 'products:home' %}" class="btn btn-outline-secondary btn-sm w-100">Clear Filters</a>
-            </div>
+                <button type="submit" class="btn btn-primary w-100 mb-2">Apply Filters</button>
+                <a href="{% url 'products:home' %}" class="btn btn-outline-secondary w-100">Clear Filters</a>
+            </form>
         </div>
     </div>
 
-    <!-- Mobile Filter Toggle -->
-    <div class="col-12 d-lg-none mb-3">
-        <button class="btn btn-outline-secondary w-100" data-bs-toggle="offcanvas" data-bs-target="#mobileFilters" aria-controls="mobileFilters">
-            <i class="fas fa-filter me-2"></i>Filters
-        </button>
-    </div>
+    <!--Sidebar-->
+    <div class="col-12 col-lg-3 mb-4 d-none d-lg-block">
+        <!-- Show nav and filters as sidebar for large screens-->
+            <h6>Quick Links</h6>
+                <ul class="list-unstyled e">
+                    <li><a href="{% url 'products:home' %}">Shop</a></li>
+                    <ul class="list-unstyled mx-3 ">
+                        <li ><a href="{% url 'products:home' %}?category=1">Tops
+                            </a></li>
+                        <li><a href="{% url 'products:home' %}?category=2">Bottom
+                            </a></li>
+                        <li><a href="{% url 'products:home' %}?category=3">Shoes
+                            </a></li>
+                    </ul>    
+                </ul>        
 
+            <div class="small" style="width: 80%;">
+                <h5>Filters</h5>
+                <hr>
+                <form method="get" action="{% url 'products:home' %}">
+
+                    <!-- Categories -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Categories</label>
+                        {% for category in categories %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="mobile_cat_{{ category.id }}" 
+                                    name="category" value="{{ category.id }}"
+                                    {% if category.id in selected_categories %}checked{% endif %}>
+                                <label class="form-check-label" for="mobile_cat_{{ category.id }}">
+                                    {{ category.category_description }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Price Range</label>
+                        <div class="d-flex gap-2">
+                            <input type="number" class="form-control" placeholder="Min" min="0" 
+                                name="price_min" value="{{ request.GET.price_min }}">
+                            <input type="number" class="form-control" placeholder="Max" min="0" 
+                                name="price_max" value="{{ request.GET.price_max }}">
+                        </div>
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Sort By</label>
+                        <select class="form-select" name="sort">
+                            <option value="">Newest</option>
+                            <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Name: A-Z</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-2">Apply Filters</button>
+                    <a href="{% url 'products:home' %}" class="btn btn-outline-secondary w-100">Clear Filters</a>
+                </form>
+            </div>
+    </div>
     <!-- Products Grid -->
-    <div class="col-lg-9">
+    <div class="col-12 col-lg-9">
         <!-- Header with count and view options -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="mb-0">
@@ -211,62 +275,6 @@
     </div>
 </div>
 
-<!-- Mobile Filter Offcanvas -->
-<div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileFilters" aria-labelledby="mobileFiltersLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="mobileFiltersLabel">Filters</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        <form method="get" action="{% url 'products:home' %}">
-            <!-- Search -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">Search</label>
-                <input type="text" name="q" class="form-control" placeholder="Search products" 
-                       value="{{ request.GET.q }}">
-            </div>
 
-            <!-- Categories -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">Categories</label>
-                {% for category in categories %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="mobile_cat_{{ category.id }}" 
-                               name="category" value="{{ category.id }}"
-                               {% if category.id in selected_categories %}checked{% endif %}>
-                        <label class="form-check-label" for="mobile_cat_{{ category.id }}">
-                            {{ category.category_description }}
-                        </label>
-                    </div>
-                {% endfor %}
-            </div>
-
-            <!-- Price Range -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">Price Range</label>
-                <div class="d-flex gap-2">
-                    <input type="number" class="form-control" placeholder="Min" min="0" 
-                           name="price_min" value="{{ request.GET.price_min }}">
-                    <input type="number" class="form-control" placeholder="Max" min="0" 
-                           name="price_max" value="{{ request.GET.price_max }}">
-                </div>
-            </div>
-
-            <!-- Sort -->
-            <div class="mb-4">
-                <label class="form-label fw-bold">Sort By</label>
-                <select class="form-select" name="sort">
-                    <option value="">Newest</option>
-                    <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
-                    <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
-                    <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Name: A-Z</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100 mb-2">Apply Filters</button>
-            <a href="{% url 'products:home' %}" class="btn btn-outline-secondary w-100">Clear Filters</a>
-        </form>
-    </div>
-</div>
 
 {% endblock %}
