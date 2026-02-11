@@ -66,6 +66,12 @@
         <h1 class="mb-2">{{ product.name }}</h1>
         
         <div class="d-flex align-items-center gap-3 mb-3">
+            <!-- 
+            =================================================
+            Come back to this logic
+            ==================================================
+             
+            -->
             <div class="text-warning">
                 {% if product.avg_rating %}
                     <i class="fas fa-star"></i>
@@ -167,20 +173,10 @@
 
         {% if reviews %}
             <!-- Reviews List -->
-            {% for review in reviews %}
-            <div id="comment{{ review.id }}">
-            {{ review.body | linebreaks }}
-          </div>
-          {% if not review.approved and review.user == user %}
-          <p class="approval">
-            This comment is awaiting approval
-          </p>
-          {% endif %}
-          
-                <div class="card mb-3 ">
+            {% for review in reviews %}                
+                <div class="card mb-3 {% if not review.approved and review.user == user %} faded {% elif not review.approved %} d-none{% endif %}">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-2 {% if not review.approved and review.user == user %}
-          faded{% elif not review.approved %} d-none{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start mb-2 ">
                             <div>
                                 <h6 class="card-title mb-1">{{ review.title }}</h6>
                                 {% if not review.approved and review.user == user %}
@@ -188,13 +184,14 @@
                                         This review is awaiting approval
                                     </div>
                                 {% endif %}
+                                <!-- Show rating out of 5 and add corresponding stars -->
                                 <div class="text-warning small mb-2">
-                                    <span class="text-muted">({{ review.rating }} / 5)</span>
+                                    <span class="text-muted">{{ review.rating }} / 5</span>
                                     {% for i in "12345" %}
                                         {% if forloop.counter <= review.rating %}
-                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star" aria-hidden="true"></i>
                                         {% else %}
-                                            <i class="far fa-star"></i>
+                                            <i class="far fa-star" aria-hidden="true"></i>
                                         {% endif %}
                                     {% endfor %}
                                 </div>
