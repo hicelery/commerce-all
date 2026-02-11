@@ -18,10 +18,20 @@ class ProductListView(ListView):
     context_object_name = 'products'
     paginate_by = 24
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        # allow category via URL (/<category_name>/) or GET param ?category_name=
+        category_key = self.kwargs.get(
+            'category_name') or self.request.GET.get('category_name')
+        if category_key:
+            qs = qs.filter(category__name__iexact=category_key)
+        return qs
 
-# does this need a get_context_data method to add the reviews to the context?
-# does this need a post method to handle the review form submission?
-# does this need to call a template?
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # add categories to context for sidebar and nav
+        context['categories'] = Category.objects.all()
+        return context
 
 
 def product_detail(request, product_id):
@@ -41,7 +51,8 @@ def product_detail(request, product_id):
             review.product = product
             # Only staff may set approved via the form
             if request.user.is_authenticated and request.user.is_staff:
-                review.approved = review_form.cleaned_data.get('approved', False)
+                review.approved = review_form.cleaned_data.get(
+                    'approved', False)
             else:
                 review.approved = False
             review.save()
@@ -50,7 +61,7 @@ def product_detail(request, product_id):
                 'Review submitted and awaiting approval'
             )
             return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
-    review_form = ReviewForm(user=request.user)
+        review_form = ReviewForm(user=request.user)
 
     context = {
         "product": product,
@@ -76,14 +87,16 @@ def review_edit(request, product_id, review_id):
             queryset, product_id=product_id)
         # get the review to edit
         review = get_object_or_404(ProductReview, pk=review_id)
-        review_form = ReviewForm(data=request.POST, instance=review, user=request.user)
+        review_form = ReviewForm(
+            data=request.POST, instance=review, user=request.user)
         # allow the author or staff to edit
         if (review.user == request.user or (request.user.is_authenticated and request.user.is_staff)) and review_form.is_valid():
             review = review_form.save(commit=False)
             review.product = product
             # if staff, accept the approved flag, otherwise ensure edits reset approval
             if request.user.is_authenticated and request.user.is_staff:
-                review.approved = review_form.cleaned_data.get('approved', False)
+                review.approved = review_form.cleaned_data.get(
+                    'approved', False)
             else:
                 review.approved = False
             review.save()

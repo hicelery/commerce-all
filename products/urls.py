@@ -10,5 +10,7 @@ urlpatterns = [
          views.review_edit, name='review_edit'),
     path('product/<int:product_id>/review_delete/<int:review_id>/',
          views.review_delete, name='review_delete'),
-
+    # category route placed after product routes to avoid catching 'product' literal
+    path('<str:category_name>/',
+         views.ProductListView.as_view(), name='category'),
 ]

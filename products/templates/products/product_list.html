@@ -26,12 +26,6 @@
         </div>
         <div class="offcanvas-body">
             <form method="get" action="{% url 'products:home' %}">
-                <!-- Search -->
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Search</label>
-                    <input type="text" name="q" class="form-control" placeholder="Search products" 
-                        value="{{ request.GET.q }}">
-                </div>
 
                 <!-- Categories -->
                 <div class="mb-4">
@@ -42,7 +36,7 @@
                                 name="category" value="{{ category.id }}"
                                 {% if category.id in selected_categories %}checked{% endif %}>
                             <label class="form-check-label" for="mobile_cat_{{ category.id }}">
-                                {{ category.category_description }}
+                                {{ category.category_name }}
                             </label>
                         </div>
                     {% endfor %}
@@ -81,36 +75,22 @@
         <!-- Show nav and filters as sidebar for large screens-->
             <h6>Quick Links</h6>
                 <ul class="list-unstyled e">
-                    <li><a href="{% url 'products:home' %}">Shop</a></li>
+                    <li><a href="{% url 'products:home' %}">All</a></li>
                     <ul class="list-unstyled mx-3 ">
-                        <li ><a href="{% url 'products:home' %}?category=1">Tops
-                            </a></li>
-                        <li><a href="{% url 'products:home' %}?category=2">Bottom
-                            </a></li>
-                        <li><a href="{% url 'products:home' %}?category=3">Shoes
-                            </a></li>
+                        {% for category in categories %}
+                            <li><a href="{% url 'products:home' %}{{category.name}}">{{category.name}}</a></li>
+                        {% endfor %}
                     </ul>    
-                </ul>        
-
+                </ul>       
+                <!-- Categories -->
+                                
+                    
             <div class="small" style="width: 80%;">
                 <h5>Filters</h5>
                 <hr>
                 <form method="get" action="{% url 'products:home' %}">
 
-                    <!-- Categories -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Categories</label>
-                        {% for category in categories %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="mobile_cat_{{ category.id }}" 
-                                    name="category" value="{{ category.id }}"
-                                    {% if category.id in selected_categories %}checked{% endif %}>
-                                <label class="form-check-label" for="mobile_cat_{{ category.id }}">
-                                    {{ category.category_description }}
-                                </label>
-                            </div>
-                        {% endfor %}
-                    </div>
+                    
 
                     <!-- Price Range -->
                     <div class="mb-4">
