@@ -10,12 +10,13 @@ from .forms import ReviewForm
 # Create your views here.
 
 
-# Product list view with optional category filter.
-# Inputs: request, category_name (default to null so as not to break non-category filtered view)
+# Product list view with optional category filter and sorting.
+# Inputs: request, category_name (default to null so as not to break non-category filtered view), sort_option (default to null)
 # If category_name is provided, filter products by category name (case-insensitive).
+# If sort_option is provided, sort products accordingly.
 
 
-def ProductList(request, category_name=None):
+def ProductList(request, category_name=None, sort_option=None):
     qs = Product.objects.all()
     category_key = category_name or request.GET.get('category_name')
     if category_key:
@@ -33,11 +34,41 @@ def ProductList(request, category_name=None):
         #     page_obj = paginator.page(1)
         # except EmptyPage:
         #     page_obj = paginator.page(paginator.num_pages)
+        # Price range filters
+
+    # Allow filtering by price range using query parameters ?price_min=xx&price_max=yy
+    # Do we need to force price_mixmax to be decimal? form inputs should prevent invalid input
+    price_min = request.GET.get('price_min')
+    price_max = request.GET.get('price_max')
+    try:
+        if price_min:
+            qs = qs.filter(price__gte=price_min)
+        if price_max:
+            qs = qs.filter(price__lte=price_max)
+    except Exception:
+        # ignore invalid numeric input
+        pass
+
+    # Sorting (use ?sort=price_low|price_high|newest|name)
+    sort = request.GET.get('sort') or request.GET.get(
+        'sort_option') or sort_option
+    if sort:
+        if sort in ('price_asc'):
+            qs = qs.order_by('price')
+        elif sort in ('price_desc'):
+            qs = qs.order_by('-price')
+        elif sort == 'name':
+            qs = qs.order_by('name')
+        elif sort == 'brand':
+            qs = qs.order_by('brand')
+        elif sort == 'newest':
+            qs = qs.order_by('-created_at')
 
     context = {
         'products': qs,
         'categories': Category.objects.all(),
-
+        'selected_categories': [int(c) for c in request.GET.getlist('category')] if request.GET.getlist('category') else [],
+        'request': request,
     }
     return render(request, 'products/product_list.html', context)
 
