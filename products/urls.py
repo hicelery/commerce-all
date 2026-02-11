@@ -4,7 +4,7 @@ from django.urls import path
 app_name = 'products'
 
 urlpatterns = [
-    path('', views.ProductListView.as_view(), name='home'),
+    path('', views.ProductList, name='home'),
     path('product/<int:product_id>/', views.product_detail, name='product_detail'),
     path('product/<int:product_id>/review_edit/<int:review_id>/',
          views.review_edit, name='review_edit'),
@@ -12,5 +12,5 @@ urlpatterns = [
          views.review_delete, name='review_delete'),
     # category route placed after product routes to avoid catching 'product' literal
     path('<str:category_name>/',
-         views.ProductListView.as_view(), name='category'),
+         views.ProductList, name='category'),
 ]
