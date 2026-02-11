@@ -6,6 +6,9 @@ const reviewForm = document.getElementById('reviewForm');
 const submitButton = document.getElementById('submit-review');
 const resetButton = document.getElementById('reset-review');
 const reviewFormHeader = document.getElementById('reviewFormHeader');
+const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
+const deleteButtons = document.getElementsByClassName("btn-delete");
+const deleteConfirm = document.getElementById("deleteConfirm");
 /**
  * Initializes the review edit functionality by adding event listeners to edit buttons.
  * When an edit button is clicked, it populates the review form with the existing review data
@@ -56,3 +59,13 @@ if (resetButton) {
                 resetButton.innerHTML = '<i class="fas fa-x me-2"></i>Clear'; // reset button text back to Reset
             });
         }
+
+
+for (let button of deleteButtons) {
+    button.addEventListener('click', (e) => {
+        const btn = e.currentTarget || button;
+        const reviewId = btn.getAttribute('review_id');
+        deleteConfirm.setAttribute('href', `review_delete/${reviewId}/`);
+        deleteModal.show();
+    });
+}
