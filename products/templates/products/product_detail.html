@@ -253,7 +253,13 @@
                             <textarea class="form-control" id="review_comment" name="comment" rows="4" 
                                       placeholder="Share your experience with this product" required></textarea>
                         </div>
-
+                        <!-- Staff-only approval checkbox -->
+                        {% if user.is_staff %}
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="id_approved" name="approved">
+                            <label class="form-check-label" for="id_approved">Approved</label>
+                        </div>
+                        {% endif %}
                         <button id="submit-review" type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane me-2"></i>Submit Review
                         </button>

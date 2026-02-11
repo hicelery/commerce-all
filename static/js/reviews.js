@@ -15,6 +15,7 @@ const deleteConfirm = document.getElementById("deleteConfirm");
  * and changes the form action to the review edit URL.
  * Scrols the form into view for better user experience.
  * When the reset button is clicked, it clears the form fields and resets the form action to the default add review URL.
+ * Review approval wiped when editing a review, as the review will need to be re-approved by staff after changes are made.
  * 
  */
 for (let button of editButtons) {
@@ -53,6 +54,8 @@ if (resetButton) {
             resetButton.addEventListener('click', () => {
                 // Clear the form fields and reset the form action to the default add review URL
                 reviewRatingButton.forEach(button => button.removeAttribute('checked')); // uncheck all rating buttons
+                const approvedCheckbox = document.getElementById('id_approved');
+                if (approvedCheckbox) approvedCheckbox.checked = false;
                 submitButton.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit Review';
                 reviewFormHeader.innerText = 'Write a Review';
                 reviewForm.setAttribute('action', `add_review/`);

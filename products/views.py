@@ -34,19 +34,23 @@ def product_detail(request, product_id):
 
     # Post request for comment forms
     if request.method == "POST":
-        review_form = ReviewForm(data=request.POST)
+        review_form = ReviewForm(data=request.POST, user=request.user)
         if review_form.is_valid():
             review = review_form.save(commit=False)
             review.user = request.user
             review.product = product
-            review.approved = False
+            # Only staff may set approved via the form
+            if request.user.is_authenticated and request.user.is_staff:
+                review.approved = review_form.cleaned_data.get('approved', False)
+            else:
+                review.approved = False
             review.save()
             messages.add_message(
                 request, messages.SUCCESS,
                 'Review submitted and awaiting approval'
             )
             return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
-    review_form = ReviewForm()
+    review_form = ReviewForm(user=request.user)
 
     context = {
         "product": product,
@@ -72,14 +76,16 @@ def review_edit(request, product_id, review_id):
             queryset, product_id=product_id)
         # get the review to edit
         review = get_object_or_404(ProductReview, pk=review_id)
-        review_form = ReviewForm(data=request.POST, instance=review)
-        # check if the user is the author of the comment and form valid
-        if review.user == request.user and review_form.is_valid():
-
-            # If the user is the author, update the comment with the new content and save it
+        review_form = ReviewForm(data=request.POST, instance=review, user=request.user)
+        # allow the author or staff to edit
+        if (review.user == request.user or (request.user.is_authenticated and request.user.is_staff)) and review_form.is_valid():
             review = review_form.save(commit=False)
             review.product = product
-            review.approved = False
+            # if staff, accept the approved flag, otherwise ensure edits reset approval
+            if request.user.is_authenticated and request.user.is_staff:
+                review.approved = review_form.cleaned_data.get('approved', False)
+            else:
+                review.approved = False
             review.save()
             messages.add_message(
                 request, messages.SUCCESS,
