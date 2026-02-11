@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
 from requests import post
 from .models import Product, ProductReview, Category
 from .forms import ReviewForm
@@ -45,7 +45,7 @@ def product_detail(request, product_id):
                 request, messages.SUCCESS,
                 'Review submitted and awaiting approval'
             )
-            return HttpResponseRedirect(reverse('products:product_detail', kwargs={'product_id': product.product_id}))
+            return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
     review_form = ReviewForm()
 
     context = {
@@ -63,12 +63,14 @@ def product_detail(request, product_id):
 
 def review_edit(request, product_id, review_id):
     """View to edit a comment.
-
+    Needs js to reopen form
     """
     if request.method == "POST":
-        # Get the comment to edit
-        queryset = Product.objects.filter(status=1)
-        product = get_object_or_404(queryset, product_id=product_id)
+        # Get the product with review attached
+        queryset = Product.objects.all()
+        product = get_object_or_404(
+            queryset, product_id=product_id)
+        # get the review to edit
         review = get_object_or_404(ProductReview, pk=review_id)
         review_form = ReviewForm(data=request.POST, instance=review)
         # check if the user is the author of the comment and form valid
@@ -89,14 +91,14 @@ def review_edit(request, product_id, review_id):
                 'You are not authorized to edit this review'
             )
         # Redirect the user back to the post detail page
-        return HttpResponseRedirect(reverse('products:product_detail', kwargs={'product_id': product.product_id}))
+        return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
 
 
 def review_delete(request, product_id, review_id):
     """
     view to delete review
     """
-    queryset = Product.objects.filter(status=1)
+    queryset = Product.objects.all()
     product = get_object_or_404(queryset, product_id=product_id)
     review = get_object_or_404(ProductReview, pk=review_id)
 
@@ -107,4 +109,4 @@ def review_delete(request, product_id, review_id):
         messages.add_message(request, messages.ERROR,
                              'You can only delete your own reviews!')
 
-    return HttpResponseRedirect(reverse('products:product_detail', kwargs={'product_id': product.product_id}))
+    return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))

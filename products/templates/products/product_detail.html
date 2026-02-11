@@ -174,11 +174,11 @@
         {% if reviews %}
             <!-- Reviews List -->
             {% for review in reviews %}                
-                <div class="card mb-3 {% if not review.approved and review.user == user %} faded {% elif not review.approved %} d-none{% endif %}">
+                <div id="review{{ review.review_id }}" class="card mb-3 {% if not review.approved and review.user == user %} faded {% elif not review.approved %} d-none{% endif %}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2 ">
                             <div>
-                                <h6 class="card-title mb-1">{{ review.title }}</h6>
+                                <h6 class="card-title mb-1" id="review_title{{ review.review_id }}">{{ review.title }}</h6>
                                 {% if not review.approved and review.user == user %}
                                     <div class="approval small">
                                         This review is awaiting approval
@@ -186,7 +186,7 @@
                                 {% endif %}
                                 <!-- Show rating out of 5 and add corresponding stars -->
                                 <div class="text-warning small mb-2">
-                                    <span class="text-muted">{{ review.rating }} / 5</span>
+                                    <span class="text-muted" id='ratingdisplay{{ review.review_id }}' value="{{ review.rating }}">{{ review.rating }} </span>
                                     {% for i in "12345" %}
                                         {% if forloop.counter <= review.rating %}
                                             <i class="fas fa-star" aria-hidden="true"></i>
@@ -198,14 +198,14 @@
                             </div>
                             <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
                         </div>
-                        <p class="card-text text-muted mb-2">{{ review.comment|striptags}}</p>
+                        <p class="card-text text-muted mb-2" id="review_comment{{ review.review_id }}">{{ review.comment|striptags}}</p>
                         <small class="text-muted d-block">by <strong>{{ review.user.username }}</strong></small>
                         {% if user.is_authenticated and review.user == user %}
                         <span>
                         <button class="btn btn-delete"
-                            review_id="{{ review.id }}">Delete</button>
+                            review_id="{{ review.review_id }}">Delete</button>
                             <button class="btn btn-edit"
-                            review_id="{{ review.id }}">Edit</button></span>
+                            review_id="{{ review.review_id }}">Edit</button></span>
                         {% endif %}
                     </div>
                 </div>
@@ -219,7 +219,7 @@
         <!-- Write a Review -->
         {% if user.is_authenticated %}
             <div class="card mt-4">
-                <div class="card-header">
+                <div id="reviewFormHeader" class="card-header">
                     <h6 class="card-title mb-0">Write a Review</h6>
                 </div>
                 <div class="card-body">
@@ -233,7 +233,7 @@
                                 <div class="btn-group" role="group">
                                     <!--Add a star button for each rating value from 1 to 5 -->
                                     {% for i in "12345" %}
-                                        <input type="radio" class="btn-check" name="rating" id="rating{{ i }}" value="{{ i }}">
+                                        <input type="radio" class="btn-check" name="rating" id="rating{{ i }}" value="{{ i }}" required>
                                         <label class="btn btn-outline-warning" for="rating{{ i }}">
                                             <i class="fas fa-star"></i> {{ i }}
                                         </label>
@@ -254,8 +254,11 @@
                                       placeholder="Share your experience with this product" required></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">
+                        <button id="submit-review" type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane me-2"></i>Submit Review
+                        </button>
+                        <button id="reset-review" type="reset" class="btn btn-secondary">
+                            <i class="fas fa-x me-2"></i>Clear
                         </button>
                     </form>
                 </div>
@@ -290,4 +293,5 @@ function decreaseQuantity() {
     }
 }
 </script>
+<script src="{% static 'js/reviews.js' %}"></script>
 {% endblock %}
