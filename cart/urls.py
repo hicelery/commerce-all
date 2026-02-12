@@ -4,15 +4,23 @@ from django.urls import path
 app_name = 'cart'
 
 urlpatterns = [
-    # category route placed after pr>oduct routes to avoid catching 'product' literalpath('checkout/', views.checkout, name='checkout'),
+    # Cart overview
     path('', views.cart_detail, name='view_cart'),
 
-    # maybe move these to product urls? but then would need to pass cart_id in the url which seems weird
-    path('<int:cart_id>/update/<int:product_id>/', views.update_cart_item,
+    # Update a cart item (identified by cart and cartitem ids)
+    path('<int:cart_id>/update/<int:cartitem_id>/', views.update_cart_item,
          name='update_cart_item'),
 
-    path('<int:cart_id>/add/', views.add_to_cart, name='add_to_cart'),
-    path('<int:cart_id>/remove/<int:product_id>/',
+    # Add a product to the current session cart (product_id only)
+    path('add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+
+    # Remove a cart item
+    path('<int:cart_id>/remove/<int:cartitem_id>/',
          views.remove_from_cart, name='remove_from_cart'),
+
+    # Additional actions used by template (minimal handlers)
+    path('clear/', views.clear_cart, name='clear_cart'),
+    path('apply-discount/', views.apply_discount, name='apply_discount'),
+    path('checkout/', views.checkout, name='checkout'),
 
 ]

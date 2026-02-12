@@ -7,7 +7,7 @@ class Cart(models.Model):
     """Cart model representing a user's shopping cart."""
     cart_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        'auth.User', on_delete=models.CASCADE, related_name='carts')
+        'auth.User', on_delete=models.CASCADE, related_name='carts', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

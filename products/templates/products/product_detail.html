@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load static %} {% load crispy_forms_tags %}
+products:{% extends "base.html" %} {% load static %} {% load crispy_forms_tags %}
 
 {% block title %}{{ product.name }} - IFA Fashion Store{% endblock %}
 
@@ -117,7 +117,7 @@
         <!-- Quantity & Add to Cart -->
         <!--replace action with add to cart url:  url 'cart:add_to_cart' product.id  -->
         <div class="mb-4">
-            <form method="post" action="" class="row g-2 align-items-end">
+            <form method="post" action="{% url 'cart:add_to_cart' product.product_id %}" class="row g-2 align-items-end">
                 {% csrf_token %}
                 
                 <div class="col-12 col-sm-auto">
