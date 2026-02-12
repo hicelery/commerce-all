@@ -89,6 +89,7 @@ def product_detail(request, product_id):
     product = get_object_or_404(queryset, product_id=product_id)
     reviews = product.reviews.order_by("-created_at")
     review_count = product.reviews.filter(approved=True).count()
+    review_form = None
 
     # Post request for comment forms
     if request.method == "POST":
