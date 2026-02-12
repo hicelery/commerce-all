@@ -78,7 +78,7 @@
                     <li><a href="{% url 'products:home' %}">All</a></li>
                     <ul class="list-unstyled mx-3 ">
                         {% for category in categories %}
-                            <li><a href="{% url 'products:home' %}{{category.name}}">{{category.name}}</a></li>
+                            <li><a href="{% url 'products:home' %}/{{category.name}}">{{category.name}}</a></li>
                         {% endfor %}
                     </ul>    
                 </ul>       
@@ -145,7 +145,7 @@ Products Grid
             <!-- Product Grid -->
             <div class="row g-4">
                 {% for product in products %}
-                    <div class="col-sm-6 col-lg-4">
+                    <div class="col-sm-6 col-md-4 col-lg-3">
                         <div class="card h-100 product-card hover-shadow">
                             <!--Turn productimage into a button to navigate to product detail view-->
                             <a href="{% url 'products:product_detail' product_id=product.pk %}">
@@ -153,7 +153,7 @@ Products Grid
                                 <div class="position-relative overflow-hidden bg-light">
                                     <!-- Check if product has an image else get placeholder-->
                                     {% if product.image %}
-                                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="aspect-ratio: 1/1; object-fit: cover;">
+                                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="aspect-ratio: 1/1; object-fit: cover; ">
                                     {% else %}
                                         <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 250px;">
                                             <i class="fas fa-image text-white fa-3x"></i>
@@ -180,7 +180,11 @@ Products Grid
                                     {{ product.name }}
                                 </p>
 
-                                    <!-- Rating (if reviews exist) -->
+                                    <!-- Rating (if reviews exist)
+                                     ==========================================
+                                     come back to this logic
+                                     ==========================================
+                                      -->
                                     <div class="mb-2">
                                         <div class="text-warning small">
                                             {% if product.avg_rating %}

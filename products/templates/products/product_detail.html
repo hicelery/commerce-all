@@ -6,14 +6,14 @@
 
 
 <!-- Breadcrumb -->
- <!--
+
 <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'products:home' %}">Shop</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'products:home' %}?category={{ product.category.id }}">{{ product.category.category_description }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'products:home' %}/{{ product.category.name }}">{{ product.category.name }}</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
     </ol>
-</nav> -->
+</nav>
 
 <!-- Product Detail Section -->
 <div class="row g-4 mt-3">
