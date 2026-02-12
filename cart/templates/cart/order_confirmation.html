@@ -40,19 +40,7 @@
                         <p class="mb-0">{{ order.created_at|date:"F d, Y" }}</p>
                     </div>
                 </div>
-                <hr>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6 class="fw-bold mb-2">Estimated Delivery</h6>
-                        <p class="mb-0">5-7 business days</p>
-                        <small class="text-muted">We'll send you tracking information soon</small>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="fw-bold mb-2">Confirmation Email</h6>
-                        <p class="mb-0">{{ order.user.email }}</p>
-                        <small class="text-muted">Check your inbox for details</small>
-                    </div>
-                </div>
+                <hr>               
             </div>
         </div>
 
@@ -118,7 +106,6 @@
                     {{ order.shipping_address }}<br>
                     <abbr title="Phone">P:</abbr> {{ order.user.profile.phone|default:"Not provided" }}
                 </address>
-                <a href="#" class="btn btn-sm btn-outline-primary">Edit Address</a>
             </div>
         </div>
     </div>

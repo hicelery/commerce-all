@@ -38,7 +38,7 @@
 <div class="row g-4">
     <!-- Checkout Form -->
     <div class="col-lg-8">
-        <form method="post" action="{% url 'cart:process_checkout' %}" id="checkoutForm">
+        <form method="post" action="{% url 'cart:checkout' %}" id="CheckoutForm">
             {% csrf_token %}
 
             <!-- Shipping Information Section -->
@@ -49,24 +49,6 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    {% if user.is_authenticated %}
-                        <!-- Use existing address or enter new -->
-                        <div class="mt-3">
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="radio" name="use_saved_address" id="newAddress" value="no" checked>
-                                <label class="form-check-label" for="newAddress">
-                                    Enter a new address
-                                </label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="radio" name="use_saved_address" id="savedAddress" value="yes">
-                                <label class="form-check-label" for="savedAddress">
-                                    Use my saved address
-                                </label>
-                            </div>
-                        </div>
-                    {% endif %}
-
                     <!-- Address Form -->
                     <div id="addressForm">
                         <div class="row g-3">
@@ -87,7 +69,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="phone" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="(123) 456-7890" required>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="(+44) 9876 543210" required>
                             </div>
                             <div class="col-12">
                                 <label for="address" class="form-label">Address</label>
@@ -141,16 +123,6 @@
                         </label>
                     </div>
                     <hr>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="shipping_method" id="overnight" 
-                               value="overnight">
-                        <label class="form-check-label w-100" for="overnight">
-                            <div class="d-flex justify-content-between">
-                                <span><strong>Overnight Shipping</strong><br><small class="text-muted">1 business day</small></span>
-                                <span class="text-primary">$29.99</span>
-                            </div>
-                        </label>
-                    </div>
                 </div>
             </div>
 
@@ -248,25 +220,4 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    // Update shipping cost based on method selection
-    document.querySelectorAll('input[name="shipping_method"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            let cost = 'Free';
-            if (this.value === 'express') cost = '$14.99';
-            if (this.value === 'overnight') cost = '$29.99';
-            document.getElementById('shippingCost').textContent = cost;
-        });
-    });
-
-    // Toggle address form based on saved address option
-    const newAddressRadio = document.getElementById('newAddress');
-    const savedAddressRadio = document.getElementById('savedAddress');
-    const addressForm = document.getElementById('addressForm');
-
-    if (newAddressRadio) {
-        newAddressRadio.addEventListener('change', () => addressForm.style.display = 'block');
-        savedAddressRadio.addEventListener('change', () => addressForm.style.display = 'none');
-    }
-</script>
 {% endblock %}

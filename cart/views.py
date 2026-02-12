@@ -3,8 +3,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
 
-from .models import Cart, CartItem
+
+from .models import Cart, CartItem, Order, OrderItem
 from products.models import Product
+from .forms import CheckoutForm
 
 # Create your views here.
 
@@ -129,5 +131,19 @@ def apply_discount(request):
 
 def checkout(request):
     # Minimal placeholder for checkout route
-    messages.info(request, 'Checkout flow not implemented.')
-    return redirect('cart:view_cart')
+    # In a real implementation, this would handle payment processing, order creation, etc.
+    # For now, give order confirmation and clear cart as a placeholder
+    # move items from cart into order/order items.
+    if request.method == 'POST':
+        checkout_form = CheckoutForm(data=request.POST, user=request.user)
+        cart_id = request.session.get('cart_id')
+        total_price = sum(
+            item.quantity * item.product.price for item in CartItem.objects.filter(cart_id=cart_id))
+        order = Order.objects.create(
+            user=request.user, total_price=total_price)
+    # Insert each CartItem into OrderItem
+        for item in CartItem.objects.filter(cart_id=cart_id):
+            OrderItem.objects.create(product=item.product, order_id=order.order_id,
+                                     quantity=item.quantity, price=item.product.price)
+        CartItem.objects.filter(cart_id=cart_id).delete()  # Clear cart
+    return render(request, 'cart/checkout.html')
