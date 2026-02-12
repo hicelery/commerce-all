@@ -17,11 +17,12 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <div class="container text-center mt-5 d-flex flex-column align-items-center justify-content-center gap-4" style="min-height: 80vh; width: 100%">
-        <button style="border: none; background: none; padding: 0;"><a class="text-decoration-none" href="{% url 'products:home' %}">
+    <div class="container text-center p-0 d-flex flex-column align-items-center justify-content-center" style="min-height: 80vh; width: 100%">
+        <button style="border: none; background: none; padding: 0;"><a class="text-decoration-none text-black" href="{% url 'products:home' %}">
             <video src="{% static 'images/enter.mp4' %}" autoplay muted style="aspect-ratio: 1 / 1; object-fit: cover; border: none; width: 499px;"> Your browser does not support the video tag. </video>
-        </a>
-    </button>
+            <h1>Enter</h1>
+            </a>
+        </button>
 
         
     </div>
