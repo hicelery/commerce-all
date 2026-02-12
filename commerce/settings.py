@@ -59,11 +59,12 @@ INSTALLED_APPS = [
     'django_summernote',
     'cloudinary_storage',
     'cloudinary',
-    'products',
-    'cart',
     'crispy_forms',
     'crispy_bootstrap5',
-]
+    'cart',
+    'enter',
+    'products',]
+
 
 SITE_ID = 1
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

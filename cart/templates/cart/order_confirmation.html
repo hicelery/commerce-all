@@ -24,71 +24,63 @@
                     <h5 class="card-title mb-0">
                         <i class="fas fa-receipt me-2"></i>Order Details
                     </h5>
-                    <small class="text-muted">Order #{{ order.id }}</small>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <h6 class="fw-bold mb-2">Order Status</h6>
-                        <span class="badge bg-success fs-6">
-                            <i class="fas fa-check me-1"></i>{{ order.order_status.description }}
-                        </span>
+                        <h6 class="fw-bold mb-2">Order Number:</h6>
+                           # {{ order.order_id }}
                     </div>
                     <div class="col-md-6">
                         <h6 class="fw-bold mb-2">Order Date</h6>
                         <p class="mb-0">{{ order.created_at|date:"F d, Y" }}</p>
                     </div>
-                </div>
-                <hr>               
-            </div>
-        </div>
-
-        <!-- Order Items Card -->
-        <div class="card mb-4">
+                </div>            
             <div class="card-header bg-light">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-box me-2"></i>Items Ordered
                 </h5>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in order_items %}
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            {% if item.product.image %}
-                                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
-                                                     class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
-                                            {% else %}
-                                                <div class="bg-light rounded d-flex align-items-center justify-content-center" 
-                                                     style="width: 60px; height: 60px;">
-                                                    <i class="fas fa-image text-secondary text-sm"></i>
-                                                </div>
-                                            {% endif %}
-                                            <div>
-                                                <p class="mb-0 fw-semibold">{{ item.product.name }}</p>
-                                                <small class="text-muted">ID: #{{ item.product.id }}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle">${{ item.price|floatformat:2 }}</td>
-                                    <td class="align-middle">{{ item.quantity }}</td>
-                                    <td class="align-middle fw-bold">${{ item.subtotal|floatformat:2 }}</td>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for item in order_items %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                {% if item.product.image %}
+                                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
+                                                        class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                                        style="width: 60px; height: 60px;">
+                                                        <i class="fas fa-image text-secondary text-sm"></i>
+                                                    </div>
+                                                {% endif %}
+                                                <div>
+                                                    <p class="mb-0 fw-semibold">{{ item.product.name }}</p>
+                                                    <small class="text-muted">ID: #{{ item.product.product_id }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">£{{ item.price|floatformat:2 }}</td>
+                                        <td class="align-middle">{{ item.quantity }}</td>
+                                        <td class="align-middle fw-bold">£{{ item.subtotal|floatformat:2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,14 +105,14 @@
     <!-- Order Summary Sidebar -->
     <div class="col-lg-4">
         <!-- Summary Card -->
-        <div class="card mb-4 sticky-top">
+        <div class="card mb-4">
             <div class="card-header bg-light">
                 <h6 class="card-title mb-0">Order Summary</h6>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between mb-2">
                     <span>Subtotal:</span>
-                    <span>${{ order.subtotal|default:order.total|floatformat:2 }}</span>
+                    <span>£{{ subtotal|default:order.total_price|floatformat:2 }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span>Shipping:</span>
@@ -129,27 +121,23 @@
                 {% if order.discount_amount %}
                     <div class="d-flex justify-content-between mb-2 text-success">
                         <span>Discount:</span>
-                        <span>-${{ order.discount_amount|floatformat:2 }}</span>
+                        <span>-£{{ order.discount_amount|floatformat:2 }}</span>
                     </div>
                 {% endif %}
                 {% if order.tax %}
                     <div class="d-flex justify-content-between mb-2">
                         <span>Tax:</span>
-                        <span>${{ order.tax|floatformat:2 }}</span>
+                        <span>£{{ order.tax|floatformat:2 }}</span>
                     </div>
                 {% endif %}
                 <hr>
                 <div class="d-flex justify-content-between mb-4">
                     <span class="fw-bold fs-5">Total:</span>
-                    <span class="fw-bold fs-5 text-primary">${{ order.total|floatformat:2 }}</span>
+                    <span class="fw-bold fs-5 text-primary">£{{ order.total_price|floatformat:2 }}</span>
                 </div>
 
                 <h6 class="fw-bold mb-3">What's Next?</h6>
                 <ol class="small">
-                    <li class="mb-2">
-                        <strong>Order Confirmation</strong><br>
-                        <span class="text-muted">We'll send a confirmation email shortly</span>
-                    </li>
                     <li class="mb-2">
                         <strong>Processing</strong><br>
                         <span class="text-muted">We're preparing your items</span>
@@ -168,9 +156,6 @@
 
         <!-- Action Buttons -->
         <div class="d-grid gap-2">
-            <a href="{% url 'account_orders' %}" class="btn btn-primary">
-                <i class="fas fa-list me-2"></i>View My Orders
-            </a>
             <a href="{% url 'products:home' %}" class="btn btn-outline-secondary">
                 <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
             </a>
@@ -181,44 +166,12 @@
             <i class="fas fa-question-circle me-2"></i>
             <strong>Need Help?</strong><br>
             <small class="d-block mt-2">
-                <a href="#" class="text-decoration-none">Contact Support</a> · 
-                <a href="#" class="text-decoration-none">Track Order</a>
+                <a href="#" class="text-decoration-none">Contact Support</a>
             </small>
         </div>
     </div>
 </div>
 
-<!-- Continue Shopping Section -->
-<div class="row mt-5">
-    <div class="col-12">
-        <h5 class="mb-4">You Might Also Like</h5>
-        <div class="row g-4">
-            {% for product in recommended_products|slice:":4" %}
-                <div class="col-sm-6 col-lg-3">
-                    <div class="card h-100">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" 
-                                 style="aspect-ratio: 1/1; object-fit: cover;">
-                        {% else %}
-                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
-                                 style="height: 250px;">
-                                <i class="fas fa-image text-secondary fa-3x"></i>
-                            </div>
-                        {% endif %}
-                        <div class="card-body">
-                            <h6 class="card-title text-truncate">{{ product.name }}</h6>
-                            <p class="card-text fw-bold text-primary">${{ product.price|floatformat:2 }}</p>
-                        </div>
-                        <div class="card-footer bg-white">
-                            <a href="{% url 'products:product_detail' product.id %}" class="btn btn-sm btn-outline-primary w-100">
-                                View
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
+
 
 {% endblock %}

@@ -33,6 +33,7 @@ class Order(models.Model):
     shipping_address = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_paid = models.BooleanField(default=False)
 
 
 class OrderItem(models.Model):
@@ -46,3 +47,11 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def subtotal(self):
+        """Return per-item subtotal (quantity * price) for templates and logic.
+
+        This is a computed read-only property, not stored in the database.
+        """
+        return self.quantity * self.price

@@ -134,16 +134,39 @@ def checkout(request):
     # In a real implementation, this would handle payment processing, order creation, etc.
     # For now, give order confirmation and clear cart as a placeholder
     # move items from cart into order/order items.
+    # create empty order first to get order_id for order items, then update total price after creating order items.
+    order = Order.objects.create(user=request.user, total_price=0)
     if request.method == 'POST':
         checkout_form = CheckoutForm(data=request.POST, user=request.user)
+        if checkout_form.is_valid():
+            order = checkout_form.save(commit=False)
         cart_id = request.session.get('cart_id')
         total_price = sum(
             item.quantity * item.product.price for item in CartItem.objects.filter(cart_id=cart_id))
-        order = Order.objects.create(
-            user=request.user, total_price=total_price)
-    # Insert each CartItem into OrderItem
+
+        if subtotal >= 50:
+            shipping = 0
+        else:
+            shipping = 9.99
+        order.total_price = total_price + shipping
+        order.is_paid = True  # Mark order as paid
+        order.save()
+        # Insert each CartItem into OrderItem
         for item in CartItem.objects.filter(cart_id=cart_id):
             OrderItem.objects.create(product=item.product, order_id=order.order_id,
                                      quantity=item.quantity, price=item.product.price)
         CartItem.objects.filter(cart_id=cart_id).delete()  # Clear cart
-    return render(request, 'cart/checkout.html')
+
+    return redirect('cart:order_confirmation', order_id=order.order_id)
+
+
+def order_confirmation(request, order_id):
+    # get order
+    # get associated items
+    order = get_object_or_404(Order, order_id=order_id)
+    # collect order items; per-item subtotal is available via model property
+    order_items = order.items.select_related('product').all()
+    subtotal = sum(order_item.subtotal for order_item in order_items)
+    context = {'order': order,
+               'order_items': order_items, 'subtotal': subtotal}
+    return render(request, 'cart/order_confirmation.html', context)

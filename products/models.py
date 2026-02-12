@@ -24,6 +24,9 @@ class Product(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    def __str__(self):
+        return f"{self.brand} {self.name} ({self.colour}, {self.size})"
+
 
 class ProductReview(models.Model):
     """ProductReview model representing a review for a product.
