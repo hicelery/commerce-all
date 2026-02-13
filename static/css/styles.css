@@ -243,6 +243,10 @@ img {
     height: auto;
 }
 
+video {
+    width: 500px;
+}
+
 /* Footer */
 footer {
     margin-top: auto;
@@ -271,27 +275,6 @@ footer a:hover {
 @keyframes spin {
     to {
         transform: rotate(360deg);
-    }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .sticky-top {
-        position: static;
-        top: auto;
-    }
-
-    .table-responsive {
-        font-size: 0.875rem;
-    }
-
-    .btn-lg {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-    }
-
-    main {
-        min-height: calc(100vh - 150px);
     }
 }
 
@@ -324,12 +307,6 @@ footer a:hover {
 /* Offcanvas */
 .offcanvas {
     width: 300px;
-}
-
-@media (max-width: 576px) {
-    .offcanvas {
-        width: 100%;
-    }
 }
 
 /* Star Ratings */
@@ -384,4 +361,41 @@ html {
 
 .skip-to-main:focus {
     top: 0;
+}
+
+@media (max-width: 576px) {
+    video {
+        width: 300px;
+    }
+
+    .offcanvas {
+        width: 100%;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sticky-top {
+        position: static;
+        top: auto;
+    }
+
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    main {
+        min-height: calc(100vh - 150px);
+    }
+}
+
+@media (min-width: 1200px) {
+    video {
+        width: 800px;
+    }
 }

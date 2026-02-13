@@ -18,19 +18,18 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
         <div class="container-fluid"> 
+            
             <!-- Toggle Button for Mobile -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <!-- Logo -->
-            <a class="navbar-brand fw-bold fs-5" href="{% url 'products:home' %}">
-                <img src="{% static 'images/commerce-logo.svg' %}" alt="Commerce-all Logo" height="30">
-            </a>
             
-           
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold fs-5 d-flex align-items-center gap-2" href="{% url 'products:home' %}">
+                <img src="{% static 'images/commerce-logo.svg' %}" alt="Commerce-all Logo" height="30" class="me-2">
+            </a>
             
             <!-- Navigation Links -->
             <div class="collapse navbar-collapse" id="navbarNav">

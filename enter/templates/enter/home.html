@@ -18,10 +18,12 @@
 </head>
 <body>
     <div class="container text-center p-0 d-flex flex-column align-items-center justify-content-center" style="min-height: 80vh; width: 100%">
-        <button style="border: none; background: none; padding: 0;"><a class="text-decoration-none text-black" href="{% url 'products:home' %}">
-            <video src="{% static 'images/commerce-alt.mp4' %}" autoplay muted style="aspect-ratio: 1 / 1; object-fit: cover; border: none; max-width: 1600px; width: 60%;"> Your browser does not support the video tag. </video>
-            <h1>Enter.</h1>            
-        </button>
+        
+            <a class="video-wrapper text-black" href="{% url 'products:home' %}">
+                <video class="video-reset" src="{% static 'images/commerce.mp4' %}" autoplay muted> Your browser does not support the video tag. </video>
+                <h1>Enter.</h1>
+            </a>
+
 
         
     </div>
