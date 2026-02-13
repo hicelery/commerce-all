@@ -17,9 +17,10 @@
 
 /* General Styles */
 body {
-    font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-        Arial, sans-serif;
+    font-family: monospace, Helvetica, sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
     line-height: 1.6;
     color: #333;
 }
@@ -42,7 +43,6 @@ main {
 .product-card {
     transition: all 0.3s ease;
     border: 1px solid #e0e0e0;
-    border-radius: var(--border-radius);
 }
 
 .product-card:hover {
@@ -77,14 +77,14 @@ main {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    background: linear-gradient(135deg, #50c076 0%, #099e10 100%);
     border: none;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+    background: linear-gradient(135deg, #50c076 0%, #099e10 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(20, 68, 1, 0.4);
 }
 
 .btn-outline-secondary {
@@ -94,6 +94,15 @@ main {
 .btn-outline-secondary:hover {
     background-color: #f8f9fa;
     border-color: var(--secondary-color);
+}
+/* Borders */
+
+.drawn-border {
+    border: solid 4px rgb(0, 0, 0) !important;
+    margin: 5% auto;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px !important;
+    padding: 0.5em;
+    line-height: 1.5em;
 }
 
 /* Form Styles */

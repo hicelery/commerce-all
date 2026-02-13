@@ -30,15 +30,8 @@
                 <!-- Categories -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Categories</label>
-                    {% for category in categories %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="mobile_cat_{{ category.id }}" 
-                                name="category" value="{{ category.id }}"
-                                {% if category.id in selected_categories %}checked{% endif %}>
-                            <label class="form-check-label" for="mobile_cat_{{ category.id }}">
-                                {{ category.category_name }}
-                            </label>
-                        </div>
+                     {% for category in categories %}
+                            <li><a href="{% url 'products:home' %}{{category.name}}">{{category.name}}</a></li>
                     {% endfor %}
                 </div>
 
@@ -78,7 +71,7 @@
                     <li><a href="{% url 'products:home' %}">All</a></li>
                     <ul class="list-unstyled mx-3 ">
                         {% for category in categories %}
-                            <li><a href="{% url 'products:home' %}/{{category.name}}">{{category.name}}</a></li>
+                            <li><a href="{% url 'products:home' %}{{category.name}}">{{category.name}}</a></li>
                         {% endfor %}
                     </ul>    
                 </ul>       
@@ -146,7 +139,7 @@ Products Grid
             <div class="row g-4">
                 {% for product in products %}
                     <div class="col-sm-6 col-md-4 col-lg-3">
-                        <div class="card h-100 product-card hover-shadow">
+                        <div class="card h-100 product-card drawn-border hover-shadow ">
                             <!--Turn productimage into a button to navigate to product detail view-->
                             <a href="{% url 'products:product_detail' product_id=product.pk %}">
                                 <!-- Product Image -->
@@ -212,7 +205,7 @@ Products Grid
 
                                 <!-- Card Footer -->
                                 <div class="card-footer bg-white border-top">
-                                    <a href="{% url 'products:product_detail' product_id=product.pk %}" class="btn btn-primary btn-sm w-100">
+                                    <a href="{% url 'products:product_detail' product_id=product.pk %}" class="btn btn-primary btn-sm w-100 drawn-border">
                                         <i class="fas fa-eye me-1"></i>View Details
                                     </a>
                                 </div>

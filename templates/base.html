@@ -18,7 +18,7 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container-fluid"> 
             <!-- Toggle Button for Mobile -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +27,7 @@
 
             <!-- Logo -->
             <a class="navbar-brand fw-bold fs-5" href="{% url 'products:home' %}">
-                <i class="fas fa-shopping-bag me-2"></i>Commerce-All
+                <img src="{% static 'images/commerce-logo.svg' %}" alt="Commerce-all Logo" height="30">
             </a>
             
            
