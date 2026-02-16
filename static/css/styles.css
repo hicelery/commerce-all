@@ -243,8 +243,9 @@ img {
     height: auto;
 }
 
-video {
-    width: 501px;
+.video-wrapper {
+    width: 500px;
+    height: 500px;
 }
 
 /* Footer */
@@ -364,8 +365,9 @@ html {
 }
 
 @media (max-width: 576px) {
-    video {
+    .video-wrapper {
         width: 300px;
+        height: 300px;
     }
 
     .offcanvas {
@@ -395,13 +397,36 @@ html {
 }
 
 @media (min-width: 1200px) {
-    video {
+    .video-wrapper {
         width: 600px;
+        height: 600px;
     }
 }
 
 @media (min-width: 1920px) {
-    video {
+    .video-wrapper {
         width: 700px;
+        height: 700px;
+    }
+}
+
+#sidebar {
+    position: sticky;
+    top: 101px;
+    z-index: 1020;
+    align-self: flex-start;
+}
+
+@supports not (position: sticky) {
+    #sidebar {
+        position: fixed;
+        top: 101px;
+    }
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        position: static;
+        top: auto;
     }
 }

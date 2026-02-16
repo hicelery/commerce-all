@@ -19,8 +19,11 @@
 <body>
     <div class="container text-center p-0 d-flex flex-column align-items-center justify-content-center" style="min-height: 80vh; width: 100%">
         
-            <a class="video-wrapper text-black" href="{% url 'products:home' %}">
-                <video class="video-reset" src="{% static 'images/commerce.mp4' %}" autoplay muted> Your browser does not support the video tag. </video>
+            <a class="text-black" href="{% url 'products:home' %}">
+               <!-- <video class="video-reset" src="{% static 'images/commerce.mp4' %}" autoplay muted> Your browser does not support the video tag. </video>-->
+                <div class="video-wrapper">
+                    <img id="enter-gif" src="{% static 'images/enter.gif' %}" alt="Enter site" class="enter-gif">
+                </div>
                 <h1>Enter.</h1>
             </a>
 

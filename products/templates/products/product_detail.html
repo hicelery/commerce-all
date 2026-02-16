@@ -42,21 +42,11 @@
                     <img src="{{ product.image.url }}" class="img-fluid rounded cursor-pointer" alt="{{ product.name }}" style="aspect-ratio: 1/1; object-fit: cover;">
                 </div>
             {% endif %}
+            {% for image in product.additional_images.all %}
             <div class="col-3">
-                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="aspect-ratio: 1/1;">
-                    <i class="fas fa-image text-secondary"></i>
-                </div>
+                    <img src="{{ image.image.url }}" class="img-fluid rounded cursor-pointer" alt="{{ product.name }}" style="aspect-ratio: 1/1; object-fit: cover;">
             </div>
-            <div class="col-3">
-                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="aspect-ratio: 1/1;">
-                    <i class="fas fa-image text-secondary"></i>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="aspect-ratio: 1/1;">
-                    <i class="fas fa-image text-secondary"></i>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 
