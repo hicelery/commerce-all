@@ -135,6 +135,9 @@ def checkout(request):
     # For now, give order confirmation and clear cart as a placeholder
     # move items from cart into order/order items.
     # create empty order first to get order_id for order items, then update total price after creating order items.
+    if not request.user.is_authenticated:
+        messages.info(request, 'You must be logged in to checkout.')
+        return redirect('cart:view_cart')
     order = Order.objects.create(user=request.user, total_price=0)
     if request.method == 'POST':
         checkout_form = CheckoutForm(data=request.POST, user=request.user)

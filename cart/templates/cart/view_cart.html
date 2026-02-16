@@ -32,8 +32,8 @@
                                 <tr>
                                     <th style="min-width: 250px;">Product</th>
                                     <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Action</th>
+                                    <th class="d-none d-sm-table-cell">Quantity</th>
+                                    <th class="d-none d-sm-table-cell">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -60,6 +60,26 @@
                                                     <small class="text-muted">ID: #{{ item.product.id }}</small>
                                                 </div>
                                             </div>
+
+                                            <!-- Mobile-only controls: quantity + remove (shown under product on small screens) -->
+                                            <div class="d-block d-sm-none mt-2">
+                                                <div class="d-flex gap-2 align-items-center">
+                                                    <form method="post" action="{% url 'cart:update_cart_item' cart.pk item.pk %}" class="d-inline w-100">
+                                                        {% csrf_token %}
+                                                        <div class="input-group input-group-sm" style="width: 60%;">
+                                                            <button type="submit" name="action" value="decrease" class="btn btn-outline-secondary">-</button>
+                                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control text-center" readonly>
+                                                            <button type="submit" name="action" value="increase" class="btn btn-outline-secondary">+</button>
+                                                        </div>
+                                                    </form>
+                                                    <form method="post" action="{% url 'cart:remove_from_cart' cart.pk item.pk %}" class="d-inline ms-2">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Remove item">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </td>
 
                                         <!-- Price -->
@@ -67,8 +87,8 @@
                                             <span class="fw-semibold">£{{ item.product.price|floatformat:2 }}</span>
                                         </td>
 
-                                        <!-- Quantity -->
-                                        <td class="align-middle">
+                                        <!-- Quantity (hidden on xs, shown from sm and up) -->
+                                        <td class="align-middle d-none d-sm-table-cell">
                                             <form method="post" action="{% url 'cart:update_cart_item' cart.pk item.pk %}" class="d-inline">
                                                 {% csrf_token %}
                                                 <div class="input-group input-group-sm" style="width: 120px;">
@@ -80,8 +100,8 @@
                                             </form>
                                         </td>
 
-                                        <!-- Remove Button -->
-                                        <td class="align-middle">
+                                        <!-- Remove Button (hidden on xs, shown from sm and up) -->
+                                        <td class="align-middle d-none d-sm-table-cell">
                                             <form method="post" action="{% url 'cart:remove_from_cart' cart.pk item.pk %}" class="d-inline">
                                                 {% csrf_token %}
                                                 <button type="submit" class="btn btn-sm btn-danger" title="Remove item">
