@@ -244,7 +244,7 @@ img {
 }
 
 video {
-    width: 500px;
+    width: 501px;
 }
 
 /* Footer */
@@ -396,6 +396,6 @@ html {
 
 @media (min-width: 1200px) {
     video {
-        width: 800px;
+        width: 700px;
     }
 }
