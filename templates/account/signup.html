@@ -4,6 +4,9 @@
     {% trans "Signup" %}
 {% endblock head_title %}
 {% block content %}
+
+ <div class="row" style="width: 100%; height: 100%; margin: 0;">
+        <div class="col d-flex flex-column align-items-center justify-content-center">
     {% element h1 %}
         {% trans "Sign Up" %}
     {% endelement %}
@@ -32,6 +35,8 @@
             {% endslot %}
         {% endelement %}
     {% endif %}
+    </div>
+    </div>
     {% if PASSKEY_SIGNUP_ENABLED %}
         {% element hr %}
         {% endelement %}

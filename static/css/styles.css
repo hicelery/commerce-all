@@ -396,6 +396,12 @@ html {
 
 @media (min-width: 1200px) {
     video {
+        width: 600px;
+    }
+}
+
+@media (min-width: 1920px) {
+    video {
         width: 700px;
     }
 }

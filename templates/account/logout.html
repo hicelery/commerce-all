@@ -1,25 +1,25 @@
 {% extends "account/base_manage.html" %}
 {% load allauth i18n %}
+{% load static%}
 {% block head_title %}
     {% trans "Sign Out" %}
 {% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-        {% trans "Sign Out" %}
-    {% endelement %}
-    {% element p %}
+
+    <div class="row" style="width: 100%; height: 100%; margin: 0;">
+        <div class="col d-flex flex-column align-items-center justify-content-center">
+            <!-- Sign Out Confirmation -->
+             <img src="{% static 'images/bye.png' %}" alt="sad face" style="width: 250px; margin-bottom: 20px;">
+             <h2> Logout</h2>
+    <p class="text-center">
         {% trans 'Are you sure you want to sign out?' %}
-    {% endelement %}
-    {% url 'account_logout' as action_url %}
-    {% element form method="post" action=action_url no_visible_fields=True %}
-        {% slot body %}
-            {% csrf_token %}
-            {{ redirect_field }}
-        {% endslot %}
-        {% slot actions %}
-            {% element button type="submit" %}
-                {% trans 'Sign Out' %}
-            {% endelement %}
-        {% endslot %}
-    {% endelement %}
+    </p>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <a href="{% url 'products:home' %}" class="btn btn-outline drawn-border">Cancel</a>
+    <button class="btn btn-danger drawn-border" type="submit">Sign Out</button>
+  </form>
+        </div>
+    </div>
 {% endblock content %}
