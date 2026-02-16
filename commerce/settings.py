@@ -30,8 +30,8 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
+# Use the DEBUG environment variable to control debug mode - true is logic check
+DEBUG = os.environ.get('DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['*.herokuapp.com',
                  'localhost',
@@ -196,10 +196,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Email / SMTP configuration (use environment variables in production)
-EMAIL_BACKEND = os.environ.get(
-    'EMAIL_BACKEND'
-)
+# Email / SMTP configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT'))
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
