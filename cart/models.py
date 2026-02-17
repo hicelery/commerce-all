@@ -29,6 +29,13 @@ class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
         'auth.User', on_delete=models.CASCADE, related_name='orders')
+    cart = models.OneToOneField(
+        'Cart',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='order'
+    )
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     shipping_address = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -43,6 +50,13 @@ class OrderItem(models.Model):
         Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(
         'products.Product', on_delete=models.CASCADE, related_name='order_items')
+    cartitem = models.OneToOneField(
+        'CartItem',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='orderitem'
+    )
     quantity = models.IntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)

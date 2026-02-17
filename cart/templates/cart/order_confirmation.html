@@ -3,6 +3,28 @@
 {% block title %}Order Confirmation - IFA Fashion Store{% endblock %}
 
 {% block content %}
+<!-- Checkout Progress -->
+<div class="row mb-4">
+    <div class="col-md-8 offset-md-2">
+        <ul class="list-unstyled d-flex justify-content-between">
+            <li class="text-center">
+                <div class="badge bg-light p-3 mb-2 d-inline-block">1</div>
+                <p class="small fw-semibold">Shipping</p>
+            </li>
+            <li class="text-center text-muted">
+                <div class="badge bg-light text-dark p-3 mb-2 d-inline-block">2</div>
+                <p class="small">Payment</p>
+            </li>
+            <li class="text-center text-muted">
+                <div class="badge bg-primary text-dark p-3 mb-2 d-inline-block">3</div>
+                <p class="small">Confirmation</p>
+            </li>
+        </ul>
+        <div class="progress mb-4">
+            <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+</div>
 <!-- Success Banner -->
 <div class="row mb-4">
     <div class="col-md-8 offset-md-2">
@@ -95,7 +117,7 @@
             <div class="card-body">
                 <address>
                     <strong>{{ order.user.first_name }} {{ order.user.last_name }}</strong><br>
-                    {{ order.shipping_address }}<br>
+                    {{ shipping_address }}<br>
                     <abbr title="Phone">P:</abbr> {{ order.user.profile.phone|default:"Not provided" }}
                 </address>
             </div>
@@ -112,7 +134,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between mb-2">
                     <span>Subtotal:</span>
-                    <span>£{{ subtotal|default:order.total_price|floatformat:2 }}</span>
+                    <span>£{{ subtotal|floatformat:2 }}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span>Shipping:</span>

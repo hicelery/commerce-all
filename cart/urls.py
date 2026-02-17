@@ -21,6 +21,7 @@ urlpatterns = [
     # Additional actions used by template (minimal handlers)
     path('clear/', views.clear_cart, name='clear_cart'),
     path('apply-discount/', views.apply_discount, name='apply_discount'),
+    path('go-to-checkout/', views.go_to_checkout, name='go-to-checkout'),
     path('checkout/', views.checkout, name='checkout'),
     path('order-confirmation/<int:order_id>/', views.order_confirmation,
          name='order_confirmation'),

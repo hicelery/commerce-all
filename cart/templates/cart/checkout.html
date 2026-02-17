@@ -199,7 +199,7 @@
                 </div>
                 <div class="d-flex justify-content-between mb-2 small text-muted">
                     <span>Shipping:</span>
-                    <span id="shippingCost">Free</span>
+                    <span id="shippingCost">{% if shipping == 0 %}Free{% else %}\${{ shipping|floatformat:2 }}{% endif %}</span>
                 </div>
                 {% if tax_amount %}
                     <div class="d-flex justify-content-between mb-2 small text-muted">

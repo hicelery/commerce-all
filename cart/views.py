@@ -49,35 +49,6 @@ def cart_detail(request, cart_id=None):
     return render(request, 'cart/view_cart.html', context)
 
 
-def update_cart_item(request, cart_id, cartitem_id):
-    cart = get_object_or_404(Cart, pk=cart_id)
-    cartitem = get_object_or_404(CartItem, pk=cartitem_id, cart=cart)
-    if request.method == 'POST':
-        action = request.POST.get('action')
-        if action == 'increase':
-            cartitem.quantity = cartitem.quantity + 1
-        elif action == 'decrease':
-            cartitem.quantity = max(1, cartitem.quantity - 1)
-        else:
-            # fallback to explicit quantity if provided
-            try:
-                quantity = int(request.POST.get('quantity', cartitem.quantity))
-            except (TypeError, ValueError):
-                quantity = cartitem.quantity
-            cartitem.quantity = max(1, quantity)
-        cartitem.save()
-        messages.success(request, 'Cart updated.')
-    return redirect('cart:view_cart')
-
-
-def remove_from_cart(request, cart_id, cartitem_id):
-    cart = get_object_or_404(Cart, pk=cart_id)
-    cartitem = get_object_or_404(CartItem, pk=cartitem_id, cart=cart)
-    cartitem.delete()
-    messages.success(request, 'Item removed!')
-    return redirect('cart:view_cart')
-
-
 def add_to_cart(request, product_id):
     # Use session-stored cart_id (or create/get a cart for the user)
     cart_id = request.session.get('cart_id')
@@ -106,9 +77,37 @@ def add_to_cart(request, product_id):
             cartitem.quantity = quantity
         cartitem.save()
         messages.success(request, 'Item added to cart.')
-        return redirect('cart:view_cart')
+    return redirect('cart:view_cart')
 
-    # If GET, show cart
+
+def update_cart_item(request, cart_id, cartitem_id):
+    cart = get_object_or_404(Cart, pk=cart_id)
+    cartitem = get_object_or_404(CartItem, pk=cartitem_id, cart=cart)
+
+    # replace logic with update based on action (increase/decrease) or explicit quantity if provided
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'increase':
+            cartitem.quantity = cartitem.quantity + 1
+        elif action == 'decrease':
+            cartitem.quantity = max(1, cartitem.quantity - 1)
+        else:
+            # fallback to explicit quantity if provided
+            try:
+                quantity = int(request.POST.get('quantity', cartitem.quantity))
+            except (TypeError, ValueError):
+                quantity = cartitem.quantity
+            cartitem.quantity = max(1, quantity)
+        cartitem.save()
+        messages.success(request, 'Cart updated.')
+    return redirect('cart:view_cart')
+
+
+def remove_from_cart(request, cart_id, cartitem_id):
+    cart = get_object_or_404(Cart, pk=cart_id)
+    cartitem = get_object_or_404(CartItem, pk=cartitem_id, cart=cart)
+    cartitem.delete()
+    messages.success(request, 'Item removed!')
     return redirect('cart:view_cart')
 
 
@@ -129,44 +128,114 @@ def apply_discount(request):
     return redirect('cart:view_cart')
 
 
-def checkout(request):
-    # Minimal placeholder for checkout route
-    # In a real implementation, this would handle payment processing, order creation, etc.
-    # For now, give order confirmation and clear cart as a placeholder
-    # move items from cart into order/order items.
-    # create empty order first to get order_id for order items, then update total price after creating order items.
+def go_to_checkout(request):
+    # ensure session key exists
+    if not request.session.session_key:
+        request.session.save()
+        session_id = request.session.session_key
+    else:
+        session_id = request.session.session_key
+    cart_id = request.session.get('cart_id')
+    if cart_id:
+        try:
+            cart = Cart.objects.get(pk=cart_id)
+        except Cart.DoesNotExist:
+            cart = None
+    # bounce user - maybe create guest user if not authenticated, but for now just require login to checkout
     if not request.user.is_authenticated:
         messages.info(request, 'You must be logged in to checkout.')
         return redirect('cart:view_cart')
-    order = Order.objects.create(user=request.user, total_price=0)
+
+    # create order object first to get order_id for order items, then update total price after creating order items.
+    try:
+        order = Order.objects.get(cart=cart, user=request.user, is_paid=False)
+    except Order.DoesNotExist:
+        order = Order.objects.create(
+            user=request.user, total_price=0, cart=cart)
+    subtotal = sum(
+        item.quantity * item.product.price for item in CartItem.objects.filter(cart=cart)
+    )
+    shipping = 0 if subtotal >= 50 else 9.99
+    order.total_price = subtotal + shipping
+    order.is_paid = False
+    order.save()
+    # Clear existing order items for this order to avoid duplicates
+    # if user goes back to checkout after order creation but before
+    # clearing cart
+    OrderItem.objects.filter(order=order).delete()
+    for item in CartItem.objects.filter(cart=cart):
+        # add new order item for each cart item, linking back to cart item for reference but allowing order items to persist after cart is cleared
+        try:
+            OrderItem.objects.create(
+                product=item.product,
+                order=order,
+                quantity=item.quantity,
+                price=item.product.price,
+                cartitem=item
+            )
+        # skip adding if item already exists (e.g. user goes back to checkout after order creation but before clearing cart)
+        except Exception:
+            pass
+
+    context = {
+        'session_id': session_id,
+        'cart_id': cart.pk if cart else None,
+        'order': order,
+        'subtotal': subtotal,
+        'shipping': shipping,
+    }
+    return render(request, 'cart/checkout.html', context)
+
+
+def checkout(request, order_id=None):
+    # Resolve order: prefer explicit arg, then POST/GET, then user's unpaid order
+    if order_id is None:
+        order_id = request.POST.get('order_id') or request.GET.get('order_id')
+    order = None
+    if order_id:
+        order = get_object_or_404(Order, pk=order_id)
+    else:
+        if request.user.is_authenticated:
+            order = Order.objects.filter(
+                user=request.user, is_paid=False).last()
+        if not order:
+            # no order found to process
+            return redirect('cart:view_cart')
+
+    # with order, update shipping address and mark as paid, then clear cart items and create new cart for session
     if request.method == 'POST':
         checkout_form = CheckoutForm(data=request.POST, user=request.user)
-        if checkout_form.is_valid():
-            order = checkout_form.save(commit=False)
-        cart_id = request.session.get('cart_id')
-        total_price = sum(
-            item.quantity * item.product.price for item in CartItem.objects.filter(cart_id=cart_id))
+        if checkout_form:
+            shipping_address = checkout_form.cleaned_data.get(
+                'shipping_address')
+            order.is_paid = True  # Mark order as paid
+            order.shipping_address = shipping_address
+            order.save()
+            cart = order.cart
+            cart_id = cart.pk if cart else None
+            # Clear cart items for the paid cart
+            if cart:
+                CartItem.objects.filter(cart=cart).delete()
+            elif cart_id:
+                CartItem.objects.filter(cart_id=cart_id).delete()
 
-        if subtotal >= 50:
-            shipping = 0
-        else:
-            shipping = 9.99
-        order.total_price = total_price + shipping
-        order.is_paid = True  # Mark order as paid
-        order.save()
-        # Insert each CartItem into OrderItem
-        for item in CartItem.objects.filter(cart_id=cart_id):
-            OrderItem.objects.create(product=item.product, order_id=order.order_id,
-                                     quantity=item.quantity, price=item.product.price)
-        CartItem.objects.filter(cart_id=cart_id).delete()  # Clear cart
+            # Create a fresh cart for the user and store it in session
+            if request.user.is_authenticated:
+                new_cart = Cart.objects.create(user=request.user)
+            else:
+                new_cart = Cart.objects.create()
+            request.session['cart_id'] = new_cart.pk
 
-    return redirect('cart:order_confirmation', order_id=order.order_id)
+        context = {'order': order, 'shipping_address': order.shipping_address}
+        print(context)
+
+    return redirect('cart:order_confirmation', order_id=order.pk)
 
 
 def order_confirmation(request, order_id):
     # get order
     # get associated items
-    order = get_object_or_404(Order, order_id=order_id)
+    order = get_object_or_404(Order, pk=order_id)
     # collect order items; per-item subtotal is available via model property
     order_items = order.items.select_related('product').all()
     subtotal = sum(order_item.subtotal for order_item in order_items)
