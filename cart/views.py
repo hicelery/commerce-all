@@ -88,7 +88,8 @@ def update_cart_item(request, cart_id, cartitem_id):
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'increase':
-            cartitem.quantity = cartitem.quantity + 1
+            cartitem.quantity = max(
+                cartitem.quantity + 1, cartitem.product.quantity)
         elif action == 'decrease':
             cartitem.quantity = max(1, cartitem.quantity - 1)
         else:
@@ -221,12 +222,9 @@ def checkout(request, order_id=None):
         checkout_form = CheckoutForm(data=post_data, user=request.user)
         print(f"Checkout form data: {post_data}")
         if checkout_form.is_valid():
-            print("valid")
             # prefer cleaned value but fallback to our assembled address
             shipping_address = checkout_form.cleaned_data.get(
                 'shipping_address') or shipping_address
-            print(f"Using shipping address: {shipping_address}")
-            print(f"Phone: {phone}")
             order.is_paid = True  # Mark order as paid
             order.shipping_address = shipping_address
             order.contactno = phone  # Save phone number to order
