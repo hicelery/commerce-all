@@ -226,8 +226,10 @@ def checkout(request, order_id=None):
             shipping_address = checkout_form.cleaned_data.get(
                 'shipping_address') or shipping_address
             print(f"Using shipping address: {shipping_address}")
+            print(f"Phone: {phone}")
             order.is_paid = True  # Mark order as paid
             order.shipping_address = shipping_address
+            order.contactno = phone  # Save phone number to order
             order.save()
             cart = order.cart
             cart_id = cart.pk if cart else None

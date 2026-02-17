@@ -122,7 +122,7 @@
                     {% else %}
                         Address not available<br>
                     {% endif %}
-                    <abbr title="Phone">P:</abbr> {{ phone |default:"Not provided" }}
+                    <abbr title="Phone">P:</abbr> {{ order.contactno|default:"Not provided" }}
                 </address>
             </div>
         </div>
