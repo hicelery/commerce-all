@@ -10,10 +10,7 @@
         <li class="breadcrumb-item active" aria-current="page">Cart</li>
     </ol>
 </nav>
-<!-- DEBUG: show session/cart diagnostics -->
-<div class="mb-3">
-    <small class="text-muted">DEBUG: session_cart_id={{ session_cart_id }} | cart.pk={{ cart.pk }} | items_count={{ items_count }}</small>
-</div>
+
 
 {% if items %}
     <div class="row g-4">
@@ -57,7 +54,7 @@
                                                             {{ item.product.name }}
                                                         </a>
                                                     </h6>
-                                                    <small class="text-muted">ID: #{{ item.product.id }}</small>
+                                                    <small class="text-muted">ID: #{{ item.product.product_id }}</small>
                                                 </div>
                                             </div>
 
@@ -117,12 +114,12 @@
                 </div>
                 <div class="card-footer bg-light">
                     <div class="d-flex justify-content-between align-items-center">
-                        <a href="{% url 'products:home' %}" class="btn btn-outline-secondary">
+                        <a href="{% url 'products:home' %}" class="btn btn-outline-secondary btn-cart">
                             <i class="fas fa-arrow-left me-2"></i>Continue Shopping
                         </a>
-                        <form method="post" action="{% url 'cart:clear_cart' %}" class="d-inline">
+                        <form method="post" action="{% url 'cart:clear_cart' %}" class="d-inline" >
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger" 
+                            <button type="submit" class="btn btn-outline-danger btn-cart" 
                                     onclick="return confirm('Are you sure you want to clear your cart?');">
                                 <i class="fas fa-trash-alt me-2"></i>Clear Cart
                             </button>

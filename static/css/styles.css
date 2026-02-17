@@ -95,6 +95,7 @@ main {
     background-color: #f8f9fa;
     border-color: var(--secondary-color);
 }
+
 /* Borders */
 
 .drawn-border {
@@ -372,6 +373,11 @@ html {
 
     .offcanvas {
         width: 100%;
+    }
+
+    .btn-cart {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.925rem;
     }
 }
 
