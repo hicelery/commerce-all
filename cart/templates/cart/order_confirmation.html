@@ -116,9 +116,13 @@
             </div>
             <div class="card-body">
                 <address>
-                    <strong>{{ order.user.first_name }} {{ order.user.last_name }}</strong><br>
-                    {{ shipping_address }}<br>
-                    <abbr title="Phone">P:</abbr> {{ order.user.profile.phone|default:"Not provided" }}
+                    <strong>{{ order.user.get_full_name|default:order.user.username }}</strong><br>
+                    {% if order.shipping_address %}
+                        {{ order.shipping_address }}<br>
+                    {% else %}
+                        Address not available<br>
+                    {% endif %}
+                    <abbr title="Phone">P:</abbr> {{ phone |default:"Not provided" }}
                 </address>
             </div>
         </div>

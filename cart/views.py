@@ -152,13 +152,7 @@ def go_to_checkout(request):
     except Order.DoesNotExist:
         order = Order.objects.create(
             user=request.user, total_price=0, cart=cart)
-    subtotal = sum(
-        item.quantity * item.product.price for item in CartItem.objects.filter(cart=cart)
-    )
-    shipping = 0 if subtotal >= 50 else 9.99
-    order.total_price = subtotal + shipping
-    order.is_paid = False
-    order.save()
+
     # Clear existing order items for this order to avoid duplicates
     # if user goes back to checkout after order creation but before
     # clearing cart
@@ -176,7 +170,14 @@ def go_to_checkout(request):
         # skip adding if item already exists (e.g. user goes back to checkout after order creation but before clearing cart)
         except Exception:
             pass
-
+    # calculate subtotal and shipping for order summary, but total price will be updated at checkouts
+    subtotal = sum(
+        item.quantity * item.product.price for item in OrderItem.objects.filter(order=order)
+    )
+    shipping = 0 if subtotal >= 50 else 9.99
+    order.total_price = subtotal + shipping
+    order.is_paid = False
+    order.save()
     context = {
         'session_id': session_id,
         'cart_id': cart.pk if cart else None,
@@ -204,10 +205,27 @@ def checkout(request, order_id=None):
 
     # with order, update shipping address and mark as paid, then clear cart items and create new cart for session
     if request.method == 'POST':
-        checkout_form = CheckoutForm(data=request.POST, user=request.user)
-        if checkout_form:
+        # build shipping_address from submitted fields so form validation succeeds
+        post_data = request.POST.copy()
+        first_name = post_data.get('first_name', '').strip()
+        last_name = post_data.get('last_name', '').strip()
+        address = post_data.get('address', '').strip()
+        city = post_data.get('city', '').strip()
+        phone = post_data.get('phone', '').strip()
+        state = post_data.get('state', '').strip()
+        zipcode = post_data.get('zipcode', '').strip()
+        shipping_address = ', '.join(filter(
+            None, [f"{first_name} {last_name}".strip(), address, city, state, zipcode]))
+        post_data['shipping_address'] = shipping_address
+
+        checkout_form = CheckoutForm(data=post_data, user=request.user)
+        print(f"Checkout form data: {post_data}")
+        if checkout_form.is_valid():
+            print("valid")
+            # prefer cleaned value but fallback to our assembled address
             shipping_address = checkout_form.cleaned_data.get(
-                'shipping_address')
+                'shipping_address') or shipping_address
+            print(f"Using shipping address: {shipping_address}")
             order.is_paid = True  # Mark order as paid
             order.shipping_address = shipping_address
             order.save()
@@ -225,8 +243,12 @@ def checkout(request, order_id=None):
             else:
                 new_cart = Cart.objects.create()
             request.session['cart_id'] = new_cart.pk
-
-        context = {'order': order, 'shipping_address': order.shipping_address}
+        else:
+            messages.error(
+                request, f'Please fix form errors: {checkout_form.errors}')
+            return render(request, 'cart/checkout.html', {'order': order, 'form': checkout_form})
+        context = {'order': order,
+                   'shipping_address': order.shipping_address, 'phone': phone}
         print(context)
 
     return redirect('cart:order_confirmation', order_id=order.pk)
