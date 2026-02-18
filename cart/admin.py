@@ -9,9 +9,9 @@ admin.site.register(CartItem)
 @admin.register(Cart)
 class CartAdmin(SummernoteModelAdmin):
 
-    list_display = ('cart_id', 'user', 'created_at', 'updated_at')
+    list_display = ('cart_id', 'user', 'created_at', 'updated_at', 'is_active')
     search_fields = ['user__username']
-    list_filter = ('user', 'created_at')
+    list_filter = ('user', 'created_at', 'is_active')
 
 
 @admin.register(Order)

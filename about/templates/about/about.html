@@ -1,0 +1,30 @@
+{%extends "base.html" %} {% block content %} {% load static %}
+{%load crispy_forms_tags %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <img src="{% static "images/illugraphic.png" %}" alt="About Image" class="img-fluid rounded mb-3">
+        </div>
+        <div class="col-12 col-md-8">
+            <!-- Title goes between these h2 tags -->
+            <h2>{{ about.title }}</h2>
+            <!-- Content goes directly underneath this -->
+            {{ about.content|safe}}
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 my-3">
+            <h2>Contact</h2>
+            <p>For any inquiries or collaboration opportunities, please use the form below:</p>
+
+            <!-- add your form here. Your submit button should 
+                                have the classes of btn, btn-secondary -->
+
+            <form id="contact-form" method="POST">
+                {{ contact_form | crispy }}
+                {% csrf_token %}                
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+        </div>
+</div>
+{% endblock content %}
