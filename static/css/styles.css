@@ -180,7 +180,8 @@ main {
     border: none;
 }
 
-.alert-info {
+.alert-info,
+.alert-safe {
     background-color: #e7f3ff;
     color: #004085;
 }

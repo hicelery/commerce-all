@@ -145,7 +145,8 @@ def go_to_checkout(request):
             cart = None
     # bounce user - maybe create guest user if not authenticated, but for now just require login to checkout
     if not request.user.is_authenticated:
-        messages.info(request, 'You must be logged in to checkout.')
+        messages.info(
+            request, 'You must be logged in to checkout. Log in here: <a href="/accounts/login">Login</a> or sign up here: <a href="/accounts/signup">Sign Up</a>.', extra_tags='safe')
         return redirect('cart:view_cart')
 
     # create order object first to get order_id for order items, then update total price after creating order items.
