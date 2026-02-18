@@ -24,10 +24,11 @@ urlpatterns = [
     path('accounts/', include('allauth.socialaccount.urls')),
     path('summernote/', include('django_summernote.urls')),
     path('products/', include('products.urls', namespace='products')),
+    path('about/', include('about.urls', namespace='about')),
     path('cart/', include('cart.urls', namespace='cart')),
-    path('', include('about.urls', namespace='about')),
+    path('dashboard/', include('dashboard.urls', namespace='dashboard')),
     path('', include('enter.urls', namespace='home')),
-    path('', include('dashboard.urls', namespace='dashboard')),
+
 ]
 
 # path('', include('my_app.urls'), name='home'),

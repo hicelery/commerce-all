@@ -3,7 +3,7 @@ from django.shortcuts import render
 from .models import AboutPage, Contact
 from django.views import generic
 from requests import post
-from .forms import ContactForm
+from .forms import ContactForm, OrderForm
 
 # Create your views here.
 
@@ -40,3 +40,31 @@ def about_detail(request):
         "about/about.html",
         context,
     )
+
+
+def Ordercontact(request):
+    """Handle order contact form submissions.
+
+    **Context**
+
+    ``order_form``
+        An instance of :model:`about.OrderForm`.
+
+    **Template:**
+    :template:`about/contact.html`
+    """
+
+    if request.method == "POST":
+        order_form = OrderForm(data=request.POST)
+        if order_form.is_valid():
+            order = order_form.save(commit=False)
+            order.save()
+            messages.add_message(
+                request, messages.SUCCESS,
+                'Order query submitted successfully'
+            )
+    else:
+        order_form = OrderForm()
+
+    context = {"order_form": order_form}
+    return render(request, "about/contact.html", context)

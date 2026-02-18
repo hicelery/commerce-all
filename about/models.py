@@ -30,3 +30,14 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"Contact request from {self.name}"
+
+
+class OrderQuery(models.Model):
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+    order_id = models.CharField(max_length=100, null=True, blank=True)
+    message = models.TextField()
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Order query from {self.name}"
