@@ -23,9 +23,10 @@ def cart_detail(request, cart_id=None):
 
     if not cart:
         if request.user.is_authenticated:
-            cart, _ = Cart.objects.get_or_create(user=request.user)
+            cart, _ = Cart.objects.get_or_create(
+                user=request.user, is_active=True)
         else:
-            cart = Cart.objects.create()
+            cart = Cart.objects.create(is_active=True)
         request.session['cart_id'] = cart.pk
 
     items = CartItem.objects.filter(cart=cart).select_related('product')
@@ -57,7 +58,7 @@ def add_to_cart(request, product_id):
         try:
             cart = Cart.objects.get(pk=cart_id)
         except Cart.DoesNotExist:
-            cart = Cart.objects.create(user=request.user)
+            cart = Cart.objects.create(user=request.user, is_active=True)
             request.session['cart_id'] = cart.cart_id
     else:
         if request.user.is_authenticated:
@@ -237,11 +238,16 @@ def checkout(request, order_id=None):
             elif cart_id:
                 CartItem.objects.filter(cart_id=cart_id).delete()
 
+            # close out old cart and create new one for session
+            cart.is_active = False
+            cart.save()
+
             # Create a fresh cart for the user and store it in session
             if request.user.is_authenticated:
-                new_cart = Cart.objects.create(user=request.user)
+                new_cart = Cart.objects.create(
+                    user=request.user, is_active=True)
             else:
-                new_cart = Cart.objects.create()
+                new_cart = Cart.objects.create(is_active=True)
             request.session['cart_id'] = new_cart.pk
         else:
             messages.error(

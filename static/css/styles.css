@@ -31,12 +31,12 @@ main {
 
 /* Navbar Customization */
 .navbar-brand {
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-size: 1.025rem;
+    font-weight: 400;
     position: sticky;
     top: 0;
     z-index: 1030;
+    background-color: white;
 }
 
 /* Product Cards */

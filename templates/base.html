@@ -18,7 +18,7 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light navbar-brand border-bottom ">
         <div class="container-fluid"> 
             
             <!-- Toggle Button for Mobile -->
@@ -99,7 +99,23 @@
                     <h6>Quick Links</h6>
                     <ul class="list-unstyled">
                         <li><a href="{% url 'products:home' %}" class="text-decoration-none text-light">Shop</a></li>
-                        <li><a href="#" class="text-decoration-none text-light">About Us</a></li>
+                        {% if user.is_authenticated %}
+                        <li>
+                            <a class="text-decoration-none text-light" href="{% url 'dashboard:account_centre' %}">
+                                Account Centre
+                            </a>
+                        </li>
+                        <li>
+                            <a class="text-decoration-none text-light" href="{% url 'account_logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a class="text-decoration-none text-light" href="{% url 'account_login' %}">Login</a>
+                        </li>
+                        <li>
+                            <a class="text-decoration-none text-light" href="{% url 'account_signup' %}">Sign Up</a>
+                        </li>
+                    {% endif %}<a href="#" class="text-decoration-none text-light">About Us</a></li>
                         <li><a href="#" class="text-decoration-none text-light">Contact</a></li>
                     </ul>
                 </div>

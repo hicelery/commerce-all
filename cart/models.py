@@ -10,6 +10,7 @@ class Cart(models.Model):
         'auth.User', on_delete=models.CASCADE, related_name='carts', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
 
 
 class CartItem(models.Model):

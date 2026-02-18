@@ -188,15 +188,17 @@
                             </div>
                             <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
                         </div>
+                            {% if user.is_authenticated and review.user == user %}
+                            <span class="review-actions float-end">
+                                <button class="btn btn-delete btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                review_id="{{ review.review_id }}">Delete</button>
+                                <button class="btn btn-edit btn-outline-secondary" review_id="{{ review.review_id }}">Edit</button>
+                            </span>
+                        {% endif %}
+                        
                         <p class="card-text text-muted mb-2" id="review_comment{{ review.review_id }}">{{ review.comment|striptags}}</p>
                         <small class="text-muted d-block">by <strong>{{ review.user.username }}</strong></small>
-                        {% if user.is_authenticated and review.user == user %}
-                        <span>
-                        <button class="btn btn-delete"
-                            review_id="{{ review.review_id }}">Delete</button>
-                            <button class="btn btn-edit"
-                            review_id="{{ review.review_id }}">Edit</button></span>
-                        {% endif %}
+                        
                     </div>
                 </div>
             {% endfor %}
