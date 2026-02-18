@@ -167,6 +167,13 @@ main {
     background-color: #f8f9fa;
 }
 
+/*lists*/
+.dashboard-list-item {
+    --bs-text-opacity: 1;
+    color: rgba(var(--bs-black-rgb), var(--bs-text-opacity));
+    text-decoration: none;
+}
+
 /* Alerts */
 .alert {
     border-radius: var(--border-radius);
