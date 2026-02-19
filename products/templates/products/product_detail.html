@@ -28,7 +28,7 @@
                 </div>
             {% endif %}
             
-            {% if product.quantity <= 0 %}
+            {% if available_sizes.count == 0 %}
                 <div class="position-absolute top-50 start-50 translate-middle">
                     <span class="badge bg-danger fs-6">Out of Stock</span>
                 </div>
@@ -86,7 +86,7 @@
                     {% endif %}
                 </div>
                 <div class="col-auto ms-auto">
-                    {% if product.quantity > 0 %}
+                    {% if available_sizes.count > 0 %}
                         <span class="badge bg-success">In Stock ({{ product.quantity }})</span>
                     {% else %}
                         <span class="badge bg-danger">Out of Stock</span>
@@ -109,18 +109,29 @@
         <div class="mb-4">
             <form method="post" action="{% url 'cart:add_to_cart' product.product_id %}" class="row g-2 align-items-end">
                 {% csrf_token %}
-                
                 <div class="col-12 col-sm-auto">
+                    <label for="size" class="form-label fw-semibold">Size</label>
+                    <select class="form-select" id="size" name="size" required>
+                        <option value="" disabled selected>Select size</option>
+                        {% for size, quantity in sizes.items %}
+                            <option value="{{ size }}">{{ size }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-12 col-sm-auto d-flex flex-column align-items-center">
                     <label for="quantity" class="form-label fw-semibold">Quantity</label>
-                    <div class="input-group">
-                        <button type="button" class="btn btn-outline-secondary" onclick="decreaseQuantity()">-</button>
-                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.quantity }}" class="form-control text-center" style="max-width: 80px;">
-                        <button type="button" class="btn btn-outline-secondary" onclick="increaseQuantity()">+</button>
-                    </div>
+                     {% for size, quantity in sizes.items %}
+                        <div class="input-group" id="quantity_group_{{ size }}" style="display: none;">
+                            <button type="button" class="btn btn-outline-secondary" onclick="decreaseQuantity('{{ size }}')">-</button>
+                            <input type="number" id="quantity_{{ size }}" name="quantity" value="1" min="1" max="{{ quantity }}" class="form-control text-center" style="max-width: 80px;">
+                            <button type="button" class="btn btn-outline-secondary" onclick="increaseQuantity('{{ size }}')">+</button>
+                        </div>
+                    {% endfor %}
                 </div>
 
                 <div class="col-12 col-sm">
-                    {% if product.quantity > 0 %}
+                    {% if available_sizes.count > 0 %}
                         <button type="submit" class="btn btn-primary btn-lg w-100">
                             <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                         </button>
@@ -296,23 +307,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-function increaseQuantity() {
-    const input = document.getElementById('quantity');
-    const max = parseInt(input.max);
-    const current = parseInt(input.value);
-    if (current < max) {
-        input.value = current + 1;
-    }
-}
-
-function decreaseQuantity() {
-    const input = document.getElementById('quantity');
-    const current = parseInt(input.value);
-    if (current > 1) {
-        input.value = current - 1;
-    }
-}
-</script>
+<script src="{% static 'js/sizeselect.js' %}"></script>
 <script src="{% static 'js/reviews.js' %}"></script>
 {% endblock %}

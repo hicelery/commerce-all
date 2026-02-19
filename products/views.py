@@ -90,7 +90,12 @@ def product_detail(request, product_id):
     reviews = product.reviews.order_by("-created_at")
     review_count = product.reviews.filter(approved=True).count()
     review_form = None
-
+    available_sizes_qs = product.available_sizes.filter(
+        quantity__gt=0, product_id=product_id)
+    sizes = {}
+    for size in available_sizes_qs:
+        sizes[size.size] = size.quantity
+    print(sizes)
     # Post request for comment forms
     if request.method == "POST":
         review_form = ReviewForm(data=request.POST, user=request.user)
@@ -111,12 +116,12 @@ def product_detail(request, product_id):
             )
             return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
         review_form = ReviewForm(user=request.user)
-
     context = {
         "product": product,
         "reviews": reviews,
         "review_count": review_count,
-        "review_form": review_form, }
+        "review_form": review_form,
+        "sizes": sizes, }
 
     return render(
         request,

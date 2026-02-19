@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, ProductReview, Category
+from .models import Product, ProductReview, Category, ProductSize
 from django_summernote.admin import SummernoteModelAdmin
 
 # Register your models here.
@@ -25,3 +25,5 @@ class ProductReviewAdmin(SummernoteModelAdmin):
 
 
 admin.site.register(Category)
+
+admin.site.register(ProductSize)

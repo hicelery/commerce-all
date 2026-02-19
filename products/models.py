@@ -28,6 +28,17 @@ class Product(models.Model):
         return f"{self.brand} {self.name} ({self.colour}, {self.size})"
 
 
+class ProductSize(models.Model):
+    """Model to represent available sizes for a product."""
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='available_sizes')
+    size = models.CharField(max_length=255)
+    quantity = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.product.name} - Size: {self.size} (Quantity: {self.quantity})"
+
+
 class ProductReview(models.Model):
     """ProductReview model representing a review for a product.
         Requires approval before being visible to the public."""
