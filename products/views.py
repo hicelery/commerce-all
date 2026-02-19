@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView
 from requests import post
+
+from django.db import models
 from .models import Product, ProductReview, Category
 from .forms import ReviewForm
 
@@ -116,13 +118,18 @@ def product_detail(request, product_id):
             )
             return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
         review_form = ReviewForm(user=request.user)
+
+    avg_rating = product.reviews.filter(approved=True).aggregate(
+        avg_rating=models.Avg('rating'))['avg_rating']
     context = {
         "product": product,
         "reviews": reviews,
         "review_count": review_count,
         "review_form": review_form,
         "available_sizes": available_sizes_qs,
-        "sizes": sizes, }
+        "sizes": sizes,
+        "avg_rating": avg_rating, }
+    print(avg_rating)
 
     return render(
         request,

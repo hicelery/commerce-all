@@ -62,11 +62,10 @@
             ==================================================
              
             -->
-            <div class="text-warning">
-                {% if product.avg_rating %}
+            <div class="">
+                {% if avg_rating %}
                     <i class="fas fa-star"></i>
-                    <span class="me-2">{{ product.avg_rating|floatformat:1 }} / 5.0</span>
-                    <span class="badge bg-secondary">{{ product.review_count }} reviews</span>
+                    <span class="me-2">{{ avg_rating|floatformat:1 }} / 5</span>
                 {% else %}
                     <span class="text-muted">No ratings yet</span>
                 {% endif %}

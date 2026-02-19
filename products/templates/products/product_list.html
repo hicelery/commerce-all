@@ -173,23 +173,6 @@ Products Grid
                                     {{ product.name }}
                                 </p>
 
-                                    <!-- Rating (if reviews exist)
-                                     ==========================================
-                                     come back to this logic
-                                     ==========================================
-                                      -->
-                                    <div class="mb-2">
-                                        <div class="text-warning small">
-                                            {% if product.avg_rating %}
-                                                <i class="fas fa-star"></i>
-                                                <span>{{ product.avg_rating|floatformat:1 }} / 5.0</span>
-                                                <span class="text-muted">({{ productreview.review_count }} reviews)</span>
-                                            {% else %}
-                                                <span class="text-muted">No ratings yet</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-
                                     <!-- Price -->
                                     <div class="mb-3">
                                         <span class="fs-5 fw-bold text-primary">
