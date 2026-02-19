@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static%}
 
 {% block title %}Shopping Cart - IFA Fashion Store{% endblock %}
 
@@ -69,12 +70,10 @@
                                                             <button type="submit" name="action" value="increase" class="btn btn-outline-secondary">+</button>
                                                         </div>
                                                     </form>
-                                                    <form method="post" action="{% url 'cart:remove_from_cart' cart.pk item.pk %}" class="d-inline ms-2">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="btn btn-sm btn-danger" title="Remove item">
+                                                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-remove-url="{% url 'cart:remove_from_cart' cart.pk item.pk %}" data-bs-toggle="modal" data-bs-target="#deleteModal" title="Remove item">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
-                                                    </form>
+                                                    
                                                 </div>
                                             </div>
                                         </td>
@@ -99,12 +98,12 @@
 
                                         <!-- Remove Button (hidden on xs, shown from sm and up) -->
                                         <td class="align-middle d-none d-sm-table-cell">
-                                            <form method="post" action="{% url 'cart:remove_from_cart' cart.pk item.pk %}" class="d-inline">
+                                            <form method="post" action="{% url 'cart:remove_from_cart' cart.pk item.pk %}" class="d-inline d-none remove-form">
                                                 {% csrf_token %}
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Remove item">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
                                             </form>
+                                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-remove-url="{% url 'cart:remove_from_cart' cart.pk item.pk %}" title="Remove item">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -117,13 +116,12 @@
                         <a href="{% url 'products:home' %}" class="btn btn-outline-secondary btn-cart">
                             <i class="fas fa-arrow-left me-2"></i>Continue Shopping
                         </a>
-                        <form method="post" action="{% url 'cart:clear_cart' %}" class="d-inline" >
+                        <form method="post" action="{% url 'cart:clear_cart' %}" class="d-inline d-none clear-form">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger btn-cart" 
-                                    onclick="return confirm('Are you sure you want to clear your cart?');">
-                                <i class="fas fa-trash-alt me-2"></i>Clear Cart
-                            </button>
                         </form>
+                        <button type="button" class="btn btn-outline-danger btn-cart btn-clear" data-clear-url="{% url 'cart:clear_cart' %}">
+                            <i class="fas fa-trash-alt me-2"></i>Clear Cart
+                        </button>
                     </div>
                 </div>
             </div>
@@ -244,5 +242,61 @@
         </div>
     </div>
 {% endif %}
+<!-- Hidden confirm form used by modal -->
+<form id="confirmDeleteForm" method="post" style="display:none;">
+        {% csrf_token %}
+</form>
+
+<!-- Hidden confirm form for clearing the entire cart -->
+<form id="confirmClearForm" method="post" style="display:none;">
+    {% csrf_token %}
+</form>
+
+<!-- Delete confirmation modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1"
+    aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+          id="deleteModalLabel">Delete item from cart?</h5>
+        <button type="button" class="btn-close"
+          data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to remove this item from your cart?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+          data-bs-dismiss="modal">Close</button>
+                <button id="deleteConfirm" type="button" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+    </div>
+
+    <!-- Clear cart confirmation modal -->
+    <div class="modal fade" id="clearCartModal" tabindex="-1" aria-labelledby="clearCartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clearCartModalLabel">Clear cart?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    This will remove all items from your cart. Are you sure you want to continue?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="clearConfirm" type="button" class="btn btn-danger">Clear cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/cart.js' %}"></script>
+{% endblock %}
+
