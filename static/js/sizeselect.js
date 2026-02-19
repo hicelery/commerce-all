@@ -13,12 +13,18 @@
     function hideAllQuantityGroups(){
         getQuantityInputs().forEach(input => {
             if(input.parentElement) input.parentElement.style.display = 'none';
+            // disable the input so only the selected quantity is submitted
+            input.disabled = true;
         });
     }
 
     function showQuantityGroupForSize(size){
         const input = document.getElementById('quantity_' + size);
-        if(input && input.parentElement) input.parentElement.style.display = 'block';
+        if(input && input.parentElement) {
+            // allow default CSS (Bootstrap flex) by clearing display
+            input.parentElement.style.display = '';
+            input.disabled = false;
+        }
     }
 
     function increaseQuantity(size){
@@ -51,7 +57,10 @@
             shown = document.getElementById('quantity_' + sizeSelect.value);
         }
         if(!shown) shown = inputs[0];
-        if(shown && shown.parentElement) shown.parentElement.style.display = '';
+        if(shown && shown.parentElement) {
+            shown.parentElement.style.display = '';
+            shown.disabled = false;
+        }
 
         // Toggle groups when the size select changes
         if(sizeSelect){
@@ -59,7 +68,10 @@
                 hideAllQuantityGroups();
                 const sel = sizeSelect.value;
                 const input = document.getElementById('quantity_' + sel);
-                if(input && input.parentElement) input.parentElement.style.display = '';
+                if(input && input.parentElement) {
+                    input.parentElement.style.display = '';
+                    input.disabled = false;
+                }
             });
         }
     }

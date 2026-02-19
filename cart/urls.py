@@ -12,7 +12,8 @@ urlpatterns = [
          name='update_cart_item'),
 
     # Add a product to the current session cart (product_id only)
-    path('add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('add/<int:product_id>/',
+         views.add_to_cart, name='add_to_cart'),
 
     # Remove a cart item
     path('<int:cart_id>/remove/<int:cartitem_id>/',

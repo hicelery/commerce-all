@@ -20,6 +20,7 @@ class CartItem(models.Model):
         Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(
         'products.Product', on_delete=models.CASCADE, related_name='cart_items')
+    size = models.CharField(max_length=50, null=True, blank=True)
     quantity = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -59,6 +60,7 @@ class OrderItem(models.Model):
         on_delete=models.SET_NULL,
         related_name='orderitem'
     )
+    size = models.CharField(max_length=50, null=True, blank=True)
     quantity = models.IntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)

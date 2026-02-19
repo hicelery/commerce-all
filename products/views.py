@@ -121,6 +121,7 @@ def product_detail(request, product_id):
         "reviews": reviews,
         "review_count": review_count,
         "review_form": review_form,
+        "available_sizes": available_sizes_qs,
         "sizes": sizes, }
 
     return render(

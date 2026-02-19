@@ -30,6 +30,7 @@
                                 <tr>
                                     <th style="min-width: 250px;">Product</th>
                                     <th>Price</th>
+                                    <th>Size</th>
                                     <th class="d-none d-sm-table-cell">Quantity</th>
                                     <th class="d-none d-sm-table-cell">Action</th>
                                 </tr>
@@ -79,10 +80,15 @@
                                                 </div>
                                             </div>
                                         </td>
+                                    
 
                                         <!-- Price -->
                                         <td class="align-middle">
                                             <span class="fw-semibold">£{{ item.product.price|floatformat:2 }}</span>
+                                        </td>
+                                        <!-- Size-->
+                                        <td class="align-middle">
+                                            <span class="fw-semibold">{{ item.size }}</span>
                                         </td>
 
                                         <!-- Quantity (hidden on xs, shown from sm and up) -->

@@ -71,6 +71,7 @@
                                 <tr>
                                     <th>Product</th>
                                     <th>Price</th>
+                                    <th>Size</th>
                                     <th>Quantity</th>
                                     <th>Subtotal</th>
                                 </tr>
@@ -96,6 +97,7 @@
                                             </div>
                                         </td>
                                         <td class="align-middle">£{{ item.price|floatformat:2 }}</td>
+                                        <td class="align-middle">{{ item.size }}</td>
                                         <td class="align-middle">{{ item.quantity }}</td>
                                         <td class="align-middle fw-bold">£{{ item.subtotal|floatformat:2 }}</td>
                                     </tr>

@@ -5,7 +5,7 @@ from django.urls import reverse
 
 
 from .models import Cart, CartItem, Order, OrderItem
-from products.models import Product
+from products.models import Product, ProductSize
 from .forms import CheckoutForm
 
 # Create your views here.
@@ -29,7 +29,8 @@ def cart_detail(request, cart_id=None):
             cart = Cart.objects.create(is_active=True)
         request.session['cart_id'] = cart.pk
 
-    items = CartItem.objects.filter(cart=cart).select_related('product')
+    items = CartItem.objects.filter(cart=cart).select_related(
+        'product')
 
     subtotal = sum(item.quantity * item.product.price for item in items)
     if subtotal >= 50:
@@ -62,16 +63,30 @@ def add_to_cart(request, product_id):
             request.session['cart_id'] = cart.cart_id
     else:
         if request.user.is_authenticated:
-            cart, _ = Cart.objects.get_or_create(user=request.user)
+            try:
+                # Prefer an active cart for the user; this avoids MultipleObjectsReturned
+                cart, _ = Cart.objects.get_or_create(
+                    user=request.user, is_active=True)
+            except Cart.MultipleObjectsReturned:
+                # If multiple carts exist, pick the most-recent one (highest pk) and use it.
+                # This is defensive: it avoids crashing and provides a single cart to continue with.
+                cart = Cart.objects.filter(
+                    user=request.user, is_active=True).order_by('-pk').first()
+                if not cart:
+                    # As a last resort, pick any cart for the user or create a fresh one
+                    cart = Cart.objects.filter(user=request.user).order_by(
+                        '-pk').first() or Cart.objects.create(user=request.user, is_active=True)
         else:
             cart = Cart.objects.create()
         request.session['cart_id'] = cart.pk
 
     product = get_object_or_404(Product, pk=product_id)
     if request.method == 'POST':
+        print(f"Received POST data: {request.POST}")
         quantity = int(request.POST.get('quantity', 1))
+        size = request.POST.get('size')
         cartitem, created = CartItem.objects.get_or_create(
-            cart=cart, product=product)
+            cart=cart, product=product, size=size)
         if not created:
             cartitem.quantity += quantity
         else:
@@ -168,7 +183,8 @@ def go_to_checkout(request):
                 order=order,
                 quantity=item.quantity,
                 price=item.product.price,
-                cartitem=item
+                cartitem=item,
+                size=item.size
             )
         # skip adding if item already exists (e.g. user goes back to checkout after order creation but before clearing cart)
         except Exception:

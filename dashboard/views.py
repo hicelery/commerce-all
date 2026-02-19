@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from cart.models import Order, OrderItem as OrderItems
+from django.db import models
 from .forms import ProfileUpdate
 
 
@@ -10,9 +11,11 @@ def profile_view(request):
     queryset = Order.objects.filter(user=request.user).order_by(
         '-updated_at')
     items_count = {}
-    # count number of order items in each order and attach to each Order
+    # count number of order items, summed by quantity, for each order and store in a dict keyed by order_id
     for order in queryset:
-        order_item_count = OrderItems.objects.filter(order=order).count()
+        order_item_count = OrderItems.objects.filter(
+            order=order).aggregate(
+            total=models.Sum('quantity'))['total'] or 0
         items_count[order.order_id] = order_item_count
         # attach a transient attribute to the Order instance for template use
         setattr(order, 'items_count', order_item_count)
