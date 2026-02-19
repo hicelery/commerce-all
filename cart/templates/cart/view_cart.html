@@ -69,11 +69,13 @@
                                                             <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control text-center">
                                                             <button type="submit" name="action" value="increase" class="btn btn-outline-secondary">+</button>
                                                         </div>
-                                                    </form>
-                                                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-remove-url="{% url 'cart:remove_from_cart' cart.pk item.pk %}" data-bs-toggle="modal" data-bs-target="#deleteModal" title="Remove item">
+                                                        </form>
+                                                    <form method="post" action="{% url 'cart:remove_from_cart' cart.pk item.pk %}" class="d-inline ms-2">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Remove item">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
-                                                    
+                                                    </form>
                                                 </div>
                                             </div>
                                         </td>
@@ -98,12 +100,12 @@
 
                                         <!-- Remove Button (hidden on xs, shown from sm and up) -->
                                         <td class="align-middle d-none d-sm-table-cell">
-                                            <form method="post" action="{% url 'cart:remove_from_cart' cart.pk item.pk %}" class="d-inline d-none remove-form">
-                                                {% csrf_token %}
+                                           <form method="post" action="{% url 'cart:remove_from_cart' cart.pk item.pk %}" class="d-inline">
+                                                {% csrf_token %}                                        
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Remove item">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </form>
-                                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-remove-url="{% url 'cart:remove_from_cart' cart.pk item.pk %}" title="Remove item">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -242,38 +244,13 @@
         </div>
     </div>
 {% endif %}
-<!-- Hidden confirm form used by modal -->
-<form id="confirmDeleteForm" method="post" style="display:none;">
-        {% csrf_token %}
-</form>
+
 
 <!-- Hidden confirm form for clearing the entire cart -->
 <form id="confirmClearForm" method="post" style="display:none;">
     {% csrf_token %}
 </form>
 
-<!-- Delete confirmation modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1"
-    aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"
-          id="deleteModalLabel">Delete item from cart?</h5>
-        <button type="button" class="btn-close"
-          data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to remove this item from your cart?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary"
-          data-bs-dismiss="modal">Close</button>
-                <button id="deleteConfirm" type="button" class="btn btn-danger">Delete</button>
-      </div>
-    </div>
-  </div>
-    </div>
 
     <!-- Clear cart confirmation modal -->
     <div class="modal fade" id="clearCartModal" tabindex="-1" aria-labelledby="clearCartModalLabel" aria-hidden="true">

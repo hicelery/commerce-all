@@ -1,9 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const deleteModalEl = document.getElementById("deleteModal");
-    const deleteModal = deleteModalEl ? new bootstrap.Modal(deleteModalEl) : null;
-    const deleteButtons = document.querySelectorAll(".btn-delete");
-    const deleteConfirmBtn = document.getElementById("deleteConfirm");
-    const confirmForm = document.getElementById("confirmDeleteForm");
 
     // Clear-cart modal elements
     const clearModalEl = document.getElementById("clearCartModal");
@@ -12,24 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearConfirmBtn = document.getElementById('clearConfirm');
     const confirmClearForm = document.getElementById('confirmClearForm');
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            const btn = e.currentTarget || button;
-            const removeUrl = btn.getAttribute('data-remove-url');
-            if (confirmForm && removeUrl) {
-                confirmForm.setAttribute('action', removeUrl);
-            }
-            if (deleteModal) deleteModal.show();
-        });
-    });
-
-    if (deleteConfirmBtn) {
-        deleteConfirmBtn.addEventListener('click', () => {
-            if (confirmForm && confirmForm.getAttribute('action')) {
-                confirmForm.submit();
-            }
-        });
-    }
 
     // Clear-cart handlers
     clearButtons.forEach(button => {
@@ -39,10 +16,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (confirmClearForm && clearUrl) {
                 confirmClearForm.setAttribute('action', clearUrl);
             }
-            if (clearModal) clearModal.show();
-        });
-    });
-
+            // prefer explicit data-remove-url, otherwise fall back to enclosing form's action
+            let removeUrl = btn.getAttribute('data-remove-url');
+            if (!removeUrl) {
+                const form = btn.closest('form');
+                if (form) removeUrl = form.getAttribute('action');
+            }
+            if (confirmForm && removeUrl) {
+                confirmForm.setAttribute('action', removeUrl);
+            }
     if (clearConfirmBtn) {
         clearConfirmBtn.addEventListener('click', () => {
             if (confirmClearForm && confirmClearForm.getAttribute('action')) {
