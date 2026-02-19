@@ -268,7 +268,7 @@ footer a {
 }
 
 footer a:hover {
-    color: var(--primary-color) !important;
+    text-decoration: underline !important;
 }
 
 /* Loading Animation */

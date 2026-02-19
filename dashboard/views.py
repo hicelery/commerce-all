@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from cart.models import Order, OrderItem as OrderItems
+from .forms import ProfileUpdate
 
 
 @login_required
@@ -19,3 +21,26 @@ def profile_view(request):
         'orders': queryset,
         'items_count': items_count,
     })
+
+
+@login_required
+def profile_page(request):
+    # provide an unbound form for GET requests so fields render
+    profile_form = ProfileUpdate(instance=request.user)
+    return render(request,
+                  'dashboard/profile.html',
+                  {'profile_form': profile_form}
+                  )
+
+
+@login_required
+def profile_update(request):
+    # bind to POST when submitting and include the current user instance
+    profile_form = ProfileUpdate(request.POST, instance=request.user)
+    if request.method == 'POST':
+        if profile_form.is_valid():
+            profile_form.save()
+            messages.info(request, 'Profile updated successfully.')
+        else:
+            messages.warning(request, 'Please correct the errors below.')
+    return render(request, 'dashboard/profile.html', {'profile_form': profile_form})
