@@ -18,13 +18,30 @@ Users will be able to add reviews to products, and perform CRUD operations on th
 
 ## Features
 
-User roles implemented with registration and deletion of accounts, and user panel to view activity history.
+Target features:
+- User roles implemented with registration and deletion of accounts, and user panel to view activity history.
+- Users can order items, add reviews and access their order history.
+- Admin can perform CRUD operations on products and user reviews, and have read-only operations on user orders.
+- Implementation of Stripe payment API (stretch goal).
 
-Users can order items, add reviews and access their order history.
+Implemented features:
+- Product list view with price, stock status, discounts.
+- Product filtering with categorization, price and sort options
+- Product detail view with reviews, additional image carousels and add to cart
+- Product reviews for signed in users, with edit and delete functionality - Full CRUD operations for users own records
+- Cart and checkout workflow, with CRUD operations for all users (create cart, add to cart, remove from cart, update quantity).
+- Order creation for verified users.
+- Account centre - allows users to update account information and view order history
+- Discount codes for users in cart - configured with start and end dates and usage number.
 
-Admin can perform CRUD operations on products and user reviews, and have read-only operations on user orders.
+Admin specific features:
+- Admin dashboard
+- CRUD of all models:
+  - Product entries, Product details, Product/Category Discounts, Categories, Product images, Discount Codes, Product Reviews.
+ Discounts can be configured for products, categories or all products. Discount codes can apply to all products, or restricted to specific categories.
 
-Implementation of Stripe payment API.
+In creating this site, many more features were implemented than the original product scope. To account for this, I assigned each week as a sprint period, and reexamined the MoSCoW priority of features. 
+Much of the complexity of theses features came from the persistence throughout the website: any functionality change would often need reflecting through product lists, detail, cart and order functionality. To mitigate this as much as possible, I split functionality into different apps, but to allow for this database schema updates were required. In future I would allow for a larger, more comprehensize DB schema, to allow more information to persist in DB, rather than needing to be created/calculated in multiple views.
 
 ## Technologies
 
