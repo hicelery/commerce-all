@@ -61,6 +61,7 @@ def ProductList(request, category_name=None, sort_option=None):
             product.discounted_price = product.price
         # Attach the discount object directly to the product
         product.discount = applicable_discounts.first()
+        product.save()
 
     # Allow filtering by price range using query parameters ?price_min=xx&price_max=yy
     # Do we need to force price_mixmax to be decimal? form inputs should prevent invalid input

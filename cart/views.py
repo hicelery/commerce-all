@@ -32,7 +32,8 @@ def cart_detail(request, cart_id=None):
     items = CartItem.objects.filter(cart=cart).select_related(
         'product')
 
-    subtotal = sum(item.quantity * item.product.price for item in items)
+    subtotal = sum(item.quantity *
+                   item.product.discounted_price for item in items)
     if subtotal >= 50:
         shipping = 0
     else:
@@ -82,7 +83,6 @@ def add_to_cart(request, product_id):
 
     product = get_object_or_404(Product, pk=product_id)
     if request.method == 'POST':
-        print(f"Received POST data: {request.POST}")
         quantity = int(request.POST.get('quantity', 1))
         size = request.POST.get('size')
         cartitem, created = CartItem.objects.get_or_create(
@@ -182,7 +182,7 @@ def go_to_checkout(request):
                 product=item.product,
                 order=order,
                 quantity=item.quantity,
-                price=item.product.price,
+                price=item.product.discounted_price,
                 cartitem=item,
                 size=item.size
             )
@@ -191,7 +191,7 @@ def go_to_checkout(request):
             pass
     # calculate subtotal and shipping for order summary, but total price will be updated at checkouts
     subtotal = sum(
-        item.quantity * item.product.price for item in OrderItem.objects.filter(order=order)
+        item.quantity * item.price for item in OrderItem.objects.filter(order=order)
     )
     shipping = 0 if subtotal >= 50 else 9.99
     order.total_price = subtotal + shipping
@@ -238,7 +238,6 @@ def checkout(request, order_id=None):
         post_data['shipping_address'] = shipping_address
 
         checkout_form = CheckoutForm(data=post_data, user=request.user)
-        print(f"Checkout form data: {post_data}")
         if checkout_form.is_valid():
             # prefer cleaned value but fallback to our assembled address
             shipping_address = checkout_form.cleaned_data.get(
@@ -272,7 +271,6 @@ def checkout(request, order_id=None):
             return render(request, 'cart/checkout.html', {'order': order, 'form': checkout_form})
         context = {'order': order,
                    'shipping_address': order.shipping_address, 'phone': phone}
-        print(context)
 
     return redirect('cart:order_confirmation', order_id=order.pk)
 

@@ -176,11 +176,11 @@ Products Grid
                                     <!-- Price -->
                                     <div class="mb-3">
                                         <span class="fs-5 fw-bold text-primary">
-                                            ${{ product.discounted_price|floatformat:2 }}
+                                            £{{ product.discounted_price|floatformat:2 }}
                                         </span>
                                         {% if product.price != product.discounted_price %}
                                             <span class="text-muted text-decoration-line-through small">
-                                                ${{ product.price|floatformat:2 }}
+                                                £{{ product.price|floatformat:2 }}
                                             </span>
                                         {% endif %}
                                     </div>
