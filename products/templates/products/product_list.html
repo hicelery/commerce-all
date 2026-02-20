@@ -160,7 +160,7 @@ Products Grid
                                         </div>
                                     {% elif product.discount %}
                                         <div class="position-absolute top-0 end-0 m-2">
-                                            <span class="badge bg-success">{{ product.discount.discount_pct }}% OFF</span>
+                                            <span class="badge bg-success">{{ product.discount.discount_percentage | floatformat:"0" }}% OFF</span>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -176,11 +176,11 @@ Products Grid
                                     <!-- Price -->
                                     <div class="mb-3">
                                         <span class="fs-5 fw-bold text-primary">
-                                            ${{ product.price|floatformat:2 }}
+                                            ${{ product.discounted_price|floatformat:2 }}
                                         </span>
-                                        {% if product.original_price %}
+                                        {% if product.price != product.discounted_price %}
                                             <span class="text-muted text-decoration-line-through small">
-                                                ${{ product.original_price|floatformat:2 }}
+                                                ${{ product.price|floatformat:2 }}
                                             </span>
                                         {% endif %}
                                     </div>

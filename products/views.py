@@ -36,20 +36,32 @@ def ProductList(request, category_name=None, sort_option=None):
         #     page_obj = paginator.page(1)
         # except EmptyPage:
         #     page_obj = paginator.page(paginator.num_pages)
-        # Price range filters
-    print(qs)
+
     # apply discount to price if discount is active
     discounts = ProductDiscount.objects.filter(
         start_date__lte=models.functions.Now(), end_date__gte=models.functions.Now())
-    print(discounts)
+
+    # for each product, check if there's an active discount for the product or its category and apply the highest discount
+    # if there is a discount with no product or category, apply that to all products as well
     for product in qs:
-        product.active_discount = None
-        for discount in discounts:
-            if (discount.product is None or discount.product_id == product.product_id) and (discount.category is None or discount.category_id == product.category_id):
-                product.active_discount = discount
-                if discount.discount_percentage:
-                    product.discounted_price = product.price * \
-                        (1 - discount.discount_percentage / 100)
+        product.discounted_price = product.price  # default to original price
+        applicable_discounts = discounts.filter(
+            models.Q(product=product)  # Discount for this specific product
+            # Discount for this product's category (no specific product)
+            | models.Q(product__isnull=True, category=product.category)
+            # Global discount (no product, no category)
+            | models.Q(product__isnull=True, category__isnull=True)
+        )
+        if applicable_discounts.exists():
+            max_discount = applicable_discounts.aggregate(
+                max_discount=models.Max('discount_percentage'))['max_discount']
+            discounted_price = product.price * (1 - max_discount / 100)
+            product.discounted_price = round(discounted_price, 2)
+        else:
+            product.discounted_price = product.price
+        # Attach the discount object directly to the product
+        product.discount = applicable_discounts.first()
+
     # Allow filtering by price range using query parameters ?price_min=xx&price_max=yy
     # Do we need to force price_mixmax to be decimal? form inputs should prevent invalid input
     price_min = request.GET.get('price_min')
@@ -57,9 +69,9 @@ def ProductList(request, category_name=None, sort_option=None):
 
     try:
         if price_min:
-            qs = qs.filter(price__gte=price_min)
+            qs = qs.filter(discounted_price__gte=price_min)
         if price_max:
-            qs = qs.filter(price__lte=price_max)
+            qs = qs.filter(discounted_price__lte=price_max)
     except Exception:
         # ignore invalid numeric input
         pass
@@ -69,16 +81,15 @@ def ProductList(request, category_name=None, sort_option=None):
         'sort_option') or sort_option
     if sort:
         if sort in ('price_asc'):
-            qs = qs.order_by('price')
+            qs = qs.order_by('discounted_price')
         elif sort in ('price_desc'):
-            qs = qs.order_by('-price')
+            qs = qs.order_by('-discounted_price')
         elif sort == 'name':
             qs = qs.order_by('name')
         elif sort == 'brand':
             qs = qs.order_by('brand')
         elif sort == 'newest':
             qs = qs.order_by('-created_at')
-
     context = {
         'products': qs,
         'categories': Category.objects.all(),
@@ -132,8 +143,30 @@ def product_detail(request, product_id):
             return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
         review_form = ReviewForm(user=request.user)
 
+    # Discount logic
+    discounts = ProductDiscount.objects.filter(
+        start_date__lte=models.functions.Now(), end_date__gte=models.functions.Now())
+    product.discounted_price = product.price  # default to original price
+    applicable_discounts = discounts.filter(
+        models.Q(product=product)  # Discount for this specific product
+        # Discount for this product's category (no specific product)
+        | models.Q(product__isnull=True, category=product.category)
+        # Global discount (no product, no category)
+        | models.Q(product__isnull=True, category__isnull=True)
+    )
+    if applicable_discounts.exists():
+        max_discount = applicable_discounts.aggregate(
+            max_discount=models.Max('discount_percentage'))['max_discount']
+        discounted_price = product.price * (1 - max_discount / 100)
+        product.discounted_price = round(discounted_price, 2)
+    else:
+        product.discounted_price = product.price
+    # Attach the discount object directly to the product
+    product.discount = applicable_discounts.first()
+
     avg_rating = product.reviews.filter(approved=True).aggregate(
         avg_rating=models.Avg('rating'))['avg_rating']
+
     context = {
         "product": product,
         "reviews": reviews,
@@ -143,13 +176,13 @@ def product_detail(request, product_id):
         "sizes": sizes,
         "avg_rating": avg_rating,
         "product_images": product_images, }
-    print(avg_rating)
 
     return render(
         request,
         "products/product_detail.html",
         context,
     )
+
 
 # Review Edit
 # Chains into reviews js

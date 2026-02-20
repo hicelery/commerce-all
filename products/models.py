@@ -14,6 +14,8 @@ class Product(models.Model):
     colour = models.CharField(max_length=255)
     size = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    discounted_price = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
     image = CloudinaryField('image', default='placeholder')
     description = models.TextField()
     quantity = models.PositiveIntegerField(default=0)
@@ -92,7 +94,7 @@ class ProductDiscount(models.Model):
     category = models.ForeignKey(
         'products.Category',
         on_delete=models.CASCADE,
-        related_name='category_discounts',
+        related_name='category',
         null=True,
         blank=True,
         help_text='Null means this discount applies to all categories'
