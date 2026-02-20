@@ -1,0 +1,139 @@
+/* Product Image Carousel Styles */
+.main-thumbnail {
+    border: 2px solid #007bff !important;
+}
+.mini-thumbnail {
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+    border: 2px solid #e9ecef48;
+}
+.product-image-main {
+    transition: background-color 0.2s ease;
+}
+
+.product-image-main img {
+    transition: transform 0.2s ease;
+}
+
+.product-image-main:hover img {
+    transform: scale(1.02);
+}
+
+.product-thumbnails {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.product-thumbnail {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.product-thumbnail:hover {
+    opacity: 1 !important;
+    transform: scale(1.05);
+}
+
+/* Image Expansion Modal Styles */
+#imageExpandModal .modal-content {
+    border: none;
+    box-shadow: 0 5px 40px rgba(0, 0, 0, 0.5);
+}
+
+#imageExpandModal .modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid #495057;
+}
+
+#imageExpandModal .modal-body {
+    padding: 0;
+    max-height: 85vh;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#expandedImage {
+    max-height: 85vh;
+    object-fit: contain;
+}
+
+/* Navigation Buttons in Modal */
+#prevImageBtn,
+#nextImageBtn {
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#prevImageBtn:hover,
+#nextImageBtn:hover {
+    opacity: 1;
+    background-color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-thumbnails {
+        flex-wrap: nowrap;
+        max-width: 100%;
+    }
+
+    .product-thumbnail {
+        width: 70px;
+        height: 70px;
+    }
+
+    #prevImageBtn,
+    #nextImageBtn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    #imageExpandModal .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    #expandedImage {
+        max-height: 80vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-thumbnail {
+        width: 60px;
+        height: 60px;
+    }
+
+    #prevImageBtn,
+    #nextImageBtn {
+        width: 35px;
+        height: 35px;
+        font-size: 0.8rem;
+        margin: 0 0.5rem;
+    }
+}
+
+/* Cursor indicator */
+.product-image-main {
+    cursor: zoom-in;
+}
+
+/* Accessibility improvements */
+.product-thumbnail:focus,
+#prevImageBtn:focus,
+#nextImageBtn:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}

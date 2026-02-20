@@ -2,6 +2,10 @@
 
 {% block title %}{{ product.name }} - IFA Fashion Store{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product-carousel.css' %}">
+{% endblock %}
+
 {% block content %}
 
 
@@ -17,13 +21,14 @@
 
 <!-- Product Detail Section -->
 <div class="row g-4 mt-3">
-    <!-- Product Image Section -->
+    <!-- Product Image Section with Carousel -->
     <div class="col-lg-6 mb-4">
-        <div class="position-relative">
+        <!-- Main Image -->
+        <div class="product-image-main position-relative rounded overflow-hidden" style="aspect-ratio: 1/1; background-color: #f8f9fa;">
             {% if product.image %}
-                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="width: 100%; aspect-ratio: 1/1; object-fit: cover;">
+                <img id="mainProductImage" src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
             {% else %}
-                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="aspect-ratio: 1/1;">
+                <div class="bg-light d-flex align-items-center justify-content-center h-100">
                     <i class="fas fa-image fa-5x text-secondary"></i>
                 </div>
             {% endif %}
@@ -33,19 +38,26 @@
                     <span class="badge bg-danger fs-6">Out of Stock</span>
                 </div>
             {% endif %}
+            
+            <!-- Zoom Indicator -->
+            <div class="position-absolute bottom-0 end-0 p-2 bg-dark bg-opacity-50 rounded-start text-white" style="font-size: 0.75rem;">
+                <i class="fas fa-search-plus"></i> Click to expand
+            </div>
         </div>
 
-        <!-- Additional Images Placeholder -->
-        <div class="row g-2 mt-3">
+        <!-- Thumbnail Images -->
+        <div class="product-thumbnails mt-3" style="overflow-x: auto; display: flex; gap: 0.5rem; padding: 0.5rem 0;">
             {% if product.image %}
-                <div class="col-3">
-                    <img src="{{ product.image.url }}" class="img-fluid rounded cursor-pointer" alt="{{ product.name }}" style="aspect-ratio: 1/1; object-fit: cover;">
-                </div>
+                <img src="{{ product.image.url }}" 
+                     class="product-thumbnail cursor-pointer main-thumbnail mini-thumbnail" 
+                     alt="{{ product.name }}" 
+                     data-full-src="{{ product.image.url }}">
             {% endif %}
-            {% for image in product.additional_images.all %}
-            <div class="col-3">
-                    <img src="{{ image.image.url }}" class="img-fluid rounded cursor-pointer" alt="{{ product.name }}" style="aspect-ratio: 1/1; object-fit: cover;">
-            </div>
+            {% for image in product_images %}
+                <img src="{{ image.image.url }}" 
+                     class="product-thumbnail cursor-pointer mini-thumbnail" 
+                     alt="{{ product.name }}" 
+                     data-full-src="{{ image.image.url }}">
             {% endfor %}
         </div>
     </div>
@@ -56,12 +68,6 @@
         <h1 class="mb-2">{{ product.name }}</h1>
         
         <div class="d-flex align-items-center gap-3 mb-3">
-            <!-- 
-            =================================================
-            Come back to this logic
-            ==================================================
-             
-            -->
             <div class="">
                 {% if avg_rating %}
                     <i class="fas fa-star"></i>
@@ -303,9 +309,35 @@
   </div>
 </div>
 
+<!-- Image Expansion Modal -->
+<div class="modal fade" id="imageExpandModal" tabindex="-1" aria-labelledby="imageExpandLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark">
+      <div class="modal-header bg-dark border-secondary">
+        <div class="d-flex gap-2 align-items-center flex-grow-1">
+          <span class="text-white" id="imageCounter">1 / 1</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0 position-relative" style="background-color: #1a1a1a;">
+        <img id="expandedImage" src="" alt="Product Image" style="width: 100%; height: auto; display: block;">
+        
+        <!-- Navigation Arrows -->
+        <button id="prevImageBtn" class="btn btn-light btn-lg position-absolute start-0 top-50 translate-middle-y ms-2" style="z-index: 10;">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="nextImageBtn" class="btn btn-light btn-lg position-absolute end-0 top-50 translate-middle-y me-2" style="z-index: 10;">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/sizeselect.js' %}"></script>
 <script src="{% static 'js/reviews.js' %}"></script>
+<script src="{% static 'js/product-carousel.js' %}"></script>
 {% endblock %}

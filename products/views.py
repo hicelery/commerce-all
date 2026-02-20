@@ -6,7 +6,7 @@ from django.views.generic import ListView
 from requests import post
 
 from django.db import models
-from .models import Product, ProductReview, Category
+from .models import Product, ProductReview, Category, ProductDiscount, DiscountCode
 from .forms import ReviewForm
 
 # Create your views here.
@@ -37,11 +37,24 @@ def ProductList(request, category_name=None, sort_option=None):
         # except EmptyPage:
         #     page_obj = paginator.page(paginator.num_pages)
         # Price range filters
-
+    print(qs)
+    # apply discount to price if discount is active
+    discounts = ProductDiscount.objects.filter(
+        start_date__lte=models.functions.Now(), end_date__gte=models.functions.Now())
+    print(discounts)
+    for product in qs:
+        product.active_discount = None
+        for discount in discounts:
+            if (discount.product is None or discount.product_id == product.product_id) and (discount.category is None or discount.category_id == product.category_id):
+                product.active_discount = discount
+                if discount.discount_percentage:
+                    product.discounted_price = product.price * \
+                        (1 - discount.discount_percentage / 100)
     # Allow filtering by price range using query parameters ?price_min=xx&price_max=yy
     # Do we need to force price_mixmax to be decimal? form inputs should prevent invalid input
     price_min = request.GET.get('price_min')
     price_max = request.GET.get('price_max')
+
     try:
         if price_min:
             qs = qs.filter(price__gte=price_min)
@@ -70,8 +83,7 @@ def ProductList(request, category_name=None, sort_option=None):
         'products': qs,
         'categories': Category.objects.all(),
         'selected_categories': [int(c) for c in request.GET.getlist('category')] if request.GET.getlist('category') else [],
-        'request': request,
-    }
+        'request': request, }
     return render(request, 'products/product_list.html', context)
 
 
@@ -88,7 +100,8 @@ def product_detail(request, product_id):
 
     # Get the product
     queryset = Product.objects.all()
-    product = get_object_or_404(queryset, product_id=product_id)
+    product = get_object_or_404(
+        queryset, product_id=product_id)
     reviews = product.reviews.order_by("-created_at")
     review_count = product.reviews.filter(approved=True).count()
     review_form = None
@@ -97,7 +110,7 @@ def product_detail(request, product_id):
     sizes = {}
     for size in available_sizes_qs:
         sizes[size.size] = size.quantity
-    print(sizes)
+    product_images = product.images.filter(product_id=product_id)
     # Post request for comment forms
     if request.method == "POST":
         review_form = ReviewForm(data=request.POST, user=request.user)
@@ -128,7 +141,8 @@ def product_detail(request, product_id):
         "review_form": review_form,
         "available_sizes": available_sizes_qs,
         "sizes": sizes,
-        "avg_rating": avg_rating, }
+        "avg_rating": avg_rating,
+        "product_images": product_images, }
     print(avg_rating)
 
     return render(
