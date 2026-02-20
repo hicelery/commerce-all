@@ -14,3 +14,16 @@ class CheckoutForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('shipping_address',)
+
+
+class DiscountCodeForm(forms.Form):
+    """Form to input and apply a discount code."""
+    code = forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter discount code',
+            'autocomplete': 'off'
+        })
+    )

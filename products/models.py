@@ -136,6 +136,7 @@ class DiscountCode(models.Model):
         blank=True,
         help_text='Null means this code applies to all categories'
     )
+    max_uses = models.PositiveIntegerField(null=True, blank=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)

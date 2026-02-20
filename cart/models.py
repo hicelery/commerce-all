@@ -38,6 +38,14 @@ class Order(models.Model):
         on_delete=models.SET_NULL,
         related_name='order'
     )
+    discount_code = models.ForeignKey(
+        'products.DiscountCode',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='orders',
+        help_text='Applied discount code to this order'
+    )
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     shipping_address = models.CharField(max_length=255)
     contactno = models.CharField(max_length=20, null=True, blank=True)

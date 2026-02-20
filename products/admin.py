@@ -32,4 +32,13 @@ admin.site.register(ProductImage)
 
 admin.site.register(ProductDiscount)
 
-admin.site.register(DiscountCode)
+
+@admin.register(DiscountCode)
+class DiscountCodeAdmin(SummernoteModelAdmin):
+
+    list_display = ('code', 'discount_percentage', 'category',
+                    'max_uses', 'start_date', 'end_date', 'created_at')
+    list_filter = ('code', 'discount_percentage', 'category',
+                   'start_date', 'end_date', 'created_at')
+    search_fields = ['start_date', 'end_date',
+                     'discount_percentage', 'category']

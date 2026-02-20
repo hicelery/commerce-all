@@ -5,8 +5,9 @@ from django.urls import reverse
 
 
 from .models import Cart, CartItem, Order, OrderItem
-from products.models import Product, ProductSize
-from .forms import CheckoutForm
+from .forms import CheckoutForm, DiscountCodeForm
+from .discount_utils import validate_discount_code, apply_discount_to_items
+from products.models import Product, ProductSize, DiscountCode
 
 # Create your views here.
 
@@ -32,22 +33,51 @@ def cart_detail(request, cart_id=None):
     items = CartItem.objects.filter(cart=cart).select_related(
         'product')
 
+    # Get applied discount code from session
+    applied_discount_code_id = request.session.get('applied_discount_code_id')
+    applied_discount_code = None
+    discount_info = None
+
+    if applied_discount_code_id:
+        try:
+            applied_discount_code = DiscountCode.objects.get(
+                pk=applied_discount_code_id)
+            discount_info = apply_discount_to_items(
+                items, applied_discount_code)
+        except DiscountCode.DoesNotExist:
+            request.session.pop('applied_discount_code_id', None)
+
+    # Calculate subtotal using base discounted prices (not discount code prices)
     subtotal = sum(item.quantity *
                    item.product.discounted_price for item in items)
+
+    # Calculate discount reduction from applied discount code
+    discount_reduction = 0
+    if discount_info:
+        discount_reduction = discount_info.get('total_discount', 0)
+
     if subtotal >= 50:
         shipping = 0
     else:
         shipping = 9.99
 
+    # Total = subtotal - discount_code_reduction + shipping
+    total = subtotal - discount_reduction + shipping
+
+    discount_form = DiscountCodeForm()
+
     context = {
         'cart': cart,
         'items': items,
         'subtotal': subtotal,
+        'discount_reduction': discount_reduction,
         'shipping': shipping,
-        'total': subtotal + shipping,
+        'total': total,
         'items_count': items.count(),
         'session_cart_id': request.session.get('cart_id'),
-
+        'discount_form': discount_form,
+        'applied_discount_code': applied_discount_code,
+        'discount_info': discount_info,
     }
     return render(request, 'cart/view_cart.html', context)
 
@@ -138,10 +168,32 @@ def clear_cart(request):
 
 
 def apply_discount(request):
-    # Placeholder: accept promo code but do not apply logic yet
+    """Apply or clear a discount code to the cart."""
     if request.method == 'POST':
-        promo = request.POST.get('promo_code')
-        messages.info(request, f'Promo code "{promo}" is not implemented.')
+        action = request.POST.get('action', 'apply')
+
+        if action == 'clear':
+            # Clear the applied discount code
+            request.session.pop('applied_discount_code_id', None)
+            messages.success(request, 'Discount code removed.')
+        else:
+            # Apply new discount code
+            code_string = request.POST.get('code', '').strip()
+
+            if not code_string:
+                messages.error(request, 'Please enter a discount code.')
+            else:
+                is_valid, discount_code, error_msg = validate_discount_code(
+                    code_string)
+
+                if is_valid:
+                    request.session['applied_discount_code_id'] = discount_code.pk
+                    messages.success(
+                        request, f'Discount code "{discount_code.code}" applied successfully!')
+                else:
+                    messages.error(
+                        request, error_msg or 'Invalid discount code.')
+
     return redirect('cart:view_cart')
 
 
@@ -164,12 +216,36 @@ def go_to_checkout(request):
             request, 'You must be logged in to checkout. Log in here: <a href="/accounts/login">Login</a> or sign up here: <a href="/accounts/signup">Sign Up</a>.', extra_tags='safe')
         return redirect('cart:view_cart')
 
+    # Validate applied discount code before checkout
+    applied_discount_code = None
+    applied_discount_code_id = request.session.get('applied_discount_code_id')
+
+    if applied_discount_code_id:
+        try:
+            applied_discount_code = DiscountCode.objects.get(
+                pk=applied_discount_code_id)
+            # Revalidate the code
+            is_valid, code_obj, error_msg = validate_discount_code(
+                applied_discount_code.code)
+            if not is_valid:
+                messages.warning(
+                    request, f'Discount code expired or invalid: {error_msg}')
+                request.session.pop('applied_discount_code_id', None)
+                applied_discount_code = None
+        except DiscountCode.DoesNotExist:
+            request.session.pop('applied_discount_code_id', None)
+            applied_discount_code = None
+
     # create order object first to get order_id for order items, then update total price after creating order items.
     try:
         order = Order.objects.get(cart=cart, user=request.user, is_paid=False)
     except Order.DoesNotExist:
         order = Order.objects.create(
-            user=request.user, total_price=0, cart=cart)
+            user=request.user, total_price=0, cart=cart, discount_code=applied_discount_code)
+
+    # Set discount code on existing order
+    order.discount_code = applied_discount_code
+    order.save()
 
     # Clear existing order items for this order to avoid duplicates
     # if user goes back to checkout after order creation but before
