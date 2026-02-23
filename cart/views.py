@@ -16,12 +16,8 @@ from products.models import Product, ProductSize, DiscountCode
 def cart_detail(request, cart_id=None):
     # Resolve cart from session or create one. Support anonymous carts.
     cart_id = request.session.get('cart_id')
-    cart = None
-    if cart_id:
-        try:
-            cart = Cart.objects.get(pk=cart_id)
-        except Cart.DoesNotExist:
-            cart = None
+    # Only treat the session cart as valid if it's active
+    cart = Cart.objects.filter(pk=cart_id, is_active=True).first() if cart_id else None
 
     if not cart:
         if request.user.is_authenticated:
@@ -86,14 +82,9 @@ def cart_detail(request, cart_id=None):
 def add_to_cart(request, product_id):
     # Use session-stored cart_id (or create/get a cart for the user)
     cart_id = request.session.get('cart_id')
-    # Ensure we have a Cart instance
-    if cart_id:
-        try:
-            cart = Cart.objects.get(pk=cart_id)
-        except Cart.DoesNotExist:
-            cart = Cart.objects.create(user=request.user, is_active=True)
-            request.session['cart_id'] = cart.cart_id
-    else:
+    # Ensure we have a Cart instance and that it is active
+    cart = Cart.objects.filter(pk=cart_id, is_active=True).first() if cart_id else None
+    if not cart:
         if request.user.is_authenticated:
             try:
                 # Prefer an active cart for the user; this avoids MultipleObjectsReturned
@@ -206,11 +197,8 @@ def go_to_checkout(request):
     else:
         session_id = request.session.session_key
     cart_id = request.session.get('cart_id')
-    if cart_id:
-        try:
-            cart = Cart.objects.get(pk=cart_id)
-        except Cart.DoesNotExist:
-            cart = None
+    # Only use active carts from the session
+    cart = Cart.objects.filter(pk=cart_id, is_active=True).first() if cart_id else None
     # bounce user - maybe create guest user if not authenticated, but for now just require login to checkout
     if not request.user.is_authenticated:
         messages.info(
@@ -266,24 +254,34 @@ def go_to_checkout(request):
         # skip adding if item already exists (e.g. user goes back to checkout after order creation but before clearing cart)
         except Exception:
             pass
-    # calculate subtotal and shipping for order summary, but total price will be updated at checkouts
+
+    # calculate subtotal and shipping for order summary, but total price will be updated at checkout
     subtotal = sum(
         item.quantity * item.price for item in OrderItem.objects.filter(order=order)
     )
-    shipping = Decimal('0.00')
+
+    # Calculate standard shipping (free over £50, £9.99 otherwise)
     if subtotal >= 50:
-        shipping = Decimal('0.00')
+        standard_shipping = Decimal('0.00')
     else:
-        shipping = Decimal('9.99')
-    order.total_price = subtotal + shipping
+        standard_shipping = Decimal('9.99')
+
+    # Express shipping is always £14.99
+    express_shipping = Decimal('14.99')
+
+    # Set initial total with standard shipping (default)
+    order.total_price = subtotal + standard_shipping
     order.is_paid = False
     order.save()
+
     context = {
         'session_id': session_id,
         'cart_id': cart.pk if cart else None,
         'order': order,
         'subtotal': subtotal,
-        'shipping': shipping,
+        'shipping': standard_shipping,  # Current/default shipping
+        'standard_shipping': standard_shipping,
+        'express_shipping': express_shipping,
     }
     return render(request, 'cart/checkout.html', context)
 
@@ -320,6 +318,27 @@ def checkout(request, order_id=None):
 
         checkout_form = CheckoutForm(data=post_data, user=request.user)
         if checkout_form.is_valid():
+            # Get the selected shipping method
+            shipping_method = checkout_form.cleaned_data.get(
+                'shipping_method', 'standard')
+
+            # Recalculate shipping cost based on selected method
+            order_items = OrderItem.objects.filter(order=order)
+            subtotal = sum(item.quantity * item.price for item in order_items)
+
+            if shipping_method == 'express':
+                shipping_cost = Decimal('14.99')
+            else:  # standard
+                if subtotal >= 50:
+                    shipping_cost = Decimal('0.00')
+                else:
+                    shipping_cost = Decimal('9.99')
+
+            order.shipping_cost = shipping_cost
+
+            # Update order with new total
+            order.total_price = subtotal + shipping_cost
+
             # prefer cleaned value but fallback to our assembled address
             shipping_address = checkout_form.cleaned_data.get(
                 'shipping_address') or shipping_address
@@ -346,14 +365,15 @@ def checkout(request, order_id=None):
             else:
                 new_cart = Cart.objects.create(is_active=True)
             request.session['cart_id'] = new_cart.pk
+
+            return redirect('cart:order_confirmation', order_id=order.pk)
         else:
             messages.error(
                 request, f'Please fix form errors: {checkout_form.errors}')
             return render(request, 'cart/checkout.html', {'order': order, 'form': checkout_form})
-        context = {'order': order,
-                   'shipping_address': order.shipping_address, 'phone': phone}
 
-    return redirect('cart:order_confirmation', order_id=order.pk)
+    # GET request - should not reach here normally
+    return redirect('cart:view_cart')
 
 
 def order_confirmation(request, order_id):
@@ -370,6 +390,6 @@ def order_confirmation(request, order_id):
         shipping = Decimal('9.99')
     context = {'order': order,
                'order_items': order_items,
-                'subtotal': subtotal,
-                'shipping': shipping}
+               'subtotal': subtotal,
+               'shipping': shipping}
     return render(request, 'cart/order_confirmation.html', context)

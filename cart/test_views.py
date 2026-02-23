@@ -512,3 +512,144 @@ class TestApplyDiscountView(TestCase):
             follow=True
         )
         self.assertNotIn('applied_discount_code_id', self.client.session)
+
+
+class TestExpressShipping(TestCase):
+    """Tests for express shipping functionality"""
+
+    def setUp(self):
+        """Create test data"""
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpass123",
+            email="test@test.com"
+        )
+        self.category = Category.objects.create(name="Test")
+        self.product = Product.objects.create(
+            name="Test Product",
+            brand="Brand",
+            colour="Red",
+            size="M",
+            price=50.00,
+            discounted_price=45.00,
+            category=self.category,
+            description="Test"
+        )
+
+    def test_go_to_checkout_shows_both_shipping_options(self):
+        """Test that go_to_checkout provides both shipping costs"""
+        self.client.login(username="testuser", password="testpass123")
+
+        # Create cart with an item
+        response = self.client.get(reverse('cart:view_cart'))
+        session = self.client.session
+        session['cart_id'] = session.get('cart_id')
+        session.save()
+
+        # Add item to cart
+        self.client.post(
+            reverse('cart:add_to_cart', args=[self.product.pk]),
+            {'quantity': 1}
+        )
+
+        # Go to checkout
+        response = self.client.get(reverse('cart:go-to-checkout'))
+
+        # Should have both shipping costs in context
+        self.assertIn('standard_shipping', response.context)
+        self.assertIn('express_shipping', response.context)
+        self.assertEqual(
+            response.context['express_shipping'], Decimal('14.99'))
+
+    def test_standard_shipping_free_over_50(self):
+        """Test standard shipping is free for orders over £50"""
+        self.client.login(username="testuser", password="testpass123")
+
+        # Create cart with items totaling over £50
+        response = self.client.get(reverse('cart:view_cart'))
+        session = self.client.session
+        session['cart_id'] = session.get('cart_id')
+        session.save()
+
+        # Add 2 items (2 * 45.00 = 90.00)
+        self.client.post(
+            reverse('cart:add_to_cart', args=[self.product.pk]),
+            {'quantity': 2}
+        )
+
+        response = self.client.get(reverse('cart:go-to-checkout'))
+        # Standard shipping should be free for 90.00 subtotal
+        self.assertEqual(
+            response.context['standard_shipping'], Decimal('0.00'))
+
+    def test_standard_shipping_charged_under_50(self):
+        """Test standard shipping costs £9.99 for orders under £50"""
+        self.client.login(username="testuser", password="testpass123")
+
+        # Create cheap product
+        cheap_product = Product.objects.create(
+            name="Cheap Product",
+            brand="Brand",
+            colour="Blue",
+            size="S",
+            price=20.00,
+            discounted_price=15.00,
+            category=self.category,
+            description="Test"
+        )
+
+        # Get cart
+        response = self.client.get(reverse('cart:view_cart'))
+        session = self.client.session
+        session['cart_id'] = session.get('cart_id')
+        session.save()
+
+        # Add 1 cheap item (15.00 < 50)
+        self.client.post(
+            reverse('cart:add_to_cart', args=[cheap_product.pk]),
+            {'quantity': 1}
+        )
+
+        response = self.client.get(reverse('cart:go-to-checkout'))
+        # Standard shipping should be 9.99 for 15.00 subtotal
+        self.assertEqual(
+            response.context['standard_shipping'], Decimal('9.99'))
+
+    def test_express_shipping_always_14_99(self):
+        """Test express shipping is always £14.99"""
+        self.client.login(username="testuser", password="testpass123")
+
+        # Create cart
+        response = self.client.get(reverse('cart:view_cart'))
+        session = self.client.session
+        session['cart_id'] = session.get('cart_id')
+        session.save()
+
+        # Add item
+        self.client.post(
+            reverse('cart:add_to_cart', args=[self.product.pk]),
+            {'quantity': 1}
+        )
+
+        response = self.client.get(reverse('cart:go-to-checkout'))
+        # Express shipping should always be 14.99
+        self.assertEqual(
+            response.context['express_shipping'], Decimal('14.99'))
+
+    def test_checkout_form_includes_shipping_method(self):
+        """Test that CheckoutForm has shipping_method field"""
+        from .forms import CheckoutForm
+        form = CheckoutForm()
+        self.assertIn('shipping_method', form.fields)
+        # Should have Standard and Express choices
+        choices = [choice[0]
+                   for choice in form.fields['shipping_method'].choices]
+        self.assertIn('standard', choices)
+        self.assertIn('express', choices)
+
+    def test_checkout_form_shipping_method_default_standard(self):
+        """Test that shipping method defaults to standard"""
+        from .forms import CheckoutForm
+        form = CheckoutForm()
+        self.assertEqual(form.fields['shipping_method'].initial, 'standard')

@@ -25,7 +25,8 @@ class TestCheckoutForm(TestCase):
     def test_checkout_form_valid_data(self):
         """Test checkout form with valid data"""
         form_data = {
-            'shipping_address': '123 Main St, New York, NY 10001'
+            'shipping_address': '123 Main St, New York, NY 10001',
+            'shipping_method': 'standard'
         }
         form = CheckoutForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -33,7 +34,8 @@ class TestCheckoutForm(TestCase):
     def test_checkout_form_empty_address(self):
         """Test checkout form with empty shipping address"""
         form_data = {
-            'shipping_address': ''
+            'shipping_address': '',
+            'shipping_method': 'standard'
         }
         form = CheckoutForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -43,13 +45,15 @@ class TestCheckoutForm(TestCase):
         form = CheckoutForm(data={})
         self.assertFalse(form.is_valid())
         self.assertIn('shipping_address', form.errors)
+        self.assertIn('shipping_method', form.errors)
 
     def test_checkout_form_long_address(self):
         """Test checkout form with long address - CharField has max_length=255"""
         # CharField with max_length=255 won't accept 255+ characters
         long_address = "123 Very Long Street Name That Goes On And On, City, State, Country 12345"
         form_data = {
-            'shipping_address': long_address
+            'shipping_address': long_address,
+            'shipping_method': 'standard'
         }
         form = CheckoutForm(data=form_data)
         # This form should be valid with a reasonably long address
@@ -80,7 +84,8 @@ class TestCheckoutForm(TestCase):
     def test_checkout_form_unicode_address(self):
         """Test checkout form with unicode characters in address"""
         form_data = {
-            'shipping_address': '東京都渋谷区 123-4, Japan'
+            'shipping_address': '東京都渋谷区 123-4, Japan',
+            'shipping_method': 'standard'
         }
         form = CheckoutForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -88,7 +93,8 @@ class TestCheckoutForm(TestCase):
     def test_checkout_form_special_characters_address(self):
         """Test checkout form with special characters in address"""
         form_data = {
-            'shipping_address': "123 O'Reilly Ave, São Paulo, BR 01310-100"
+            'shipping_address': "123 O'Reilly Ave, São Paulo, BR 01310-100",
+            'shipping_method': 'standard'
         }
         form = CheckoutForm(data=form_data)
         self.assertTrue(form.is_valid())

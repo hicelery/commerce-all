@@ -3,6 +3,18 @@ from django import forms
 
 
 class CheckoutForm(forms.ModelForm):
+    SHIPPING_CHOICES = (
+        ('standard', 'Standard Shipping'),
+        ('express', 'Express Shipping'),
+    )
+    
+    shipping_method = forms.ChoiceField(
+        choices=SHIPPING_CHOICES,
+        initial='standard',
+        required=True,
+        widget=forms.RadioSelect(),
+    )
+    
     def __init__(self, *args, **kwargs):
         # accept optional `user` kwarg; remove `approved` for non-staff users
         user = kwargs.pop('user', None)
