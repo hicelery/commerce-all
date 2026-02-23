@@ -2,19 +2,16 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.views.generic import ListView
-from requests import post
-
 from django.db import models
-from .models import Product, ProductReview, Category, ProductDiscount, DiscountCode
+from .models import Product, ProductReview, Category, ProductDiscount
 from .forms import ReviewForm
 
 # Create your views here.
 
 
 # Product list view with optional category filter and sorting.
-# Inputs: request, category_name (default to null so as not to break non-category filtered view), sort_option (default to null)
-# If category_name is provided, filter products by category name (case-insensitive).
+# Inputs: request, category_name, sort_option
+# If category_name filter products by category name (case-insensitive).
 # If sort_option is provided, sort products accordingly.
 
 
@@ -39,10 +36,15 @@ def ProductList(request, category_name=None, sort_option=None):
 
     # apply discount to price if discount is active
     discounts = ProductDiscount.objects.filter(
-        start_date__lte=models.functions.Now(), end_date__gte=models.functions.Now())
+        start_date__lte=models.functions.Now(),
+        end_date__gte=models.functions.Now())
 
-    # for each product, check if there's an active discount for the product or its category and apply the highest discount
-    # if there is a discount with no product or category, apply that to all products as well
+    # for each product
+    # check if there's an active discount
+    # for the product or its category
+    # apply the highest discount
+    # if there is a discount with no product or category
+    # apply that to all products as well
     for product in qs:
         product.discounted_price = product.price  # default to original price
         applicable_discounts = discounts.filter(
@@ -63,8 +65,9 @@ def ProductList(request, category_name=None, sort_option=None):
         product.discount = applicable_discounts.first()
         product.save()
 
-    # Allow filtering by price range using query parameters ?price_min=xx&price_max=yy
-    # Do we need to force price_mixmax to be decimal? form inputs should prevent invalid input
+    # Allow filtering by price range
+    # using query parameters ?price_min=xx&price_max=yy
+
     price_min = request.GET.get('price_min')
     price_max = request.GET.get('price_max')
 
@@ -91,10 +94,16 @@ def ProductList(request, category_name=None, sort_option=None):
             qs = qs.order_by('brand')
         elif sort == 'newest':
             qs = qs.order_by('-created_at')
+
+    if request.GET.getlist('category'):
+        selected_categories = [int(c) for c in request.GET.getlist('category')]
+    else:
+        selected_categories = []
+
     context = {
         'products': qs,
         'categories': Category.objects.all(),
-        'selected_categories': [int(c) for c in request.GET.getlist('category')] if request.GET.getlist('category') else [],
+        'selected_categories': selected_categories,
         'request': request, }
     return render(request, 'products/product_list.html', context)
 
@@ -141,12 +150,15 @@ def product_detail(request, product_id):
                 request, messages.SUCCESS,
                 'Review submitted and awaiting approval'
             )
-            return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
+            return HttpResponseRedirect(
+                reverse('products:product_detail',
+                        args=[product.product_id]))
         review_form = ReviewForm(user=request.user)
 
     # Discount logic
     discounts = ProductDiscount.objects.filter(
-        start_date__lte=models.functions.Now(), end_date__gte=models.functions.Now())
+        start_date__lte=models.functions.Now(),
+        end_date__gte=models.functions.Now())
     product.discounted_price = product.price  # default to original price
     applicable_discounts = discounts.filter(
         models.Q(product=product)  # Discount for this specific product
@@ -189,7 +201,8 @@ def product_detail(request, product_id):
 # Chains into reviews js
 #
 # Inputs: request, product_id (int), review_id (from URL)
-# Output: Edits the review if the user is the author or staff, then redirects to product detail page.
+# Output: Edits the review if the user is the author or staff
+# Then redirects to product detail page.
 
 
 def review_edit(request, product_id, review_id):
@@ -206,10 +219,13 @@ def review_edit(request, product_id, review_id):
         review_form = ReviewForm(
             data=request.POST, instance=review, user=request.user)
         # allow the author or staff to edit
-        if (review.user == request.user or (request.user.is_authenticated and request.user.is_staff)) and review_form.is_valid():
+        if (review.user == request.user or
+                (request.user.is_authenticated and request.user.is_staff)) \
+                and review_form.is_valid():
             review = review_form.save(commit=False)
             review.product = product
-            # if staff, accept the approved flag, otherwise ensure edits reset approval
+            # if staff, accept the approved flag
+            #  otherwise ensure edits reset approval
             if request.user.is_authenticated and request.user.is_staff:
                 review.approved = review_form.cleaned_data.get(
                     'approved', False)
@@ -226,7 +242,9 @@ def review_edit(request, product_id, review_id):
                 'You are not authorized to edit this review'
             )
         # Redirect the user back to the post detail page
-        return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
+        return HttpResponseRedirect(
+            reverse('products:product_detail',
+                    args=[product.product_id]))
 
 # Review Delete
 #
@@ -252,4 +270,6 @@ def review_delete(request, product_id, review_id):
         messages.add_message(request, messages.ERROR,
                              'You can only delete your own reviews!')
 
-    return HttpResponseRedirect(reverse('products:product_detail', args=[product.product_id]))
+    return HttpResponseRedirect(
+        reverse('products:product_detail',
+                args=[product.product_id]))
