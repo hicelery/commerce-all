@@ -17,7 +17,8 @@ def cart_detail(request, cart_id=None):
     # Resolve cart from session or create one. Support anonymous carts.
     cart_id = request.session.get('cart_id')
     # Only treat the session cart as valid if it's active
-    cart = Cart.objects.filter(pk=cart_id, is_active=True).first() if cart_id else None
+    cart = Cart.objects.filter(
+        pk=cart_id, is_active=True).first() if cart_id else None
 
     if not cart:
         if request.user.is_authenticated:
@@ -83,7 +84,8 @@ def add_to_cart(request, product_id):
     # Use session-stored cart_id (or create/get a cart for the user)
     cart_id = request.session.get('cart_id')
     # Ensure we have a Cart instance and that it is active
-    cart = Cart.objects.filter(pk=cart_id, is_active=True).first() if cart_id else None
+    cart = Cart.objects.filter(
+        pk=cart_id, is_active=True).first() if cart_id else None
     if not cart:
         if request.user.is_authenticated:
             try:
@@ -198,7 +200,8 @@ def go_to_checkout(request):
         session_id = request.session.session_key
     cart_id = request.session.get('cart_id')
     # Only use active carts from the session
-    cart = Cart.objects.filter(pk=cart_id, is_active=True).first() if cart_id else None
+    cart = Cart.objects.filter(
+        pk=cart_id, is_active=True).first() if cart_id else None
     # bounce user - maybe create guest user if not authenticated, but for now just require login to checkout
     if not request.user.is_authenticated:
         messages.info(
@@ -260,16 +263,10 @@ def go_to_checkout(request):
         item.quantity * item.price for item in OrderItem.objects.filter(order=order)
     )
 
-    # Calculate standard shipping (free over £50, £9.99 otherwise)
-    if subtotal >= 50:
-        standard_shipping = Decimal('0.00')
-    else:
-        standard_shipping = Decimal('9.99')
-
-    # Express shipping is always £14.99
+    # Set shipping prices for display; actual shipping cost will be determined at checkout based on selected method
+    standard_shipping = Decimal('0.00') if subtotal >= 50 else Decimal('9.99')
     express_shipping = Decimal('14.99')
 
-    # Set initial total with standard shipping (default)
     order.total_price = subtotal + standard_shipping
     order.is_paid = False
     order.save()
@@ -346,6 +343,7 @@ def checkout(request, order_id=None):
             order.shipping_address = shipping_address
             order.contactno = phone  # Save phone number to order
             order.save()
+            print(order.shipping_cost)
             cart = order.cart
             cart_id = cart.pk if cart else None
             # Clear cart items for the paid cart
@@ -383,13 +381,8 @@ def order_confirmation(request, order_id):
     # collect order items; per-item subtotal is available via model property
     order_items = order.items.select_related('product').all()
     subtotal = sum(order_item.subtotal for order_item in order_items)
-    shipping = Decimal('0.00')
-    if subtotal >= 50:
-        shipping = Decimal('0.00')
-    else:
-        shipping = Decimal('9.99')
     context = {'order': order,
                'order_items': order_items,
                'subtotal': subtotal,
-               'shipping': shipping}
+               'shipping': order.shipping_cost}
     return render(request, 'cart/order_confirmation.html', context)

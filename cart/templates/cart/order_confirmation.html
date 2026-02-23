@@ -144,7 +144,7 @@
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span>Shipping:</span>
-                    <span>{% if shipping == 0 %}Free{% else %}£{{ shipping|floatformat:2 }}{% endif %}</span>
+                    <span>{% if order.shipping_cost == 0 %}Free{% else %}£{{ order.shipping_cost|floatformat:2 }}{% endif %}</span>
                 </div>
                 {% if order.discount_amount %}
                     <div class="d-flex justify-content-between mb-2 text-success">
