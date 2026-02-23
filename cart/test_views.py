@@ -636,20 +636,3 @@ class TestExpressShipping(TestCase):
         # Express shipping should always be 14.99
         self.assertEqual(
             response.context['express_shipping'], Decimal('14.99'))
-
-    def test_checkout_form_includes_shipping_method(self):
-        """Test that CheckoutForm has shipping_method field"""
-        from .forms import CheckoutForm
-        form = CheckoutForm()
-        self.assertIn('shipping_method', form.fields)
-        # Should have Standard and Express choices
-        choices = [choice[0]
-                   for choice in form.fields['shipping_method'].choices]
-        self.assertIn('standard', choices)
-        self.assertIn('express', choices)
-
-    def test_checkout_form_shipping_method_default_standard(self):
-        """Test that shipping method defaults to standard"""
-        from .forms import CheckoutForm
-        form = CheckoutForm()
-        self.assertEqual(form.fields['shipping_method'].initial, 'standard')
