@@ -103,7 +103,7 @@
                 <div class="card-body">
                     <div class="form-check mb-3">
                         <input class="form-check-input shipping-method-radio" type="radio" name="shipping_method" id="standard" 
-                               value="standard" checked data-shipping-cost="{% if standard_shipping == 0 %}0{% else %}{{ standard_shipping }}{% endif %}">
+                               value="standard" checked data-shipping-cost="{% if standard_shipping == 0 %}0{% else %}{{ standard_shipping| }}{% endif %}">
                         <label class="form-check-label w-100" for="standard">
                             <div class="d-flex justify-content-between">
                                 <span><strong>Standard Shipping</strong><br><small class="text-muted">5-7 business days</small></span>

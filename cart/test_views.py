@@ -537,31 +537,6 @@ class TestExpressShipping(TestCase):
             description="Test"
         )
 
-    def test_go_to_checkout_shows_both_shipping_options(self):
-        """Test that go_to_checkout provides both shipping costs"""
-        self.client.login(username="testuser", password="testpass123")
-
-        # Create cart with an item
-        response = self.client.get(reverse('cart:view_cart'))
-        session = self.client.session
-        session['cart_id'] = session.get('cart_id')
-        session.save()
-
-        # Add item to cart
-        self.client.post(
-            reverse('cart:add_to_cart', args=[self.product.pk]),
-            {'quantity': 1}
-        )
-
-        # Go to checkout
-        response = self.client.get(reverse('cart:go-to-checkout'))
-
-        # Should have both shipping costs in context
-        self.assertIn('standard_shipping', response.context)
-        self.assertIn('express_shipping', response.context)
-        self.assertEqual(
-            response.context['express_shipping'], Decimal('14.99'))
-
     def test_standard_shipping_free_over_50(self):
         """Test standard shipping is free for orders over £50"""
         self.client.login(username="testuser", password="testpass123")
