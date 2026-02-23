@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.contrib.messages import get_messages
-from .models import Cart, CartItem, Order, OrderItem
+from .models import Cart, CartItem
 from products.models import Product, Category, DiscountCode
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -39,7 +39,7 @@ class TestCartDetailView(TestCase):
 
     def test_cart_detail_creates_session_cart(self):
         """Test that cart detail creates anonymous cart"""
-        response = self.client.get(reverse('cart:view_cart'))
+        self.client.get(reverse('cart:view_cart'))
         self.assertIn('cart_id', self.client.session)
 
     # ========== AUTHENTICATED USER TESTS ==========
@@ -194,7 +194,7 @@ class TestAddToCartView(TestCase):
     # ========== QUANTITY TESTS ==========
     def test_add_to_cart_default_quantity(self):
         """Test adding product with default quantity"""
-        response = self.client.post(
+        self.client.post(
             reverse('cart:add_to_cart', args=[self.product.pk]),
             {}
         )
@@ -203,7 +203,7 @@ class TestAddToCartView(TestCase):
 
     def test_add_to_cart_custom_quantity(self):
         """Test adding product with custom quantity"""
-        response = self.client.post(
+        self.client.post(
             reverse('cart:add_to_cart', args=[self.product.pk]),
             {'quantity': 5}
         )
@@ -213,7 +213,7 @@ class TestAddToCartView(TestCase):
     # ========== SIZE TESTS ==========
     def test_add_to_cart_with_size(self):
         """Test adding product with size"""
-        response = self.client.post(
+        self.client.post(
             reverse('cart:add_to_cart', args=[self.product.pk]),
             {'quantity': 1, 'size': 'L'}
         )
@@ -345,8 +345,9 @@ class TestUpdateCartItemView(TestCase):
 
     def test_update_cart_item_increase(self):
         """Test increasing cart item quantity"""
-        # The view uses max(quantity + 1, product.quantity) which caps at product.quantity
-        response = self.client.post(
+        # The view uses max(quantity + 1, product.quantity)
+        # caps at product.quantity
+        self.client.post(
             reverse('cart:update_cart_item',
                     args=[self.cart.pk, self.cart_item.pk]),
             {'action': 'increase'}
@@ -357,7 +358,7 @@ class TestUpdateCartItemView(TestCase):
 
     def test_update_cart_item_decrease(self):
         """Test decreasing cart item quantity"""
-        response = self.client.post(
+        self.client.post(
             reverse('cart:update_cart_item',
                     args=[self.cart.pk, self.cart_item.pk]),
             {'action': 'decrease'}
@@ -370,7 +371,7 @@ class TestUpdateCartItemView(TestCase):
         self.cart_item.quantity = 1
         self.cart_item.save()
 
-        response = self.client.post(
+        self.client.post(
             reverse('cart:update_cart_item',
                     args=[self.cart.pk, self.cart_item.pk]),
             {'action': 'decrease'}
@@ -380,7 +381,7 @@ class TestUpdateCartItemView(TestCase):
 
     def test_update_cart_item_explicit_quantity(self):
         """Test updating cart item with explicit quantity"""
-        response = self.client.post(
+        self.client.post(
             reverse('cart:update_cart_item',
                     args=[self.cart.pk, self.cart_item.pk]),
             {'quantity': 5}
@@ -436,7 +437,7 @@ class TestClearCartView(TestCase):
         session['cart_id'] = self.cart.pk
         session.save()
 
-        response = self.client.post(reverse('cart:clear_cart'), follow=True)
+        self.client.post(reverse('cart:clear_cart'), follow=True)
         self.assertEqual(CartItem.objects.filter(cart=self.cart).count(), 0)
 
     def test_clear_cart_success_message(self):
@@ -448,7 +449,7 @@ class TestClearCartView(TestCase):
         session['cart_id'] = self.cart.pk
         session.save()
 
-        response = self.client.post(reverse('cart:clear_cart'), follow=True)
+        self.client.post(reverse('cart:clear_cart'), follow=True)
         # Verify the cart is cleared
         self.assertEqual(CartItem.objects.filter(cart=self.cart).count(), 0)
 
@@ -474,7 +475,7 @@ class TestApplyDiscountView(TestCase):
 
     def test_apply_valid_discount_code(self):
         """Test applying valid discount code"""
-        response = self.client.post(
+        self.client.post(
             reverse('cart:apply_discount'),
             {'code': 'SAVE10'},
             follow=True
@@ -483,12 +484,13 @@ class TestApplyDiscountView(TestCase):
 
     def test_apply_invalid_discount_code(self):
         """Test applying invalid discount code"""
-        response = self.client.post(
+        self.client.post(
             reverse('cart:apply_discount'),
             {'code': 'INVALID'},
             follow=True
         )
-        # When invalid code is applied, session should not contain applied_discount_code_id
+        # When invalid code is applied
+        # session should not contain applied_discount_code_id
         self.assertNotIn('applied_discount_code_id', self.client.session)
 
     def test_apply_empty_discount_code(self):
@@ -506,7 +508,7 @@ class TestApplyDiscountView(TestCase):
         self.client.session['applied_discount_code_id'] = self.discount_code.pk
         self.client.session.save()
 
-        response = self.client.post(
+        self.client.post(
             reverse('cart:apply_discount'),
             {'action': 'clear'},
             follow=True
@@ -542,7 +544,7 @@ class TestExpressShipping(TestCase):
         self.client.login(username="testuser", password="testpass123")
 
         # Create cart with items totaling over £50
-        response = self.client.get(reverse('cart:view_cart'))
+        self.client.get(reverse('cart:view_cart'))
         session = self.client.session
         session['cart_id'] = session.get('cart_id')
         session.save()
@@ -575,7 +577,7 @@ class TestExpressShipping(TestCase):
         )
 
         # Get cart
-        response = self.client.get(reverse('cart:view_cart'))
+        self.client.get(reverse('cart:view_cart'))
         session = self.client.session
         session['cart_id'] = session.get('cart_id')
         session.save()
@@ -596,7 +598,7 @@ class TestExpressShipping(TestCase):
         self.client.login(username="testuser", password="testpass123")
 
         # Create cart
-        response = self.client.get(reverse('cart:view_cart'))
+        self.client.get(reverse('cart:view_cart'))
         session = self.client.session
         session['cart_id'] = session.get('cart_id')
         session.save()
