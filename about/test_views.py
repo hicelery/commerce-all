@@ -13,22 +13,21 @@ class TestAboutViews(TestCase):
         self.AboutPage.save()
 
     def test_render_about_page(self):
-        response = self.client.get(reverse('about'))
+        response = self.client.get(reverse('about:about'))
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"About Me", response.content)
         self.assertIn(b"This is about me.", response.content)
         self.assertIsInstance(
             response.context['contact_form'], ContactForm)
-        print(response.content)
 
     def test_successful_contact_request_submission(self):
         """Test for a user submitting a contact request"""
         post_data = {
             'name': 'test name',
             'email': 'test@email.com',
+            'type': 'general',
             'message': 'test message'
         }
-        response = self.client.post(reverse('about'), post_data)
+        response = self.client.post(reverse('about:about'), post_data)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(
-            b'Contact request submitted successfully', response.content)
+        self.assertEqual(Contact.objects.count(), 1)

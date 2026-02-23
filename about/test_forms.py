@@ -9,6 +9,8 @@ class TestCollaborateForm(TestCase):
         form = ContactForm({
             'name': 'test name',
             'email': 'test@test.com',
+            'type': 'general',
             'message': 'Hello!'
         })
-        self.assertTrue(form.is_valid(), msg="Form is not valid")
+        self.assertTrue(form.is_valid(),
+                        msg=f"Form is not valid errors: {form.errors}")

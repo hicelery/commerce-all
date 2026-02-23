@@ -2,6 +2,7 @@ from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
+from decimal import Decimal
 
 
 from .models import Cart, CartItem, Order, OrderItem
@@ -52,14 +53,14 @@ def cart_detail(request, cart_id=None):
                    item.product.discounted_price for item in items)
 
     # Calculate discount reduction from applied discount code
-    discount_reduction = 0
+    discount_reduction = Decimal('0.00')
     if discount_info:
         discount_reduction = discount_info.get('total_discount', 0)
 
     if subtotal >= 50:
-        shipping = 0
+        shipping = Decimal('0.00')
     else:
-        shipping = 9.99
+        shipping = Decimal('9.99')
 
     # Total = subtotal - discount_code_reduction + shipping
     total = subtotal - discount_reduction + shipping
@@ -269,7 +270,11 @@ def go_to_checkout(request):
     subtotal = sum(
         item.quantity * item.price for item in OrderItem.objects.filter(order=order)
     )
-    shipping = 0 if subtotal >= 50 else 9.99
+    shipping = Decimal('0.00')
+    if subtotal >= 50:
+        shipping = Decimal('0.00')
+    else:
+        shipping = Decimal('9.99')
     order.total_price = subtotal + shipping
     order.is_paid = False
     order.save()
@@ -358,6 +363,13 @@ def order_confirmation(request, order_id):
     # collect order items; per-item subtotal is available via model property
     order_items = order.items.select_related('product').all()
     subtotal = sum(order_item.subtotal for order_item in order_items)
+    shipping = Decimal('0.00')
+    if subtotal >= 50:
+        shipping = Decimal('0.00')
+    else:
+        shipping = Decimal('9.99')
     context = {'order': order,
-               'order_items': order_items, 'subtotal': subtotal}
+               'order_items': order_items,
+                'subtotal': subtotal,
+                'shipping': shipping}
     return render(request, 'cart/order_confirmation.html', context)
