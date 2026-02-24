@@ -70,7 +70,9 @@ Automated tests were created upon MVP deployment, and kept as a regression test 
 
 I created initial unit tests for models, views, and forms, before using Claude Haiku to expand coverage and create tests for edge cases I may have missed, including minor stress testing; before creating a coverage summary report to better describe the scope of the test suite. This mimicked working with an external QA team, who have separation from code creation and can be more analytical and penetrative when creating test suites.
 
-### Test Suite Coverage Report
+Lighthouse testing was conducted for performance and high-level accessibility/security testing. WCAG testing utilized WAVE(WebAIM) browser extension.
+
+### Test Suite Exit Report
 
 #### Dashboard Tests: 42 Tests
 
@@ -112,8 +114,7 @@ Tests for the profile update view (POST profile updates):
 
 Edge case and boundary condition tests:
 
-- **Special Characters**: Names with hyphens, apostrophes (Jean-Claude, O'Neill)
-- **Unicode Support**: Tests with accented characters (José, Müller)
+- **Special Characters,  Unicode Support**: Names with hyphens, apostrophes and accents
 - **Length Limits**: Very long names (30+ characters), whitespace-only values
 - **Data Isolation**: Verifies session persistence across multiple operations
 - **Stress Tests**: 50 orders per user, 100 items per order
@@ -127,6 +128,11 @@ Comprehensive tests for:
 - Product detail views
 - Product reviews and ratings
 - Category and product relationships
+
+#### Accessibility
+
+All pages tested manually with WAVE and lighthouse and have no WCAG errors. All pages have AIM score of or above 9.6/10  <img width="600" aspect-ratio="1/1" alt="image" src="https://github.com/user-attachments/assets/f1e56a47-b66d-4308-95f5-96af00128396" />
+
 
 ## Deployment
 
