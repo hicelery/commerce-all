@@ -3,3 +3,4 @@ env.py
 __pycache__/
 reviewsnippet.txt
 BUILD_CHECKLIST.md
+TESTING_GUIDE.md
