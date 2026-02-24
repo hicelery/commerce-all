@@ -134,7 +134,8 @@
                      {% for size, quantity in sizes.items %}
                         <div class="input-group" id="quantity_group_{{ size }}" style="display: none;">
                             <button type="button" class="btn btn-outline-secondary" onclick="decreaseQuantity('{{ size }}')">-</button>
-                            <input type="number" id="quantity_{{ size }}" name="quantity" value="1" min="1" max="{{ quantity }}" class="form-control text-center" style="max-width: 80px;">
+                            <label id="quantity_label_{{ size }}" class="visually-hidden">Quantity for size {{ size }}</label>
+                            <input type="number" id="quantity_{{ size }}" name="quantity" value="1" min="1" max="{{ quantity }}" class="form-control text-center" style="max-width: 80px;" aria-labelledby="quantity_label_{{ size }}">
                             <button type="button" class="btn btn-outline-secondary" onclick="increaseQuantity('{{ size }}')">+</button>
                         </div>
                     {% endfor %}
@@ -247,7 +248,7 @@
                                     <!--Add a star button for each rating value from 1 to 5 -->
                                     {% for i in "12345" %}
                                         <input type="radio" class="btn-check" name="rating" id="rating{{ i }}" value="{{ i }}" required>
-                                        <label class="btn btn-outline-warning" for="rating{{ i }}">
+                                        <label class="btn btn-outline-secondary" for="rating{{ i }}">
                                             <i class="fas fa-star"></i> {{ i }}
                                         </label>
                                     {% endfor %}
@@ -315,7 +316,7 @@
 </div>
 
 <!-- Image Expansion Modal -->
-<div class="modal fade" id="imageExpandModal" tabindex="-1" aria-labelledby="imageExpandLabel" aria-hidden="true">
+<div class="modal fade" id="imageExpandModal" tabindex="-1" aria-labelledby="expandedImageLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content bg-dark">
       <div class="modal-header bg-dark border-secondary">
@@ -325,13 +326,15 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-0 position-relative" style="background-color: #1a1a1a;">
+        <!-- Expanded Image -->
+         <label id="expandedImageLabel" class="visually-hidden">Expanded product image</label>
         <img id="expandedImage" src="" alt="Product Image" style="width: 100%; height: auto; display: block;">
         
         <!-- Navigation Arrows -->
-        <button id="prevImageBtn" class="btn btn-light btn-lg position-absolute start-0 top-50 translate-middle-y ms-2" style="z-index: 10;">
+        <button id="prevImageBtn" class="btn btn-light btn-lg position-absolute start-0 top-50 translate-middle-y ms-2" style="z-index: 10;" aria-label="Previous Image">
           <i class="fas fa-chevron-left"></i>
         </button>
-        <button id="nextImageBtn" class="btn btn-light btn-lg position-absolute end-0 top-50 translate-middle-y me-2" style="z-index: 10;">
+        <button id="nextImageBtn" class="btn btn-light btn-lg position-absolute end-0 top-50 translate-middle-y me-2" style="z-index: 10;" aria-label="Next Image"> 
           <i class="fas fa-chevron-right"></i>
         </button>
       </div>

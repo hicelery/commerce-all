@@ -67,7 +67,8 @@
                                                         {% csrf_token %}
                                                         <div class="input-group input-group-sm" style="width: 60%;">
                                                             <button type="submit" name="action" value="decrease" class="btn btn-outline-secondary">-</button>
-                                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control text-center">
+                                                            <label for="quantity_{{ item.pk }}_mobile" class="visually-hidden">Quantity for {{ item.product.name }}</label>
+                                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control text-center" aria-labelledby="quantity_{{ item.pk }}_mobile" id="quantity_{{ item.pk }}_mobile">
                                                             <button type="submit" name="action" value="increase" class="btn btn-outline-secondary">+</button>
                                                         </div>
                                                         </form>
@@ -97,8 +98,9 @@
                                                 {% csrf_token %}
                                                 <div class="input-group input-group-sm" style="width: 120px;">
                                                     <button type="submit" name="action" value="decrease" class="btn btn-outline-secondary">-</button>
+                                                    <label for="quantity_{{ item.pk }}" class="visually-hidden">Quantity for {{ item.product.name }}</label>
                                                     <input type="number" name="quantity" value="{{ item.quantity }}" min="1" 
-                                                           class="form-control text-center">
+                                                           class="form-control text-center" id="quantity_{{ item.pk }}">
                                                     <button type="submit" name="action" value="increase" class="btn btn-outline-secondary">+</button>
                                                 </div>
                                             </form>
@@ -121,13 +123,13 @@
                 </div>
                 <div class="card-footer bg-light">
                     <div class="d-flex justify-content-between align-items-center">
-                        <a href="{% url 'products:home' %}" class="btn btn-outline-secondary btn-cart">
+                        <a href="{% url 'products:home' %}" class="btn btn-secondary btn-cart">
                             <i class="fas fa-arrow-left me-2"></i>Continue Shopping
                         </a>
                         <form method="post" action="{% url 'cart:clear_cart' %}" class="d-inline d-none clear-form">
                             {% csrf_token %}
                         </form>
-                        <button type="button" class="btn btn-outline-danger btn-cart btn-clear" data-clear-url="{% url 'cart:clear_cart' %}">
+                        <button type="button" class="btn btn-danger btn-cart btn-clear" data-clear-url="{% url 'cart:clear_cart' %}">
                             <i class="fas fa-trash-alt me-2"></i>Clear Cart
                         </button>
                     </div>
@@ -184,6 +186,7 @@
                         <form method="post" action="{% url 'cart:apply_discount' %}" class="row g-2">
                             {% csrf_token %}
                             <div class="col-auto flex-grow-1">
+                                <label for="{{ discount_form.code.id_for_label }}" class="visually-hidden">{{ discount_form.code.label }}</label>
                                 {{ discount_form.code }}
                             </div>
                             <div class="col-auto">

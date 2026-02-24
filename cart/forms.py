@@ -7,14 +7,15 @@ class CheckoutForm(forms.ModelForm):
         ('standard', 'Standard Shipping'),
         ('express', 'Express Shipping'),
     )
-    
+
     shipping_method = forms.ChoiceField(
         choices=SHIPPING_CHOICES,
         initial='standard',
         required=True,
+        label='Shipping Method',
         widget=forms.RadioSelect(),
     )
-    
+
     def __init__(self, *args, **kwargs):
         # accept optional `user` kwarg; remove `approved` for non-staff users
         user = kwargs.pop('user', None)
@@ -26,6 +27,9 @@ class CheckoutForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('shipping_address',)
+        labels = {
+            'shipping_address': 'Shipping Address',
+        }
 
 
 class DiscountCodeForm(forms.Form):
@@ -33,6 +37,7 @@ class DiscountCodeForm(forms.Form):
     code = forms.CharField(
         max_length=50,
         required=True,
+        label='Discount Code',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Enter discount code',

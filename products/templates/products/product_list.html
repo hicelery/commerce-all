@@ -8,7 +8,6 @@
 <!-- 
     =======================================================================================
     Filters and Quick Links
-    - Show as offcanvas on mobile and sidebar on large screens
     =======================================================================================   
 -->
     <!-- Filter Toggle -->
@@ -18,7 +17,7 @@
         </button>
     </div>
 
-    <!-- Filters Offcanvas-->
+    <!-- Filters Offcanvas (mobile)-->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileFilters" aria-labelledby="mobileFiltersLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="mobileFiltersLabel">Filters</h5>
@@ -37,12 +36,14 @@
 
                 <!-- Price Range -->
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Price Range</label>
+                    <label class="form-label fw-bold" for="price_min">Price Range</label>
                     <div class="d-flex gap-2">
+                        <label id="price_min_mobile_label" class="visually-hidden">Minimum Price</label>
                         <input type="number" class="form-control" placeholder="Min" min="0" 
-                            name="price_min" value="{{ request.GET.price_min }}">
+                            name="price_min" value="{{ request.GET.price_min }}" aria-labelledby="price_min_mobile_label">
+                        <label id="price_max_mobile_label" class="visually-hidden">Maximum Price</label>
                         <input type="number" class="form-control" placeholder="Max" min="0" 
-                            name="price_max" value="{{ request.GET.price_max }}">
+                            name="price_max" value="{{ request.GET.price_max }}" aria-labelledby="price_max_mobile_label">
                     </div>
                 </div>
 
@@ -63,6 +64,7 @@
         </div>
     </div>
 
+    <!-- Desktop Filters-->
     <!--Sidebar-->
     <div id="sidebar" class="col-12 col-lg-2 mb-4 d-none d-lg-block">
         <!-- Show nav and filters as sidebar for large screens-->
@@ -87,10 +89,12 @@
                     <div class="mb-4">
                         <label class="form-label fw-bold">Price Range</label>
                         <div class="d-flex gap-2">
+                            <label id="price_min_label" class="visually-hidden">Minimum Price</label>
                             <input type="number" class="form-control" placeholder="Min" min="0" 
-                                name="price_min" value="{{ request.GET.price_min }}">
+                                name="price_min" value="{{ request.GET.price_min }}" aria-labelledby="price_min_label">
+                            <label id="price_max_label" class="visually-hidden">Maximum Price</label>
                             <input type="number" class="form-control" placeholder="Max" min="0" 
-                                name="price_max" value="{{ request.GET.price_max }}">
+                                name="price_max" value="{{ request.GET.price_max }}" aria-labelledby="price_max_label">
                         </div>
                     </div>
 
@@ -188,7 +192,7 @@ Products Grid
 
                                 <!-- Card Footer -->
                                 <div class="card-footer bg-white border-top">
-                                    <a href="{% url 'products:product_detail' product_id=product.pk %}" class="btn btn-primary btn-sm w-100 drawn-border">
+                                    <a href="{% url 'products:product_detail' product_id=product.pk %}" class="btn btn-primary btn-sm w-100 drawn-border" aria-label="View details of {{ product.name }}">
                                         <i class="fas fa-eye me-1"></i>View Details
                                     </a>
                                 </div>

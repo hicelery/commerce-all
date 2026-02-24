@@ -7,16 +7,16 @@
 <div class="row mb-4">
     <div class="col-md-8 offset-md-2">
         <ul class="list-unstyled d-flex justify-content-between">
-            <li class="text-center">
-                <div class="badge bg-light p-3 mb-2 d-inline-block">1</div>
-                <p class="small fw-semibold">Shipping</p>
+            <li class="text-center text-muted">
+                <div class="badge bg-light text-dark p-3 mb-2 d-inline-block">1</div>
+                <p class="small">Shipping</p>
             </li>
             <li class="text-center text-muted">
                 <div class="badge bg-light text-dark p-3 mb-2 d-inline-block">2</div>
                 <p class="small">Payment</p>
             </li>
-            <li class="text-center text-muted">
-                <div class="badge bg-primary text-dark p-3 mb-2 d-inline-block">3</div>
+            <li class="text-center">
+                <div class="badge bg-primary  p-3 mb-2 d-inline-block">3</div>
                 <p class="small">Confirmation</p>
             </li>
         </ul>
@@ -194,7 +194,7 @@
             <i class="fas fa-question-circle me-2"></i>
             <strong>Need Help?</strong><br>
             <small class="d-block mt-2">
-                <a href="#" class="text-decoration-none">Contact Support</a>
+                <a href="{% url 'about:contact' %}" class="text-decoration-underline text-dark">Contact Support</a>
             </small>
         </div>
     </div>
