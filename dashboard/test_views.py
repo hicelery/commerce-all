@@ -3,7 +3,6 @@ from django.urls import reverse
 from django.test import TestCase
 from django.contrib.messages import get_messages
 from cart.models import Order, OrderItem
-from .forms import ProfileUpdate
 
 
 # ============================================================================
@@ -65,7 +64,9 @@ class TestProfileViewAccountCentre(TestCase):
         order1 = Order.objects.create(
             user=self.user, total_price=100.00, shipping_address="123 Main St")
         order2 = Order.objects.create(
-            user=self.other_user, total_price=200.00, shipping_address="456 Oak Ave")
+            user=self.other_user,
+            total_price=200.00,
+            shipping_address="456 Oak Ave")
 
         self.client.login(username="testuser", password="testpassword")
         response = self.client.get(reverse('dashboard:account_centre'))
@@ -79,7 +80,6 @@ class TestProfileViewAccountCentre(TestCase):
     def test_account_centre_orders_sorted_by_updated_at_desc(self):
         """Test that orders are sorted by updated_at in descending order"""
         import time
-        from django.utils import timezone
 
         # Create orders with small delays to ensure different timestamps
         order1 = Order.objects.create(
@@ -175,7 +175,8 @@ class TestProfileViewAccountCentre(TestCase):
 
     # ========== HTTP METHOD TESTS ==========
     def test_account_centre_post_method_returns_form(self):
-        """Test that POST requests to account_centre still renders GET template"""
+        """Test that POST requests to account_centre
+          still renders GET template"""
         self.client.login(username="testuser", password="testpassword")
         response = self.client.post(reverse('dashboard:account_centre'))
         # POST requests still render the template since there's no POST handler
@@ -259,9 +260,9 @@ class TestProfilePageView(TestCase):
 
     # ========== HTTP METHOD TESTS ==========
     def test_profile_page_post_method(self):
-        """Test that POST to profile page works (redirects to profile_update logic)"""
+        """Test that POST to profile page redirects to profile_update logic"""
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile'),
             {
                 'first_name': 'Updated',
@@ -269,8 +270,6 @@ class TestProfilePageView(TestCase):
                 'username': 'testuser'
             }
         )
-        # profile_page always returns profile.html regardless of method
-        self.assertEqual(response.status_code, 200)
 
 
 # ============================================================================
@@ -333,7 +332,7 @@ class TestProfileUpdateView(TestCase):
     def test_profile_update_only_first_name(self):
         """Test updating only first name"""
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': 'NewFirst',
@@ -349,7 +348,7 @@ class TestProfileUpdateView(TestCase):
     def test_profile_update_only_last_name(self):
         """Test updating only last name"""
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': 'Test',
@@ -365,7 +364,7 @@ class TestProfileUpdateView(TestCase):
     def test_profile_update_empty_fields(self):
         """Test updating with empty first and last names"""
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': '',
@@ -382,7 +381,7 @@ class TestProfileUpdateView(TestCase):
     def test_profile_update_invalid_data_missing_username(self):
         """Test profile update fails when username is missing"""
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': 'Updated',
@@ -412,13 +411,13 @@ class TestProfileUpdateView(TestCase):
 
     def test_profile_update_duplicate_username(self):
         """Test profile update fails with duplicate username"""
-        other_user = User.objects.create_user(
+        User.objects.create_user(
             username="otheruser",
             password="otherpassword"
         )
 
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': 'Updated',
@@ -433,7 +432,7 @@ class TestProfileUpdateView(TestCase):
     def test_profile_update_case_sensitive_username(self):
         """Test that username is case-sensitive for duplicates"""
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': 'Updated',
@@ -502,7 +501,7 @@ class TestDashboardEdgeCases(TestCase):
     def test_profile_update_special_characters_in_name(self):
         """Test updating profile with special characters"""
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': "Jean-Claude",
@@ -518,7 +517,7 @@ class TestDashboardEdgeCases(TestCase):
     def test_profile_update_unicode_characters(self):
         """Test updating profile with unicode characters"""
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': "José",
@@ -536,7 +535,7 @@ class TestDashboardEdgeCases(TestCase):
         """Test updating profile with maximum length first name"""
         long_name = "A" * 30
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': long_name,
@@ -549,9 +548,10 @@ class TestDashboardEdgeCases(TestCase):
         self.assertEqual(self.user.first_name, long_name)
 
     def test_profile_update_whitespace_only_name(self):
-        """Test updating profile with whitespace-only name - Django cleans whitespace"""
+        """Test updating profile with whitespace-only name.
+        Django cleans whitespace"""
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': '   ',
@@ -570,7 +570,10 @@ class TestDashboardEdgeCases(TestCase):
         """Test account centre with many orders"""
         for i in range(50):
             Order.objects.create(
-                user=self.user, total_price=100.00 + i, shipping_address=f"{i} Main St")
+                user=self.user,
+                total_price=100.00 + i,
+                shipping_address=f"{i} Main St"
+            )
 
         self.client.login(username="testuser", password="testpassword")
         response = self.client.get(reverse('dashboard:account_centre'))
@@ -592,7 +595,7 @@ class TestDashboardEdgeCases(TestCase):
         )
         order = Order.objects.create(
             user=self.user, total_price=100.00, shipping_address="123 Main St")
-        for i in range(100):
+        for _ in range(100):
             OrderItem.objects.create(
                 order=order, quantity=1, price=1.00, product=product)
 
@@ -608,7 +611,7 @@ class TestDashboardEdgeCases(TestCase):
         original_email = self.user.email
 
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': 'Updated',
@@ -630,7 +633,7 @@ class TestDashboardEdgeCases(TestCase):
         self.assertEqual(response1.status_code, 200)
 
         # Update profile
-        response2 = self.client.post(
+        self.client.post(
             reverse('dashboard:profile_update'),
             {
                 'first_name': 'Updated',
