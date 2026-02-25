@@ -67,14 +67,14 @@ I created wireframes to block out desktop and mobile layouts of the main pages, 
 
 ## Features
 
-Target features:
+**Target features:**
 
 - User roles implemented with registration and deletion of accounts, and user panel to view activity history.
 - Users can order items, add reviews and access their order history.
 - Admin can perform CRUD operations on products and user reviews, and have read-only operations on user orders.
 - Implementation of Stripe payment API (stretch goal).
 
-Implemented features:
+**Implemented features:**
 
 - Product list view with price, stock status, discounts.
 - Product filtering with categorization, price and sort options.
@@ -88,14 +88,14 @@ Implemented features:
 - Google account SSO
 - Persistent breadcrumb and navbar for ease of navigation
 
-Admin specific features:
+**Admin specific features:**
 
 - Admin dashboard
 - CRUD of all models:
     - Product entries, Product details, Product/Category Discounts, Categories, Product images, Discount Codes, Product Reviews.
       Discounts can be configured for products, categories or all products. Discount codes can apply to all products, or restricted to specific categories.
 
-Post-live features to be implemented:
+**Post-live features to be implemented:**
 
 - Payment API
 - Tax handling for enterprise customers.
@@ -140,17 +140,19 @@ Account management is handled with django allauth and Google Oauth2 SSO.
 Coverage was calculated against number of lines in views/models etc that were called in unit test suite.
 
 **Accessibility:** All pages achieve WCAG AAA compliance with Lighthouse scores ≥9.6/10
+Google lighthouse testing largely revealed issues with third party cookies, associated with cloudiary. In future I would prompt user to accept these for site function or seek an alternative hosting provider <img width="851" height="449" alt="image" src="https://github.com/user-attachments/assets/5f9609d9-2626-4c5c-b33b-de5ea45393dd" />
 
 For detailed test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
 
 ## AI retrospective
 
-To aid development, I created a custom copilot agent inspired by u/burkeholland 's gpt beastmode agent. The aim of this was to increase the contextual understanding of free and less-than-premium usage models (which often struggle with more complex and persistent conversations due to a reduced context window) to allow for greater usage within my premium requests budget. To achieve this, I defined three main goals: be opinionated, break down tasks into to-do lists, ask for user input before moving to next steps.
+To aid development, I created a custom copilot agent inspired by u/burkeholland 's gpt beastmode agent. The aim of this was to standardise the approach of free and less-than-premium usage models (which often struggle with more complex and persistent conversations due to a reduced context window) to give repeateable, more viable results to allow for greater usage within my premium requests budget. 
+To achieve this, I defined three main goals: be opinionated (don't pander to user), break down tasks into to-do lists, ask for user input before moving to next steps.
 
 I used AI to create a project checklist to ensure I had considered all bases, and serve as a project status checker.
-I created initial HTML boilerplates from wireframes, thought this did require manual intervention, as this created a large amount of redundant functionality that could be present on an e-commerce website, but was not needed for the scope of my project.
+I created initial HTML boilerplates with AI by attaching wireframes. This streamlined development, though did require manual intervention, as this created a large amount of redundant functionality that could be present on an e-commerce website, but was not needed for the scope of my project.
 
-Test pack creation was augmented - I defined a test suite and implemented initial unit tests for models, views, and forms; before using Claude Haiku to expand coverage and create tests for missed edge cases, including minor stress testing.
+Test pack creation was augmented with AI - I defined a test suite and implemented initial unit tests for models, views, and forms; before using Claude Haiku to expand coverage and create tests for missed edge cases, including minor stress testing.
 Again using Claude, I created a testing exit summary report to better describe the scope and success of the test suite. This mimicked working with an external QA team, who have separation from code creation and can be more analytical and penetrative when creating test suites.
 
 In future I would continue to use custom agent prompts, and boilerplate creation. I would ensure that any feature creation would include the full workspace in requests and use premium request models to ensure the largest amount of context and reduce code that doesn't interact well with the existing codebase.
