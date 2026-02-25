@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.contrib.messages import get_messages
-from .models import Cart, CartItem
+from .models import Cart, CartItem, Order, OrderItem
 from products.models import Product, Category, DiscountCode
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -613,3 +613,292 @@ class TestExpressShipping(TestCase):
         # Express shipping should always be 14.99
         self.assertEqual(
             response.context['express_shipping'], Decimal('14.99'))
+
+
+class TestGoToCheckoutView(TestCase):
+    """Tests for go_to_checkout view (order preparation)"""
+
+    def setUp(self):
+        """Create test data"""
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpass123",
+            email="test@test.com"
+        )
+        self.category = Category.objects.create(name="Test")
+        self.product = Product.objects.create(
+            name="Test Product",
+            brand="Brand",
+            colour="Red",
+            size="M",
+            price=50.00,
+            discounted_price=45.00,
+            category=self.category,
+            description="Test"
+        )
+
+    def test_go_to_checkout_unauthenticated_user_redirect(self):
+        """Test that unauthenticated users are redirected with login message"""
+        self.client.get(reverse('cart:view_cart'))
+        response = self.client.get(
+            reverse('cart:go-to-checkout'), follow=False)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('cart:view_cart'))
+
+    def test_go_to_checkout_authenticated_user_creates_order(self):
+        """Test that authenticated user reaches checkout with order created"""
+        self.client.login(username="testuser", password="testpass123")
+
+        # Add item to cart
+        self.client.get(reverse('cart:view_cart'))
+        session = self.client.session
+        session['cart_id'] = session.get('cart_id')
+        session.save()
+
+        self.client.post(
+            reverse('cart:add_to_cart', args=[self.product.pk]),
+            {'quantity': 1}
+        )
+
+        response = self.client.get(reverse('cart:go-to-checkout'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('order', response.context)
+        self.assertIsNotNone(response.context['order'])
+
+        # Verify order was created
+        order = response.context['order']
+        self.assertEqual(order.user, self.user)
+        self.assertFalse(order.is_paid)
+
+
+class TestCheckoutView(TestCase):
+    """Tests for checkout view (payment processing)"""
+
+    def setUp(self):
+        """Create test data"""
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpass123",
+            email="test@test.com"
+        )
+        self.category = Category.objects.create(name="Test")
+        self.product = Product.objects.create(
+            name="Test Product",
+            brand="Brand",
+            colour="Red",
+            size="M",
+            price=50.00,
+            discounted_price=45.00,
+            category=self.category,
+            description="Test"
+        )
+
+    def test_checkout_valid_form_standard_shipping(self):
+        """Test valid checkout with standard shipping"""
+        self.client.login(username="testuser", password="testpass123")
+
+        # Create cart and add product (total > 50 for free shipping)
+        cart = Cart.objects.create(user=self.user, is_active=True)
+        CartItem.objects.create(cart=cart, product=self.product, quantity=2)
+
+        # Create order
+        order = Order.objects.create(
+            user=self.user,
+            cart=cart,
+            total_price=0,
+            is_paid=False
+        )
+        OrderItem.objects.create(
+            order=order,
+            product=self.product,
+            quantity=2,
+            price=self.product.discounted_price,
+            size="M"
+        )
+
+        # Submit checkout form with standard shipping
+        checkout_data = {
+            'order_id': order.pk,
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'address': '123 Main St',
+            'city': 'London',
+            'state': 'England',
+            'zipcode': 'SW1A 1AA',
+            'phone': '02071838750',
+            'shipping_method': 'standard'
+        }
+        self.client.post(
+            reverse('cart:checkout'),
+            checkout_data,
+            follow=False
+        )
+
+        # Verify order is marked as paid
+        order.refresh_from_db()
+        self.assertTrue(order.is_paid)
+        self.assertEqual(order.contactno, '02071838750')
+        self.assertIn('123 Main St', order.shipping_address)
+
+        # Verify standard shipping cost applied (free for >= 50)
+        self.assertEqual(order.shipping_cost, Decimal('0.00'))
+
+        # Verify cart cleared and new one created
+        self.assertEqual(CartItem.objects.filter(cart=order.cart).count(), 0)
+        old_cart_inactive = Cart.objects.get(pk=order.cart.pk)
+        self.assertFalse(old_cart_inactive.is_active)
+
+    def test_checkout_valid_form_express_shipping(self):
+        """Test valid checkout with express shipping"""
+        self.client.login(username="testuser", password="testpass123")
+
+        # Create cart and add product
+        cart = Cart.objects.create(user=self.user, is_active=True)
+        CartItem.objects.create(cart=cart, product=self.product, quantity=1)
+
+        # Create order
+        order = Order.objects.create(
+            user=self.user,
+            cart=cart,
+            total_price=0,
+            is_paid=False
+        )
+        OrderItem.objects.create(
+            order=order,
+            product=self.product,
+            quantity=1,
+            price=self.product.discounted_price,
+            size="M"
+        )
+
+        # Submit checkout form with express shipping
+        checkout_data = {
+            'order_id': order.pk,
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'address': '456 Oak Ave',
+            'city': 'Manchester',
+            'state': 'England',
+            'zipcode': 'M1 1AA',
+            'phone': '01612200000',
+            'shipping_method': 'express'
+        }
+        self.client.post(
+            reverse('cart:checkout'),
+            checkout_data
+        )
+
+        # Verify order is marked as paid with express shipping cost
+        order.refresh_from_db()
+        self.assertTrue(order.is_paid)
+        self.assertEqual(order.shipping_cost, Decimal('14.99'))
+
+    def test_checkout_form_validation_error(self):
+        """Test checkout with invalid form data (empty shipping address)"""
+        self.client.login(username="testuser", password="testpass123")
+
+        # Create cart and order
+        cart = Cart.objects.create(user=self.user, is_active=True)
+        CartItem.objects.create(cart=cart, product=self.product, quantity=1)
+
+        order = Order.objects.create(
+            user=self.user,
+            cart=cart,
+            total_price=0,
+            is_paid=False
+        )
+        OrderItem.objects.create(
+            order=order,
+            product=self.product,
+            quantity=1,
+            price=self.product.discounted_price,
+            size="M"
+        )
+
+        # Submit with all empty fields - results in empty shipping_address
+        checkout_data = {
+            'order_id': order.pk,
+            'first_name': '',
+            'last_name': '',
+            'address': '',
+            'city': '',
+            'state': '',
+            'zipcode': '',
+            'phone': '',
+            'shipping_method': 'standard'
+        }
+        response = self.client.post(
+            reverse('cart:checkout'),
+            checkout_data
+        )
+
+        # Verify order is NOT marked as paid
+        order.refresh_from_db()
+        self.assertFalse(order.is_paid)
+
+        # Verify error response
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'cart/checkout.html')
+
+
+class TestOrderConfirmationView(TestCase):
+    """Tests for order_confirmation view"""
+
+    def setUp(self):
+        """Create test data"""
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpass123",
+            email="test@test.com"
+        )
+        self.category = Category.objects.create(name="Test")
+        self.product = Product.objects.create(
+            name="Test Product",
+            brand="Brand",
+            colour="Red",
+            size="M",
+            price=50.00,
+            discounted_price=45.00,
+            category=self.category,
+            description="Test"
+        )
+
+    def test_order_confirmation_displays_order(self):
+        """Test order confirmation page displays order and items"""
+        # Create completed order
+        cart = Cart.objects.create(user=self.user, is_active=False)
+        order = Order.objects.create(
+            user=self.user,
+            cart=cart,
+            total_price=54.99,
+            is_paid=True,
+            shipping_address="123 Main St, London",
+            shipping_cost=Decimal('9.99')
+        )
+        OrderItem.objects.create(
+            order=order,
+            product=self.product,
+            quantity=1,
+            price=self.product.discounted_price,
+            size="M"
+        )
+
+        response = self.client.get(
+            reverse('cart:order_confirmation', args=[order.pk])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['order'], order)
+        self.assertEqual(len(response.context['order_items']), 1)
+        self.assertEqual(response.context['shipping'], Decimal('9.99'))
+        self.assertEqual(response.context['subtotal'], Decimal('45.00'))
+
+    def test_order_confirmation_nonexistent_order(self):
+        """Test order confirmation with non-existent order returns 404"""
+        response = self.client.get(
+            reverse('cart:order_confirmation', args=[9999])
+        )
+        self.assertEqual(response.status_code, 404)
