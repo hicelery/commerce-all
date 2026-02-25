@@ -130,7 +130,7 @@
                 </div>
                 
                 <div class="col-12 col-sm-auto d-flex flex-column align-items-center">
-                    <label for="quantity" class="form-label fw-semibold">Quantity</label>
+                    <label class="form-label fw-semibold">Quantity</label>
                      {% for size, quantity in sizes.items %}
                         <div class="input-group" id="quantity_group_{{ size }}" style="display: none;">
                             <button type="button" class="btn btn-outline-secondary" onclick="decreaseQuantity('{{ size }}')">-</button>
@@ -242,9 +242,9 @@
                         {% csrf_token %}
                         <!--Stars-->
                         <div class="mb-3">
-                            <label for="rating{{i}}" class="form-label fw-semibold">Rating</label>
+                            <label class="form-label fw-semibold">Rating</label>
                             <div>
-                                <div class="btn-group" role="group">
+                                <div id="rating-group" class="btn-group" role="group">
                                     <!--Add a star button for each rating value from 1 to 5 -->
                                     {% for i in "12345" %}
                                         <input type="radio" class="btn-check" name="rating" id="rating{{ i }}" value="{{ i }}" required>
