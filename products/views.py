@@ -72,11 +72,20 @@ def ProductList(request, category_name=None, sort_option=None):
     price_max = request.GET.get('price_max')
 
     try:
-        if price_min:
-            qs = qs.filter(discounted_price__gte=price_min)
-        if price_max:
-            qs = qs.filter(discounted_price__lte=price_max)
-    except Exception:
+        if price_min and price_max:
+            price_min_val = float(price_min)
+            price_max_val = float(price_max)
+            # Constraint: price_min must be less than price_max
+            if price_min_val > price_max_val:
+                # Swap values if min is greater than max
+                price_min_val, price_max_val = price_max_val, price_min_val
+            qs = qs.filter(discounted_price__gte=price_min_val,
+                           discounted_price__lte=price_max_val)
+        elif price_min:
+            qs = qs.filter(discounted_price__gte=float(price_min))
+        elif price_max:
+            qs = qs.filter(discounted_price__lte=float(price_max))
+    except (ValueError, TypeError):
         # ignore invalid numeric input
         pass
 
