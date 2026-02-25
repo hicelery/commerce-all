@@ -1,40 +1,54 @@
 # commerce-all
 
-Commerce-all is a sleek, navigable e-commerce website built with django designed for end users and site administrators.
+A full-stack e-commerce platform built with Django, featuring product browsing, shopping cart functionality, secure checkout, user accounts, and admin dashboard. Designed for seamless shopping experiences with comprehensive order and review management.
 
+## Quick Start
+
+**Live site:** https://commerce-all-7e9e664f7d53.herokuapp.com/
+
+**Local setup:**
+
+```bash
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
+
+**Requirements:** Python 3.12, PostgreSQL, Cloudinary account (for image hosting), Django allauth setup
 
 ## Deployment
 
-Deployed link: https://commerce-all-7e9e664f7d53.herokuapp.com/
+<details>
+<summary><strong>Detailed Deployment Instructions</strong></summary>
 
-To deploy this project, we need only:
+### Local Setup
+
 - Install dependencies from requirements.txt
 - Create Cloudinary API link
-- Create instance of postgreSQL database
-- (Optional) Configure app on google auth platform:
+- Create instance of PostgreSQL database
+- (Optional) Configure app on Google auth platform:
     - Create app
-    - Define host urls
+    - Define host URLs
     - Create a client
-    - define redirect URLs 
-- Configure environment variables
+    - Define redirect URLs
+- Configure environment variables:
     - Project secret key
     - Database URL
     - Cloudinary API URL
     - Email server details (host, port, TLS/SSL, user, password)
     - (For Google sign in) Google client secret key and client ID
-- Ensure settings file reflects this.
- 
-  To host this on a third party provider (heroku) we must also define the python version and dyno type. For this project and heroku we need:
-  - .python-version file
-  - Procfile
- With:
+- Ensure settings file reflects this
 
-- python 3.12
-- web: gunicorn commerce.wsgi
+### Heroku Deployment
 
-For heroku deployment, environment variables must be saved on heroku, including DB and Cloudinary links.
+To host on Heroku, create:
 
-  
+- `.python-version` file with `python 3.12`
+- `Procfile` with `web: gunicorn commerce.wsgi`
+
+Environment variables must be saved on Heroku, including DB and Cloudinary links.
+
+</details>
 
 ## UX design
 
@@ -64,7 +78,7 @@ Implemented features:
 
 - Product list view with price, stock status, discounts.
 - Product filtering with categorization, price and sort options.
-- Product detail view with reviews, additional image carousels and add to cart.
+- Product detail with reviews, additional image carousels and add to cart.
 - Product reviews for signed in users, with edit and delete functionality - Full CRUD operations for users own records.
 - Product quantities split by sizes.
 - Cart and checkout workflow, with CRUD operations for all users (create cart, add to cart, remove from cart, update quantity).
@@ -94,12 +108,11 @@ DB Schema updates:
 
 - Added product image table: This allows multiple product images to be associated with one product id.
 - Product Sizes: Added Product size table to allow product quantity to be tracked across multiple sizes.
-- 
 
-## Agile 
+## Agile
 
 To aid development, the project length was divided into three sprints.
-User stories were added to a kanban board, and development items to achieve these were created as child objects. This enabled me to set the user stories as swimlanes to better view progress towards each issue. 
+User stories were added to a kanban board, and development items to achieve these were created as child objects. This enabled me to set the user stories as swimlanes to better view progress towards each issue.
 I used custom labels for MoSCoW prioritisation and targeted 60% must have 30% should have, 10% could have issues for each sprint.
 The development workflow was customised to add a testing and grooming status to the kanban board, which allows for issues to be developed, and then set to groom to be considered for further iteration in future sprints.
 
@@ -112,72 +125,22 @@ Account management is handled with django allauth and Google Oauth2 SSO.
 
 ## Testing
 
-Automated tests were created upon MVP deployment, and kept as a regression test suite for future feature implementation. General UX testing was conducted following site maps and distributing the site to a prospective user group to provide feedback and bugs; which greatly increased testing coverage.
+**Comprehensive test suite:** 316 automated tests with 100% pass rate and 95% code coverage
 
-I created initial unit tests for models, views, and forms, before using Claude Haiku to expand coverage and create tests for edge cases I may have missed, including minor stress testing; before creating a coverage summary report to better describe the scope of the test suite. This mimicked working with an external QA team, who have separation from code creation and can be more analytical and penetrative when creating test suites.
+| Component    | Tests | Coverage | Pass rate |
+| ------------ | ----- | -------- | --------- |
+| About App    | 50    | 100%     | 100%      |
+| Cart App     | 114   | 85%      | 100%      |
+| Dashboard    | 42    | 100%     | 100%      |
+| Enter App    | 16    | 100%     | 100%      |
+| Products App | 94    | 93%      | 100%      |
 
-Lighthouse testing was conducted for performance and high-level accessibility/security testing. WCAG testing utilized WAVE(WebAIM) browser extension.
+**Testing approach:** Automated unit tests for models, views, and forms with edge cases; manual UX testing with user group feedback; Lighthouse performance audits; WCAG 2.1 accessibility compliance via WAVE.
+Coverage was calculated against number of lines in views/models etc that were called in unit test suite.
 
-### Test Suite Exit Report
+**Accessibility:** All pages achieve WCAG AAA compliance with Lighthouse scores ≥9.6/10
 
-#### Dashboard Tests: 42 Tests
-
-##### `TestProfileViewAccountCentre` (11 tests)
-
-Tests for the account centre which displays user orders:
-
-- **Login Requirements**: Tests authentication redirects for unauthenticated users
-- **Access Control**: Verifies only authenticated users can access the view
-- **Order Display**: Tests correct template usage (`account_centre.html`) and context variables
-- **Data Filtering**: Ensures users only see their own orders, not other users' orders
-- **Sorting**: Validates orders are sorted by `updated_at` in descending order
-- **Item Counting**: Tests automatic item count calculation and aggregation per order
-- **Edge Cases**: No orders, many orders (50+), orders with various item counts (0-100)
-
-##### `TestProfilePageView` (8 tests)
-
-Tests for the profile page view (GET profile form):
-
-- **Authentication**: Validates login requirement
-- **Form Handling**: Unbound form with user data pre-populated correctly
-- **Template Verification**: Correct template usage (`profile.html`)
-- **Field Validation**: All expected fields present (`first_name`, `last_name`, `username`)
-- **HTTP Methods**: Tests both GET and POST request handling
-
-##### `TestProfileUpdateView` (15 tests)
-
-Tests for the profile update view (POST profile updates):
-
-- **Valid Updates**: Successful profile modifications with success message display
-- **Partial Updates**: Updating individual fields (`first_name`, `last_name`) independently
-- **Data Persistence**: Verifies non-profile fields are preserved (email, password, etc.)
-- **Invalid Data**: Tests with missing required fields and duplicate username attempts
-- **Edge Cases**: Empty fields, case-sensitive username handling
-- **Form Validation**: Warning messages displayed on invalid submissions
-- **HTTP Methods**: GET returns unbound form, POST processes updates
-
-##### `TestDashboardEdgeCases` (8 tests)
-
-Edge case and boundary condition tests:
-
-- **Special Characters,  Unicode Support**: Names with hyphens, apostrophes and accents
-- **Length Limits**: Very long names (30+ characters), whitespace-only values
-- **Data Isolation**: Verifies session persistence across multiple operations
-- **Stress Tests**: 50 orders per user, 100 items per order
-
-#### About & Products Tests: 13 Tests
-
-Comprehensive tests for:
-
-- Contact form submission
-- Product listing and filtering
-- Product detail views
-- Product reviews and ratings
-- Category and product relationships
-
-#### Accessibility
-
-All pages tested manually with WAVE and lighthouse and have no WCAG errors. All pages have AIM score of or above 9.6/10  <img width="600" aspect-ratio="1/1" alt="image" src="https://github.com/user-attachments/assets/f1e56a47-b66d-4308-95f5-96af00128396" />
+For detailed test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
 
 ## AI retrospective
 
@@ -186,9 +149,12 @@ To aid development, I created a custom copilot agent inspired by u/burkeholland 
 I used AI to create a project checklist to ensure I had considered all bases, and serve as a project status checker.
 I created initial HTML boilerplates from wireframes, thought this did require manual intervention, as this created a large amount of redundant functionality that could be present on an e-commerce website, but was not needed for the scope of my project.
 
-Test pack creation was augmented - I defined a test suite and asked AI to expand coverage: to create tests for missed edge cases; alongside validating the created tests were behaving as expected.
+Test pack creation was augmented - I defined a test suite and implemented initial unit tests for models, views, and forms; before using Claude Haiku to expand coverage and create tests for missed edge cases, including minor stress testing.
+Again using Claude, I created a testing exit summary report to better describe the scope and success of the test suite. This mimicked working with an external QA team, who have separation from code creation and can be more analytical and penetrative when creating test suites.
 
 In future I would continue to use custom agent prompts, and boilerplate creation. I would ensure that any feature creation would include the full workspace in requests and use premium request models to ensure the largest amount of context and reduce code that doesn't interact well with the existing codebase.
+
+Unit test creation through AI was a very impactful addition, and greatly increased coverage as there were many cases I had not thought to test. It is worth noting that it would create unused variables and sometimes invalid tests, so in future I will place hard limits on the number of generated tests (e.g 50 tests per app) to reduce the amount of manual intervention needed.
 
 ## References
 
