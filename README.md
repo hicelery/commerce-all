@@ -2,7 +2,39 @@
 
 Commerce-all is a sleek, navigable e-commerce website built with django designed for end users and site administrators.
 
-Deployed link:
+
+## Deployment
+
+Deployed link: https://commerce-all-7e9e664f7d53.herokuapp.com/
+
+To deploy this project, we need only:
+- Install dependencies from requirements.txt
+- Create Cloudinary API link
+- Create instance of postgreSQL database
+- (Optional) Configure app on google auth platform:
+    - Create app
+    - Define host urls
+    - Create a client
+    - define redirect URLs 
+- Configure environment variables
+    - Project secret key
+    - Database URL
+    - Cloudinary API URL
+    - Email server details (host, port, TLS/SSL, user, password)
+    - (For Google sign in) Google client secret key and client ID
+- Ensure settings file reflects this.
+ 
+  To host this on a third party provider (heroku) we must also define the python version and dyno type. For this project and heroku we need:
+  - .python-version file
+  - Procfile
+ With:
+
+- python 3.12
+- web: gunicorn commerce.wsgi
+
+For heroku deployment, environment variables must be saved on heroku, including DB and Cloudinary links.
+
+  
 
 ## UX design
 
@@ -16,6 +48,7 @@ Users will be able to add products to a cart and upon purchase cart details will
 Users will be able to add reviews to products, and perform CRUD operations on their reviews.
 
 I created wireframes to block out desktop and mobile layouts of the main pages, highlighting layout and responsive behaviour.
+
 <img width="2118" height="800" alt="IFAfinal wireframe" src="https://github.com/user-attachments/assets/fa32a5a4-508f-4f1f-bef9-d4d64201d413" />
 
 ## Features
@@ -145,9 +178,6 @@ Comprehensive tests for:
 #### Accessibility
 
 All pages tested manually with WAVE and lighthouse and have no WCAG errors. All pages have AIM score of or above 9.6/10  <img width="600" aspect-ratio="1/1" alt="image" src="https://github.com/user-attachments/assets/f1e56a47-b66d-4308-95f5-96af00128396" />
-
-
-## Deployment
 
 ## AI retrospective
 
