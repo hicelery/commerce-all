@@ -15,6 +15,9 @@ DB Schema:
 Users will be able to add products to a cart and upon purchase cart details will be added to order tables and deleted from cart tables.
 Users will be able to add reviews to products, and perform CRUD operations on their reviews.
 
+I created wireframes to block out desktop and mobile layouts of the main pages, highlighting layout and responsive behaviour.
+<img width="2118" height="800" alt="IFAfinal wireframe" src="https://github.com/user-attachments/assets/fa32a5a4-508f-4f1f-bef9-d4d64201d413" />
+
 ## Features
 
 Target features:
@@ -58,6 +61,16 @@ DB Schema updates:
 
 - Added product image table: This allows multiple product images to be associated with one product id.
 - Product Sizes: Added Product size table to allow product quantity to be tracked across multiple sizes.
+- 
+
+## Agile 
+
+To aid development, the project length was divided into three sprints.
+User stories were added to a kanban board, and development items to achieve these were created as child objects. This enabled me to set the user stories as swimlanes to better view progress towards each issue. 
+I used custom labels for MoSCoW prioritisation and targeted 60% must have 30% should have, 10% could have issues for each sprint.
+The development workflow was customised to add a testing and grooming status to the kanban board, which allows for issues to be developed, and then set to groom to be considered for further iteration in future sprints.
+
+For initial creation of the minimum viable project, no git workflow was utilised, but following deployment of the MVP this repo will use a gitflow approach for further release and feature development.
 
 ## Technologies
 
