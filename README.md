@@ -86,6 +86,7 @@ Implemented features:
 - Account centre - allows users to update account information and view order history.
 - Discount codes for users in cart - configured with start and end dates and usage number.
 - Google account SSO
+- Persistent breadcrumb and navbar for ease of navigation
 
 Admin specific features:
 
