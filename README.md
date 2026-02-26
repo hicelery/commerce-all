@@ -193,7 +193,16 @@ Responsivity testing for multiple devices and use of am i responsive.
 
 For detailed unit test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
 
-**User story test:**
+| User Story                  | Expected functionality                                                                  | Actual Functionality                                                                                                                 | Pass/Fail |
+| --------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | --------- |
+| 1) Superuser                | Admin should be able to manage site content, user accounts and perform moderation tasks | Admin panel has full CRUD operations over all models. Reviews require admin approval.                                                | Pass      |
+| 2) Regular user             | Manage account details and view order history                                           | Account centre displays order history and quick links to change password, email, username                                            | Pass      |
+| 3) Site visitor             | Create a purchase order for desired items                                               | Checkout workflow creates order, confirms and adds to order history in account centre                                                | Pass      |
+| 4) Admin and site visitor   | Retrieve and highlight products on site load to drive user engagement                   | No shop highlights/featured products were implemented                                                                                | Fail      |
+| 5) Regular user             | Submit queries to site owners for order updates and issue resolution                    | Order contact form and email server saves user queries to admin panel and marks as read/unread for Categorizing                      | Pass      |
+| 6) Site admin               | Add discounts to products to drive sales and create promotion periods                   | Discounts can be applied to product, category and have specified timeframe.                                                          | Pass      |
+| 7) Regular user             | Add products to cart and complete purchase orders                                       | User can create cart add products and checkout. Carts are stored in user session to retain products when revisiting site.            | Pass      |
+| 8) Site visitor/Buyer/Owner | View and add product reviews to make informed purchasing decisions                      | Product reviews visible to all. Authenticated users can leave and edit/delete reviews. Admin can approve and see unapproved reviews. | Pass      |
 
 **Accessibility:** All pages achieve WCAG AAA compliance with Lighthouse scores ≥9.6/10.
 Initial Google lighthouse testing largely revealed issues with third party cookies and insecure photo delivery, associated with cloudiary - this was easily remidied by enforcing 'secure = true' in cloudinary SDK config. In future I would prompt user to accept these for site function or seek an alternative hosting provider <img width="851" height="449" alt="image" src="https://github.com/user-attachments/assets/5f9609d9-2626-4c5c-b33b-de5ea45393dd" />
