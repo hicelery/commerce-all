@@ -52,8 +52,9 @@ Environment variables must be saved on Heroku, including DB and Cloudinary links
 
 ## UX design
 
-E-commerce sites are incredibly information-dense, and almost exclusively present data for the user to interactive with. Ease of navigation is essential for this application, so as not to introduce any barriers to a user completing a transaction.
-To accomplish this, and allow the site to become scaleable, a logical and modular DB schema is essential.
+For this project I targeted a wide user base with a focus on young adults. To achieve this I leant into a simple and playful handrawn style. This design language is prevalent in clothing markets to imply a down-to-earth, consumer-centric brand. Features and user stories were created to ensure intuitive functionality, where ease of navigation is essential for this application, so as not to introduce any barriers to a user completing a purchase.
+
+E-commerce sites are incredibly information-dense, and almost exclusively present data for the user to interactive with. To accomplish this, and allow the site to become scaleable, a logical and modular DB schema is essential.
 
 DB Schema:
 <img width="1054" height="757" alt="image" src="https://github.com/user-attachments/assets/9486ffb0-3a1c-4557-95ca-be1187deb9dc" />
@@ -108,7 +109,6 @@ Much of the complexity of theses features came from the persistence throughout t
 
 Some features were de-scoped, in particular payment was excluded from this project due to need to host site inventory on Stripe (and use webhooks to sync these). Creating product entries ended up being a large time sink, and repeating this process for stripe would have significantly impacted timelines.
 
-In future I would allow for a larger, more comprehensize DB schema, to allow more information to persist in DB, rather than needing to be created/calculated in multiple views.
 It was beyond the scope of this project to create automated DB runs, but this would have streamlined a lot of features - particularly discounts. Rather than fetching discounts, and calculating price adjustments, we would be able to run an hourly executable that takes any active discounts and applies these to a product discounted price field. This would also allow for live stock updates and reserving stock for users when items are added to cart.
 
 DB Schema updates:
@@ -118,7 +118,29 @@ DB Schema updates:
 
 ### Project Hurdles/Bugs
 
-A few features that were tough to build and how i fixed them (carts duping, sizes/)
+A few features caused some issues during development, particularly cart handling, shipping and stocking different sized items.
+
+#### Carts:
+
+- **Approach:** In order to store items in a cart for purchase, initially I created a cart when a user added an item to the cart, and subsequent items to this cart. In order to achieve this I wanted to tie carts to users, to ensure a 1-1 relationship.
+- **Problem:** This blocked non-logged in users from adding items to a cart.
+- **Solution**: I updated the view to remove this constraint.
+- **Further Iteration**: This meant after completing an order, futher items would be added to the same cart and cause integrity issues when creating an order.
+- **Solution:** I updated DB schema to include a cart active status, and deactivated carts after order and created a new one. I used AI to add more defensive programming, which included selecting the most recent active user cart when creating an order to enforce database constraints.
+
+#### Shipping:
+
+- **Approach:** Shipping should affect order total, and give the option of free shipping for orders under £50.
+- **Problem:** Shipping would not be reflected either in order total or update on screen in real-time.
+- **Solution:** I added a field to the Order model for shipping cost and total price, so that this could be calculated in one view and then queried for use in further view. I added javascript to update relevant fields on the front end so this is visibile to the user.
+
+#### Sizes:
+
+- **Approach**: Each product should be able to have multiple size options.
+- **Problem:** My initial approach added size to the Product model, which meant a new product would need to be added for each size, disrupting the shopping experience by showing seemingly duplicate products and increasing the amount of data entry for staff.
+- **Solution:** I added a new model 'ProductSize' to link to a product and add a size and quantity, before updating relevant views. This did cause further considerations to the cart process, as this would not group cart items by size (e.g 3x M shirt would display as 3 separate cart items); so I updated CartItem model to add size to each entry.
+
+Overall many of these development issues could have been avoided by better understanding the scope of the project. This would allow for a larger, more comprehensize DB schema, to allow more information to persist in DB, rather than needing to be created/calculated in multiple views.
 
 ## Agile
 
@@ -151,31 +173,29 @@ Responsivity testing for multiple devices and use of am i responsive.
 | Enter App    | 16    | 100%     | 100%      |
 | Products App | 94    | 93%      | 100%      |
 
+For detailed unit test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
+
 **Accessibility:** All pages achieve WCAG AAA compliance with Lighthouse scores ≥9.6/10.
 Initial Google lighthouse testing largely revealed issues with third party cookies and insecure photo delivery, associated with cloudiary - this was easily remidied by enforcing 'secure = true' in cloudinary SDK config. In future I would prompt user to accept these for site function or seek an alternative hosting provider <img width="851" height="449" alt="image" src="https://github.com/user-attachments/assets/5f9609d9-2626-4c5c-b33b-de5ea45393dd" />
 
-| Page | Phone | Tablet | Desktop |
-|------|-------|--------|---------|
-| Shop | <img width="363" height="640" alt="Shop mobile view" src="https://github.com/user-attachments/assets/a6d93a3d-a839-454c-a31c-63a53273892f" /> | <img width="532" height="755" alt="Shop tablet view" src="https://github.com/user-attachments/assets/773a0b7c-a3c3-4979-80db-6c7182ba3e92" /> | <img width="1208" height="686" alt="Shop desktop view" src="https://github.com/user-attachments/assets/47f2ff65-6515-4d8d-a9d9-d28b1c3370cc" /> |
-| Item Detail | <img width="497" height="797" alt="Item detail mobile" src="https://github.com/user-attachments/assets/387b8b77-9b82-44fb-b984-667af4e356a3" /> | <img width="531" height="756" alt="Item detail tablet" src="https://github.com/user-attachments/assets/0dfd5bcf-9512-4021-b291-28c937d63696" /> | <img width="1386" height="782" alt="Item detail desktop" src="https://github.com/user-attachments/assets/39aa48ff-a040-406c-9df7-a9d60ae2e78d" /> |
-| Cart | <img width="366" height="639" alt="Cart mobile" src="https://github.com/user-attachments/assets/4d1e6088-acc7-4d96-bf7d-0ab58a627f17" /> | <img width="471" height="676" alt="Cart tablet" src="https://github.com/user-attachments/assets/7023b524-6fa8-4d68-8ee7-68516b109aa0" /> | <img width="1209" height="683" alt="Cart desktop" src="https://github.com/user-attachments/assets/8ae55541-eaed-4b74-9d32-b7fc314d9ad6" /> |
-| Checkout | <img width="360" height="633" alt="Checkout mobile" src="https://github.com/user-attachments/assets/f9208a18-5de7-405a-8870-0b36aeadca2c" /> | <img width="522" height="747" alt="Checkout tablet" src="https://github.com/user-attachments/assets/ed5dfbfe-4a72-43a2-bd8f-b694472de929" /> | <img width="1209" height="684" alt="Checkout desktop" src="https://github.com/user-attachments/assets/c0f2ead9-80d1-49d2-8215-51e736629630" /> |
-| Order Confirmation | <img width="362" height="639" alt="Order confirmation mobile" src="https://github.com/user-attachments/assets/eba13542-c2a3-4d53-9819-f0b5f5fe51c0" /> | <img width="527" height="751" alt="image" src="https://github.com/user-attachments/assets/bd0a8fb4-5219-4518-9a4d-e4df4b4cc0a8" />
- | <img width="1213" height="687" alt="Order confirmation desktop" src="https://github.com/user-attachments/assets/3088a9cb-dba2-4117-bf34-2454e410e905" /> |
-
 **Responsivity:** All pages are fully responsive across mobile, tablet, and desktop viewports with consistent layouts and navigation.
 
-
-For detailed unit test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
+| Page               | Phone                                                                                                                                                  | Tablet                                                                                                                                                 | Desktop                                                                                                                                                  |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Shop               | <img width="363" height="640" alt="Shop mobile view" src="https://github.com/user-attachments/assets/a6d93a3d-a839-454c-a31c-63a53273892f" />          | <img width="532" height="755" alt="Shop tablet view" src="https://github.com/user-attachments/assets/773a0b7c-a3c3-4979-80db-6c7182ba3e92" />          | <img width="1208" height="686" alt="Shop desktop view" src="https://github.com/user-attachments/assets/47f2ff65-6515-4d8d-a9d9-d28b1c3370cc" />          |
+| Item Detail        | <img width="497" height="797" alt="Item detail mobile" src="https://github.com/user-attachments/assets/387b8b77-9b82-44fb-b984-667af4e356a3" />        | <img width="531" height="756" alt="Item detail tablet" src="https://github.com/user-attachments/assets/0dfd5bcf-9512-4021-b291-28c937d63696" />        | <img width="1386" height="782" alt="Item detail desktop" src="https://github.com/user-attachments/assets/39aa48ff-a040-406c-9df7-a9d60ae2e78d" />        |
+| Cart               | <img width="366" height="639" alt="Cart mobile" src="https://github.com/user-attachments/assets/4d1e6088-acc7-4d96-bf7d-0ab58a627f17" />               | <img width="471" height="676" alt="Cart tablet" src="https://github.com/user-attachments/assets/7023b524-6fa8-4d68-8ee7-68516b109aa0" />               | <img width="1209" height="683" alt="Cart desktop" src="https://github.com/user-attachments/assets/8ae55541-eaed-4b74-9d32-b7fc314d9ad6" />               |
+| Checkout           | <img width="360" height="633" alt="Checkout mobile" src="https://github.com/user-attachments/assets/f9208a18-5de7-405a-8870-0b36aeadca2c" />           | <img width="522" height="747" alt="Checkout tablet" src="https://github.com/user-attachments/assets/ed5dfbfe-4a72-43a2-bd8f-b694472de929" />           | <img width="1209" height="684" alt="Checkout desktop" src="https://github.com/user-attachments/assets/c0f2ead9-80d1-49d2-8215-51e736629630" />           |
+| Order Confirmation | <img width="362" height="639" alt="Order confirmation mobile" src="https://github.com/user-attachments/assets/eba13542-c2a3-4d53-9819-f0b5f5fe51c0" /> | <img width="527" height="751" alt="Order confirmation tablet" src="https://github.com/user-attachments/assets/bd0a8fb4-5219-4518-9a4d-e4df4b4cc0a8" /> | <img width="1213" height="687" alt="Order confirmation desktop" src="https://github.com/user-attachments/assets/3088a9cb-dba2-4117-bf34-2454e410e905" /> |
 
 ## AI retrospective
 
 **Main use cases**:
+
 - Project planning and organisation tooling
 - Code creation (for simple, easy to define use cases)
 - Debugging
 - Test pack creation
-
 
 To aid development, I created a custom copilot agent inspired by u/burkeholland 's gpt beastmode agent. The aim of this was to standardise the approach of free and less-than-premium usage models (which often struggle with more complex and persistent conversations due to a reduced context window) to give repeateable, more viable results to allow for greater usage within my premium requests budget.
 To achieve this, I defined three main goals: be opinionated (don't pander to user), break down tasks into to-do lists, ask for user input before moving to next steps.
@@ -193,3 +213,4 @@ Unit test creation through AI was a very impactful addition, and greatly increas
 ## References
 
 u/burkeholland/minibeast.md
+Design: https://www.ssense.com/en-gb/, https://london.doverstreetmarket.com/
