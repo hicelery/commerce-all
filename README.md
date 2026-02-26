@@ -167,6 +167,13 @@ For detailed unit test breakdown and coverage analysis, see [TESTING_EXIT_REPORT
 
 ## AI retrospective
 
+**Main use cases**:
+- Project planning and organisation tooling
+- Code creation (for simple, easy to define use cases)
+- Debugging
+- Test pack creation
+
+
 To aid development, I created a custom copilot agent inspired by u/burkeholland 's gpt beastmode agent. The aim of this was to standardise the approach of free and less-than-premium usage models (which often struggle with more complex and persistent conversations due to a reduced context window) to give repeateable, more viable results to allow for greater usage within my premium requests budget.
 To achieve this, I defined three main goals: be opinionated (don't pander to user), break down tasks into to-do lists, ask for user input before moving to next steps.
 
