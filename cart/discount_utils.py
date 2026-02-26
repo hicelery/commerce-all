@@ -1,7 +1,6 @@
 """Utility functions for discount code handling."""
 
 from django.utils import timezone
-from django.db import models
 from products.models import DiscountCode
 
 

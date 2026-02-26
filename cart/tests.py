@@ -79,8 +79,8 @@ class TestCartModel(TestCase):
     # ========== MULTIPLE CARTS FOR USER TESTS ==========
     def test_multiple_carts_same_user(self):
         """Test that user can have multiple carts"""
-        cart1 = Cart.objects.create(user=self.user, is_active=True)
-        cart2 = Cart.objects.create(user=self.user, is_active=False)
+        Cart.objects.create(user=self.user, is_active=True)
+        Cart.objects.create(user=self.user, is_active=False)
 
         user_carts = Cart.objects.filter(user=self.user)
         self.assertEqual(user_carts.count(), 2)
@@ -183,13 +183,13 @@ class TestCartItemModel(TestCase):
     # ========== MULTIPLE ITEMS TESTS ==========
     def test_same_product_different_sizes(self):
         """Test cart can have same product with different sizes"""
-        item1 = CartItem.objects.create(
+        CartItem.objects.create(
             cart=self.cart,
             product=self.product,
             quantity=1,
             size="M"
         )
-        item2 = CartItem.objects.create(
+        CartItem.objects.create(
             cart=self.cart,
             product=self.product,
             quantity=1,

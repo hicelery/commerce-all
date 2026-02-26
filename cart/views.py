@@ -1,14 +1,12 @@
-from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.urls import reverse
 from decimal import Decimal
 
 
 from .models import Cart, CartItem, Order, OrderItem
 from .forms import CheckoutForm, DiscountCodeForm
 from .discount_utils import validate_discount_code, apply_discount_to_items
-from products.models import Product, ProductSize, DiscountCode
+from products.models import Product, DiscountCode
 
 # Create your views here.
 
@@ -45,7 +43,7 @@ def cart_detail(request, cart_id=None):
         except DiscountCode.DoesNotExist:
             request.session.pop('applied_discount_code_id', None)
 
-    # Calculate subtotal using base discounted prices (not discount code prices)
+    # Calculate subtotal using base discounted prices (not discount code)
     subtotal = sum(item.quantity *
                    item.product.discounted_price for item in items)
 
@@ -89,16 +87,18 @@ def add_to_cart(request, product_id):
     if not cart:
         if request.user.is_authenticated:
             try:
-                # Prefer an active cart for the user; this avoids MultipleObjectsReturned
+                # Prefer an active cart for the user;
+                # this avoids MultipleObjectsReturned
                 cart, _ = Cart.objects.get_or_create(
                     user=request.user, is_active=True)
             except Cart.MultipleObjectsReturned:
-                # If multiple carts exist, pick the most-recent one (highest pk) and use it.
-                # This is defensive: it avoids crashing and provides a single cart to continue with.
+                # If multiple carts exist,
+                # pick the most-recent one (highest pk) and use it.
                 cart = Cart.objects.filter(
                     user=request.user, is_active=True).order_by('-pk').first()
                 if not cart:
-                    # As a last resort, pick any cart for the user or create a fresh one
+                    # As a last resort,
+                    # pick any cart for the user or create a fresh one
                     cart = Cart.objects.filter(user=request.user).order_by(
                         '-pk').first() or Cart.objects.create(user=request.user, is_active=True)
         else:
@@ -124,7 +124,8 @@ def update_cart_item(request, cart_id, cartitem_id):
     cart = get_object_or_404(Cart, pk=cart_id)
     cartitem = get_object_or_404(CartItem, pk=cartitem_id, cart=cart)
 
-    # replace logic with update based on action (increase/decrease) or explicit quantity if provided
+    # replace logic with update based on action (increase/decrease)
+    # or explicit quantity if provided
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'increase':
@@ -183,7 +184,8 @@ def apply_discount(request):
                 if is_valid:
                     request.session['applied_discount_code_id'] = discount_code.pk
                     messages.success(
-                        request, f'Discount code "{discount_code.code}" applied successfully!')
+                        request,
+                        f'Discount code "{discount_code.code}" applied successfully!')
                 else:
                     messages.error(
                         request, error_msg or 'Invalid discount code.')
@@ -202,7 +204,7 @@ def go_to_checkout(request):
     # Only use active carts from the session
     cart = Cart.objects.filter(
         pk=cart_id, is_active=True).first() if cart_id else None
-    # bounce user - maybe create guest user if not authenticated, but for now just require login to checkout
+    # bounce user if not authenticated
     if not request.user.is_authenticated:
         messages.info(
             request, 'You must be logged in to checkout. Log in here: <a href="/accounts/login">Login</a> or sign up here: <a href="/accounts/signup">Sign Up</a>.', extra_tags='safe')
@@ -228,12 +230,16 @@ def go_to_checkout(request):
             request.session.pop('applied_discount_code_id', None)
             applied_discount_code = None
 
-    # create order object first to get order_id for order items, then update total price after creating order items.
+    # create order object first to get order_id for order items,
+    # then update total price after creating order items.
     try:
         order = Order.objects.get(cart=cart, user=request.user, is_paid=False)
     except Order.DoesNotExist:
         order = Order.objects.create(
-            user=request.user, total_price=0, cart=cart, discount_code=applied_discount_code)
+            user=request.user,
+            total_price=0,
+            cart=cart,
+            discount_code=applied_discount_code)
 
     # Set discount code on existing order
     order.discount_code = applied_discount_code
@@ -244,7 +250,9 @@ def go_to_checkout(request):
     # clearing cart
     OrderItem.objects.filter(order=order).delete()
     for item in CartItem.objects.filter(cart=cart):
-        # add new order item for each cart item, linking back to cart item for reference but allowing order items to persist after cart is cleared
+        # add new order item for each cart item,
+        # linking back to cart item for reference
+        # but allowing order items to persist after cart is cleared
         try:
             OrderItem.objects.create(
                 product=item.product,
@@ -254,16 +262,19 @@ def go_to_checkout(request):
                 cartitem=item,
                 size=item.size
             )
-        # skip adding if item already exists (e.g. user goes back to checkout after order creation but before clearing cart)
+        # skip adding if item already exists
         except Exception:
             pass
 
-    # calculate subtotal and shipping for order summary, but total price will be updated at checkout
+    # calculate subtotal and shipping for order summary,
+    # total price will be updated at checkout
     subtotal = sum(
         item.quantity * item.price for item in OrderItem.objects.filter(order=order)
     )
 
-    # Set shipping prices for display; actual shipping cost will be determined at checkout based on selected method
+    # Set shipping prices for display;
+    # actual shipping cost will be determined at checkout
+    # based on selected method
     standard_shipping = Decimal('0.00') if subtotal >= 50 else Decimal('9.99')
     express_shipping = Decimal('14.99')
 
@@ -284,7 +295,8 @@ def go_to_checkout(request):
 
 
 def checkout(request, order_id=None):
-    # Resolve order: prefer explicit arg, then POST/GET, then user's unpaid order
+    # Resolve order: prefer explicit arg,
+    # then POST/GET, then user's unpaid order
     if order_id is None:
         order_id = request.POST.get('order_id') or request.GET.get('order_id')
     order = None
@@ -298,9 +310,11 @@ def checkout(request, order_id=None):
             # no order found to process
             return redirect('cart:view_cart')
 
-    # with order, update shipping address and mark as paid, then clear cart items and create new cart for session
+    # with order, update shipping address and mark as paid
+    # clear cart items and create new cart for session
     if request.method == 'POST':
-        # build shipping_address from submitted fields so form validation succeeds
+        # build shipping_address from submitted fields
+        #  so form validation succeeds
         post_data = request.POST.copy()
         first_name = post_data.get('first_name', '').strip()
         last_name = post_data.get('last_name', '').strip()
@@ -368,7 +382,9 @@ def checkout(request, order_id=None):
         else:
             messages.error(
                 request, f'Please fix form errors: {checkout_form.errors}')
-            return render(request, 'cart/checkout.html', {'order': order, 'form': checkout_form})
+            return render(request,
+                          'cart/checkout.html',
+                          {'order': order, 'form': checkout_form})
 
     # GET request - should not reach here normally
     return redirect('cart:view_cart')

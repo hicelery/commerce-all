@@ -48,7 +48,7 @@ class TestCheckoutForm(TestCase):
         self.assertIn('shipping_method', form.errors)
 
     def test_checkout_form_long_address(self):
-        """Test checkout form with long address - CharField has max_length=255"""
+        """Test checkout form with long address"""
         # CharField with max_length=255 won't accept 255+ characters
         long_address = "123 Very Long Street Name That Goes On And On, City, State, Country 12345"
         form_data = {
@@ -139,7 +139,7 @@ class TestDiscountCodeForm(TestCase):
         self.assertIn('code', form.errors)
 
     def test_discount_form_whitespace_only(self):
-        """Test discount form with whitespace only - Django cleans whitespace"""
+        """Test discount form with whitespace only"""
         form_data = {
             'code': '   '
         }

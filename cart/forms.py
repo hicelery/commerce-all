@@ -1,4 +1,4 @@
-from .models import Cart, CartItem, Order, OrderItem
+from .models import Order
 from django import forms
 
 

@@ -11,7 +11,9 @@ def profile_view(request):
     queryset = Order.objects.filter(user=request.user).order_by(
         '-updated_at')
     items_count = {}
-    # count number of order items, summed by quantity, for each order and store in a dict keyed by order_id
+    # for each order
+    # count number of order items summed by quantity
+    # and store in a dict keyed by order_id
     for order in queryset:
         order_item_count = OrderItems.objects.filter(
             order=order).aggregate(
@@ -46,4 +48,6 @@ def profile_update(request):
             messages.info(request, 'Profile updated successfully.')
         else:
             messages.warning(request, 'Please correct the errors below.')
-    return render(request, 'dashboard/profile.html', {'profile_form': profile_form})
+    return render(request,
+                  'dashboard/profile.html',
+                  {'profile_form': profile_form})

@@ -102,7 +102,12 @@ I created wireframes to block out desktop and mobile layouts of the main pages, 
 - Automated stock handling (update on order completion)
 
 In creating this site, many more features were implemented than the original product scope. To account for this, I assigned each week as a sprint period, and reexamined the MoSCoW priority of features.
-Much of the complexity of theses features came from the persistence throughout the website: any functionality change would often need reflecting through product lists, detail, cart and order functionality. To mitigate this as much as possible, I split functionality into different apps, but to allow for this database schema updates were required. In future I would allow for a larger, more comprehensize DB schema, to allow more information to persist in DB, rather than needing to be created/calculated in multiple views.
+
+Much of the complexity of theses features came from the persistence throughout the website: any functionality change would often need reflecting through product lists, detail, cart and order functionality. To mitigate this as much as possible, I split functionality into different apps, but to allow for this database schema updates were required.
+
+Some features were de-scoped, in particular payment was excluded from this project due to need to host site inventory on Stripe (and use webhooks to sync these). Creating product entries ended up being a large time sink, and repeating this process for stripe would have significantly impacted timelines.
+
+In future I would allow for a larger, more comprehensize DB schema, to allow more information to persist in DB, rather than needing to be created/calculated in multiple views.
 It was beyond the scope of this project to create automated DB runs, but this would have streamlined a lot of features - particularly discounts. Rather than fetching discounts, and calculating price adjustments, we would be able to run an hourly executable that takes any active discounts and applies these to a product discounted price field. This would also allow for live stock updates and reserving stock for users when items are added to cart.
 
 DB Schema updates:
@@ -126,7 +131,11 @@ Account management is handled with django allauth and Google Oauth2 SSO.
 
 ## Testing
 
-**Comprehensive test suite:** 316 automated tests with 100% pass rate and 95% code coverage
+**Testing approach:** Automated unit tests for models, views, and forms built with django test module. Manual UX testing with user group feedback. Lighthouse performance audits; WCAG 2.1 accessibility compliance via WAVE (webAIM browser extension).
+HTML, CSS and JS validated with w3schools, jigsaw and https://validatejavascript.com/.
+Coverage was calculated against number of lines in views/models etc that were called in unit test suite.
+
+**Unit test results:** 316 automated tests with 100% pass rate and 95% code coverage
 
 | Component    | Tests | Coverage | Pass rate |
 | ------------ | ----- | -------- | --------- |
@@ -136,17 +145,14 @@ Account management is handled with django allauth and Google Oauth2 SSO.
 | Enter App    | 16    | 100%     | 100%      |
 | Products App | 94    | 93%      | 100%      |
 
-**Testing approach:** Automated unit tests for models, views, and forms with edge cases; manual UX testing with user group feedback; Lighthouse performance audits; WCAG 2.1 accessibility compliance via WAVE.
-Coverage was calculated against number of lines in views/models etc that were called in unit test suite.
+**Accessibility:** All pages achieve WCAG AAA compliance with Lighthouse scores ≥9.6/10.
+Initial Google lighthouse testing largely revealed issues with third party cookies and insecure photo delivery, associated with cloudiary - this was easily remidied by enforcing 'secure = true' in cloudinary SDK config. In future I would prompt user to accept these for site function or seek an alternative hosting provider <img width="851" height="449" alt="image" src="https://github.com/user-attachments/assets/5f9609d9-2626-4c5c-b33b-de5ea45393dd" />
 
-**Accessibility:** All pages achieve WCAG AAA compliance with Lighthouse scores ≥9.6/10
-Google lighthouse testing largely revealed issues with third party cookies, associated with cloudiary. In future I would prompt user to accept these for site function or seek an alternative hosting provider <img width="851" height="449" alt="image" src="https://github.com/user-attachments/assets/5f9609d9-2626-4c5c-b33b-de5ea45393dd" />
-
-For detailed test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
+For detailed unit test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
 
 ## AI retrospective
 
-To aid development, I created a custom copilot agent inspired by u/burkeholland 's gpt beastmode agent. The aim of this was to standardise the approach of free and less-than-premium usage models (which often struggle with more complex and persistent conversations due to a reduced context window) to give repeateable, more viable results to allow for greater usage within my premium requests budget. 
+To aid development, I created a custom copilot agent inspired by u/burkeholland 's gpt beastmode agent. The aim of this was to standardise the approach of free and less-than-premium usage models (which often struggle with more complex and persistent conversations due to a reduced context window) to give repeateable, more viable results to allow for greater usage within my premium requests budget.
 To achieve this, I defined three main goals: be opinionated (don't pander to user), break down tasks into to-do lists, ask for user input before moving to next steps.
 
 I used AI to create a project checklist to ensure I had considered all bases, and serve as a project status checker.

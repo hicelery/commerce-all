@@ -1,8 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render
-from .models import AboutPage, Contact
-from django.views import generic
-from requests import post
+from .models import AboutPage
 from .forms import ContactForm, OrderForm
 
 # Create your views here.

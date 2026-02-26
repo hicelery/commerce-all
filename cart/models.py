@@ -7,7 +7,11 @@ class Cart(models.Model):
     """Cart model representing a user's shopping cart."""
     cart_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        'auth.User', on_delete=models.CASCADE, related_name='carts', null=True, blank=True)
+        'auth.User',
+        on_delete=models.CASCADE,
+        related_name='carts',
+        null=True,
+        blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
@@ -19,7 +23,9 @@ class CartItem(models.Model):
     cart = models.ForeignKey(
         Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(
-        'products.Product', on_delete=models.CASCADE, related_name='cart_items')
+        'products.Product',
+        on_delete=models.CASCADE,
+        related_name='cart_items')
     size = models.CharField(max_length=50, null=True, blank=True)
     quantity = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -62,7 +68,9 @@ class OrderItem(models.Model):
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(
-        'products.Product', on_delete=models.CASCADE, related_name='order_items')
+        'products.Product',
+        on_delete=models.CASCADE,
+        related_name='order_items')
     cartitem = models.OneToOneField(
         'CartItem',
         null=True,
