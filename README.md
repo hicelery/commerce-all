@@ -4,7 +4,7 @@ A full-stack e-commerce platform built with Django, featuring product browsing, 
 
 ## Quick Start
 
-**Live site:** https://commerce-all-7e9e664f7d53.herokuapp.com/
+**Live site:** <a href="https://commerce-all-7e9e664f7d53.herokuapp.com/" target="_blank">
 
 **Local setup:**
 
@@ -60,26 +60,16 @@ Account management is handled with django allauth and Google Oauth2 SSO.
 For this project I targeted a wide user base with a focus on young adults. To achieve this I leant into a simple and playful handrawn style. This design language is prevalent in clothing markets to imply a down-to-earth, consumer-centric brand. Features and user stories were created to ensure intuitive functionality, where ease of navigation is essential for this application, so as not to introduce any barriers to a user completing a purchase.
 From this project brief, I created user stories:
 
-| User Story                | User          | Requirement                  | Intended functionality                                                                  |
-| ------------------------- | ------------- | ---------------------------- | --------------------------------------------------------------------------------------- |
-| 1) Superuser              | Staff/Admin   | Admin portal and priviledges | Admin should be able to manage site content, user accounts and perform moderation tasks |
-| 2) Regular user           | User          | User dashboard               | Manage account details and view order history                                           |
-| 3) Site visitor           | Visitor       | Easily navigable site        | Create a purchase order for desired items                                               |
-| 4) Admin and site visitor | Admin/Visitor | Impactful landing page       | Retrieve and highlight products on site load to drive user engagement                   |
-
-5. As a User
-   I want:
-   To submit a query to site owners
-
-So I can:
-request updated on the status of orders and resolve issues
-
-6. As a site admin
-   I want:
-   to add discounts to products
-
-So I can:
-drive sales and create promotion periods
+| User Story                  | User                | Requirement                  | Intended functionality                                                                  |
+| --------------------------- | ------------------- | ---------------------------- | --------------------------------------------------------------------------------------- |
+| 1) Superuser                | Staff/Admin         | Admin portal and priviledges | Admin should be able to manage site content, user accounts and perform moderation tasks |
+| 2) Regular user             | User                | User dashboard               | Manage account details and view order history                                           |
+| 3) Site visitor             | Visitor             | Easily navigable site        | Create a purchase order for desired items                                               |
+| 4) Admin and site visitor   | Admin/Visitor       | Impactful landing page       | Retrieve and highlight products on site load to drive user engagement                   |
+| 5) Regular user             | User                | Contact form                 | Submit queries to site owners for order updates and issue resolution                    |
+| 6) Site admin               | Admin               | Discount management          | Add discounts to products to drive sales and create promotion periods                   |
+| 7) Regular user             | User                | Shopping cart and checkout   | Add products to cart and complete purchase orders                                       |
+| 8) Site visitor/Buyer/Owner | Visitor/Buyer/Owner | Product reviews              | View and add product reviews to make informed purchasing decisions                      |
 
 ## UX design
 
@@ -203,6 +193,8 @@ Responsivity testing for multiple devices and use of am i responsive.
 
 For detailed unit test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
 
+**User story test:**
+
 **Accessibility:** All pages achieve WCAG AAA compliance with Lighthouse scores ≥9.6/10.
 Initial Google lighthouse testing largely revealed issues with third party cookies and insecure photo delivery, associated with cloudiary - this was easily remidied by enforcing 'secure = true' in cloudinary SDK config. In future I would prompt user to accept these for site function or seek an alternative hosting provider <img width="851" height="449" alt="image" src="https://github.com/user-attachments/assets/5f9609d9-2626-4c5c-b33b-de5ea45393dd" />
 
@@ -240,5 +232,5 @@ Unit test creation through AI was a very impactful addition, and greatly increas
 
 ## References
 
-u/burkeholland/minibeast.md
+u/burkeholland/minibeast.md: https://gist.github.com/burkeholland/1366d67f8d59247e098b6df3c6a6e38 <br>
 Design: https://www.ssense.com/en-gb/, https://london.doverstreetmarket.com/
