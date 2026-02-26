@@ -115,6 +115,10 @@ DB Schema updates:
 - Added product image table: This allows multiple product images to be associated with one product id.
 - Product Sizes: Added Product size table to allow product quantity to be tracked across multiple sizes.
 
+### Project Hurdles/Bugs
+
+A few features that were tough to build and how i fixed them (carts duping, sizes/)
+
 ## Agile
 
 To aid development, the project length was divided into three sprints.
@@ -122,7 +126,6 @@ User stories were added to a kanban board, and development items to achieve thes
 I used custom labels for MoSCoW prioritisation and targeted 60% must have 30% should have, 10% could have issues for each sprint.
 The development workflow was customised to add a testing and grooming status to the kanban board, which allows for issues to be developed, and then set to groom to be considered for further iteration in future sprints.
 <img width="1919" height="851" alt="image" src="https://github.com/user-attachments/assets/a15073e0-27a7-41ac-8c88-487ea83e8947" />
-
 
 For initial creation of the minimum viable project, no git workflow was utilised, but following deployment of the MVP this repo will use a gitflow approach for further release and feature development.
 
@@ -135,9 +138,9 @@ Account management is handled with django allauth and Google Oauth2 SSO.
 
 **Testing approach:** Automated unit tests for models, views, and forms built with django test module. Manual UX testing with user group feedback. Lighthouse performance audits; WCAG 2.1 accessibility compliance via WAVE (webAIM browser extension).
 HTML, CSS and JS validated with w3schools, jigsaw and https://validatejavascript.com/.
-Coverage was calculated against number of lines in views/models etc that were called in unit test suite.
+Responsivity testing for multiple devices and use of am i responsive.
 
-**Unit test results:** 316 automated tests with 100% pass rate and 95% code coverage
+**Unit test results:** 316 automated tests with 100% pass rate and 95% code coverage. Coverage was calculated against number of lines in views/models etc that were called in unit test suite.
 
 | Component    | Tests | Coverage | Pass rate |
 | ------------ | ----- | -------- | --------- |
@@ -149,6 +152,15 @@ Coverage was calculated against number of lines in views/models etc that were ca
 
 **Accessibility:** All pages achieve WCAG AAA compliance with Lighthouse scores ≥9.6/10.
 Initial Google lighthouse testing largely revealed issues with third party cookies and insecure photo delivery, associated with cloudiary - this was easily remidied by enforcing 'secure = true' in cloudinary SDK config. In future I would prompt user to accept these for site function or seek an alternative hosting provider <img width="851" height="449" alt="image" src="https://github.com/user-attachments/assets/5f9609d9-2626-4c5c-b33b-de5ea45393dd" />
+
+**Responsivity:**
+
+| Page               | Phone | Tablet | Desktop |
+| ------------------ | ----- | ------ | ------- |
+| Shop               |       |        |         |
+| Item detail        |       |        |         |
+| Cart               |       |        |         |
+| Order Confirmation |       |        |         |
 
 For detailed unit test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
 
