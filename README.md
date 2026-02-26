@@ -93,7 +93,8 @@ I created wireframes to block out desktop and mobile layouts of the main pages, 
 - Admin dashboard
 - CRUD of all models:
     - Product entries, Product details, Product/Category Discounts, Categories, Product images, Discount Codes, Product Reviews.
-      Discounts can be configured for products, categories or all products. Discount codes can apply to all products, or restricted to specific categories.
+    - Discounts can be configured for products, categories or all products.
+    - Discount codes can apply to all products, or restricted to specific categories.
 
 **Post-live features to be implemented:**
 
