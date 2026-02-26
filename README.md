@@ -50,9 +50,42 @@ Environment variables must be saved on Heroku, including DB and Cloudinary links
 
 </details>
 
-## UX design
+## Technologies
+
+Built in python and JS using django framework. Python dependencies listed in requirements.txt: gunicorn, crispyforms. Deployed on Heroku dynos using gunicorn and image hosting on cloudinary.
+Account management is handled with django allauth and Google Oauth2 SSO.
+
+## User stories
 
 For this project I targeted a wide user base with a focus on young adults. To achieve this I leant into a simple and playful handrawn style. This design language is prevalent in clothing markets to imply a down-to-earth, consumer-centric brand. Features and user stories were created to ensure intuitive functionality, where ease of navigation is essential for this application, so as not to introduce any barriers to a user completing a purchase.
+From this project brief, I created user stories:
+
+| User Story   | User        | Requirement                  | Intended functionality                                                                  |
+| ------------ | ----------- | ---------------------------- | --------------------------------------------------------------------------------------- |
+| 1) Superuser | Staff/Admin | Admin portal and priviledges | Admin should be able to manage site content, user accounts and perform moderation tasks |
+
+2): As a regular user
+I want:
+A user dashboard
+
+So I can:
+Manage my account, details and order history
+
+3. As a site visitor
+   I want:
+   An easily navigable site
+
+    So I can:
+    Create a purchase order for my desired items.
+
+4) As an admin and site visitor
+   I want:
+   An impactful landing page
+
+    So I can:
+    retrieve and highlight products on site load to drive user engagement.
+
+## UX design
 
 E-commerce sites are incredibly information-dense, and almost exclusively present data for the user to interactive with. To accomplish this, and allow the site to become scaleable, a logical and modular DB schema is essential.
 
@@ -120,6 +153,8 @@ DB Schema updates:
 
 A few features caused some issues during development, particularly cart handling, shipping and stocking different sized items.
 
+<div style="font-size: 0.9em; line-height: 1.4;">
+
 #### Carts:
 
 - **Approach:** In order to store items in a cart for purchase, initially I created a cart when a user added an item to the cart, and subsequent items to this cart. In order to achieve this I wanted to tie carts to users, to ensure a 1-1 relationship.
@@ -140,6 +175,7 @@ A few features caused some issues during development, particularly cart handling
 - **Problem:** My initial approach added size to the Product model, which meant a new product would need to be added for each size, disrupting the shopping experience by showing seemingly duplicate products and increasing the amount of data entry for staff.
 - **Solution:** I added a new model 'ProductSize' to link to a product and add a size and quantity, before updating relevant views. This did cause further considerations to the cart process, as this would not group cart items by size (e.g 3x M shirt would display as 3 separate cart items); so I updated CartItem model to add size to each entry.
 
+</div>
 Overall many of these development issues could have been avoided by better understanding the scope of the project. This would allow for a larger, more comprehensize DB schema, to allow more information to persist in DB, rather than needing to be created/calculated in multiple views.
 
 ## Agile
@@ -148,14 +184,10 @@ To aid development, the project length was divided into three sprints.
 User stories were added to a kanban board, and development items to achieve these were created as child objects. This enabled me to set the user stories as swimlanes to better view progress towards each issue.
 I used custom labels for MoSCoW prioritisation and targeted 60% must have 30% should have, 10% could have issues for each sprint.
 The development workflow was customised to add a testing and grooming status to the kanban board, which allows for issues to be developed, and then set to groom to be considered for further iteration in future sprints.
+
 <img width="1919" height="851" alt="image" src="https://github.com/user-attachments/assets/a15073e0-27a7-41ac-8c88-487ea83e8947" />
 
 For initial creation of the minimum viable project, no git workflow was utilised, but following deployment of the MVP this repo will use a gitflow approach for further release and feature development.
-
-## Technologies
-
-Built in python and JS using django framework. Python dependencies listed in requirements.txt: gunicorn, crispyforms. Deployed on Heroku dynos using gunicorn and image hosting on cloudinary.
-Account management is handled with django allauth and Google Oauth2 SSO.
 
 ## Testing
 
