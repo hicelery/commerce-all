@@ -23,6 +23,21 @@
 <div class="row g-4 mt-3">
     <!-- Product Image Section with Carousel -->
     <div class="col-lg-6 mb-4">
+        <!-- Product Title & Rating -->
+        <div class="d-block d-lg-none">
+        <h1 class="mb-2">{{ product.name }}</h1>
+
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="">
+                {% if avg_rating %}
+                    <i class="fas fa-star"></i>
+                    <span class="me-2">{{ avg_rating|floatformat:1 }} / 5</span>
+                {% else %}
+                    <span class="text-muted">No ratings yet</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
         <!-- Main Image -->
         <div class="product-image-main position-relative rounded overflow-hidden" style="aspect-ratio: 1/1; background-color: #f8f9fa;">
             {% if product.image %}
@@ -69,19 +84,20 @@
     <!-- Product Info Section -->
     <div class="col-lg-6">
         <!-- Product Title & Rating -->
-        <h1 class="mb-2">{{ product.name }}</h1>
-        
-        <div class="d-flex align-items-center gap-3 mb-3">
-            <div class="">
-                {% if avg_rating %}
-                    <i class="fas fa-star"></i>
-                    <span class="me-2">{{ avg_rating|floatformat:1 }} / 5</span>
-                {% else %}
-                    <span class="text-muted">No ratings yet</span>
-                {% endif %}
+        <div class="d-none d-lg-block">
+            <h1 class="mb-2">{{ product.name }}</h1>
+
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="">
+                    {% if avg_rating %}
+                        <i class="fas fa-star"></i>
+                        <span class="me-2">{{ avg_rating|floatformat:1 }} / 5</span>
+                    {% else %}
+                        <span class="text-muted">No ratings yet</span>
+                    {% endif %}
+                </div>
             </div>
         </div>
-
         <hr>
 
         <!-- Price Section -->

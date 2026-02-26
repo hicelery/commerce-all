@@ -155,21 +155,13 @@ Initial Google lighthouse testing largely revealed issues with third party cooki
 
 **Responsivity:**
 
-| Page               | Phone | Tablet | Desktop |
-| ------------------ | ----- | ------ | ------- |
-| Shop               |     <img width="363" height="640" alt="image" src="https://github.com/user-attachments/assets/a6d93a3d-a839-454c-a31c-63a53273892f" />
-  |    <img width="532" height="755" alt="image" src="https://github.com/user-attachments/assets/773a0b7c-a3c3-4979-80db-6c7182ba3e92" />
-    |         |
-| Item detail        |   <img width="497" height="797" alt="image" src="https://github.com/user-attachments/assets/387b8b77-9b82-44fb-b984-667af4e356a3" />    |  <img width="531" height="756" alt="image" src="https://github.com/user-attachments/assets/0dfd5bcf-9512-4021-b291-28c937d63696" />
-      |  <img width="1386" height="782" alt="image" src="https://github.com/user-attachments/assets/39aa48ff-a040-406c-9df7-a9d60ae2e78d" />
-       |
-| Cart               |    <img width="366" height="639" alt="image" src="https://github.com/user-attachments/assets/4d1e6088-acc7-4d96-bf7d-0ab58a627f17" />  |  <img width="471" height="676" alt="image" src="https://github.com/user-attachments/assets/7023b524-6fa8-4d68-8ee7-68516b109aa0" />    |     <img width="1209" height="683" alt="image" src="https://github.com/user-attachments/assets/8ae55541-eaed-4b74-9d32-b7fc314d9ad6" />
-    |
-| Checkout | <img width="360" height="633" alt="image" src="https://github.com/user-attachments/assets/f9208a18-5de7-405a-8870-0b36aeadca2c" /> |     |    |
-
-| Order Confirmation |     <img width="362" height="639" alt="image" src="https://github.com/user-attachments/assets/eba13542-c2a3-4d53-9819-f0b5f5fe51c0" />
-  |  <img width="524" height="747" alt="image" src="https://github.com/user-attachments/assets/09f8db33-644e-4130-8aba-c3b231136f73" />
-      |         |
+| Page               | Phone                                                                                                                                                  | Tablet                                                                                                                                                 | Desktop                                                                                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Shop               | <img width="363" height="640" alt="Shop mobile view" src="https://github.com/user-attachments/assets/a6d93a3d-a839-454c-a31c-63a53273892f" />          | <img width="532" height="755" alt="Shop tablet view" src="https://github.com/user-attachments/assets/773a0b7c-a3c3-4979-80db-6c7182ba3e92" />          | Desktop view                                                                                                                                      |
+| Item Detail        | <img width="497" height="797" alt="Item detail mobile" src="https://github.com/user-attachments/assets/387b8b77-9b82-44fb-b984-667af4e356a3" />        | <img width="531" height="756" alt="Item detail tablet" src="https://github.com/user-attachments/assets/0dfd5bcf-9512-4021-b291-28c937d63696" />        | <img width="1386" height="782" alt="Item detail desktop" src="https://github.com/user-attachments/assets/39aa48ff-a040-406c-9df7-a9d60ae2e78d" /> |
+| Cart               | <img width="366" height="639" alt="Cart mobile" src="https://github.com/user-attachments/assets/4d1e6088-acc7-4d96-bf7d-0ab58a627f17" />               | <img width="471" height="676" alt="Cart tablet" src="https://github.com/user-attachments/assets/7023b524-6fa8-4d68-8ee7-68516b109aa0" />               | <img width="1209" height="683" alt="Cart desktop" src="https://github.com/user-attachments/assets/8ae55541-eaed-4b74-9d32-b7fc314d9ad6" />        |
+| Checkout           | <img width="360" height="633" alt="Checkout mobile" src="https://github.com/user-attachments/assets/f9208a18-5de7-405a-8870-0b36aeadca2c" />           | Tablet view                                                                                                                                            | Desktop view                                                                                                                                      |
+| Order Confirmation | <img width="362" height="639" alt="Order confirmation mobile" src="https://github.com/user-attachments/assets/eba13542-c2a3-4d53-9819-f0b5f5fe51c0" /> | <img width="524" height="747" alt="Order confirmation tablet" src="https://github.com/user-attachments/assets/09f8db33-644e-4130-8aba-c3b231136f73" /> | Desktop view                                                                                                                                      |
 
 For detailed unit test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
 

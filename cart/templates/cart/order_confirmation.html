@@ -83,7 +83,7 @@
                                             <div class="d-flex align-items-center gap-2">
                                                 {% if item.product.image %}
                                                     <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
-                                                        class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                                        class="rounded d-none d-md-block" style="width: 60px; height: 60px; object-fit: cover;">
                                                 {% else %}
                                                     <div class="bg-light rounded d-flex align-items-center justify-content-center" 
                                                         style="width: 60px; height: 60px;">
