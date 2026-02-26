@@ -164,9 +164,8 @@ Initial Google lighthouse testing largely revealed issues with third party cooki
 | Checkout           | <img width="360" height="633" alt="Checkout mobile" src="https://github.com/user-attachments/assets/f9208a18-5de7-405a-8870-0b36aeadca2c" />           | <img width="522" height="747" alt="image" src="https://github.com/user-attachments/assets/ed5dfbfe-4a72-43a2-bd8f-b694472de929" />
                                                                                                                                            | <img width="1209" height="684" alt="image" src="https://github.com/user-attachments/assets/c0f2ead9-80d1-49d2-8215-51e736629630" />
                                                                                                                                    |
-| Order Confirmation | <img width="362" height="639" alt="Order confirmation mobile" src="https://github.com/user-attachments/assets/eba13542-c2a3-4d53-9819-f0b5f5fe51c0" /> | <img width="1213" height="687" alt="image" src="https://github.com/user-attachments/assets/c7c7a8c4-9380-4b98-8bcc-37ce8a692963" />
-| ![Uploading image.png…]()
-                                                                                                                                  |
+| Order Confirmation | <img width="362" height="639" alt="Order confirmation mobile" src="https://github.com/user-attachments/assets/eba13542-c2a3-4d53-9819-f0b5f5fe51c0" /> | <img width="1213" height="687" alt="image" src="https://github.com/user-attachments/assets/c7c7a8c4-9380-4b98-8bcc-37ce8a692963" />   |<img width="1213" height="687" alt="image" src="https://github.com/user-attachments/assets/3088a9cb-dba2-4117-bf34-2454e410e905" /> |
+
 
 For detailed unit test breakdown and coverage analysis, see [TESTING_EXIT_REPORT.md](TESTING_EXIT_REPORT.md).
 
