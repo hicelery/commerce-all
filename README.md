@@ -121,6 +121,8 @@ To aid development, the project length was divided into three sprints.
 User stories were added to a kanban board, and development items to achieve these were created as child objects. This enabled me to set the user stories as swimlanes to better view progress towards each issue.
 I used custom labels for MoSCoW prioritisation and targeted 60% must have 30% should have, 10% could have issues for each sprint.
 The development workflow was customised to add a testing and grooming status to the kanban board, which allows for issues to be developed, and then set to groom to be considered for further iteration in future sprints.
+<img width="1919" height="851" alt="image" src="https://github.com/user-attachments/assets/a15073e0-27a7-41ac-8c88-487ea83e8947" />
+
 
 For initial creation of the minimum viable project, no git workflow was utilised, but following deployment of the MVP this repo will use a gitflow approach for further release and feature development.
 
