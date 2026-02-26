@@ -4,7 +4,7 @@ A full-stack e-commerce platform built with Django, featuring product browsing, 
 
 ## Quick Start
 
-**Live site:** <a href="https://commerce-all-7e9e664f7d53.herokuapp.com/" target="_blank">
+**Live site:** <a target="_blank">https://commerce-all-7e9e664f7d53.herokuapp.com/</a>
 
 **Local setup:**
 
