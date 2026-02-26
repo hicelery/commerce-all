@@ -60,30 +60,26 @@ Account management is handled with django allauth and Google Oauth2 SSO.
 For this project I targeted a wide user base with a focus on young adults. To achieve this I leant into a simple and playful handrawn style. This design language is prevalent in clothing markets to imply a down-to-earth, consumer-centric brand. Features and user stories were created to ensure intuitive functionality, where ease of navigation is essential for this application, so as not to introduce any barriers to a user completing a purchase.
 From this project brief, I created user stories:
 
-| User Story   | User        | Requirement                  | Intended functionality                                                                  |
-| ------------ | ----------- | ---------------------------- | --------------------------------------------------------------------------------------- |
-| 1) Superuser | Staff/Admin | Admin portal and priviledges | Admin should be able to manage site content, user accounts and perform moderation tasks |
+| User Story                | User          | Requirement                  | Intended functionality                                                                  |
+| ------------------------- | ------------- | ---------------------------- | --------------------------------------------------------------------------------------- |
+| 1) Superuser              | Staff/Admin   | Admin portal and priviledges | Admin should be able to manage site content, user accounts and perform moderation tasks |
+| 2) Regular user           | User          | User dashboard               | Manage account details and view order history                                           |
+| 3) Site visitor           | Visitor       | Easily navigable site        | Create a purchase order for desired items                                               |
+| 4) Admin and site visitor | Admin/Visitor | Impactful landing page       | Retrieve and highlight products on site load to drive user engagement                   |
 
-2): As a regular user
-I want:
-A user dashboard
+5. As a User
+   I want:
+   To submit a query to site owners
 
 So I can:
-Manage my account, details and order history
+request updated on the status of orders and resolve issues
 
-3. As a site visitor
+6. As a site admin
    I want:
-   An easily navigable site
+   to add discounts to products
 
-    So I can:
-    Create a purchase order for my desired items.
-
-4) As an admin and site visitor
-   I want:
-   An impactful landing page
-
-    So I can:
-    retrieve and highlight products on site load to drive user engagement.
+So I can:
+drive sales and create promotion periods
 
 ## UX design
 
