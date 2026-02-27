@@ -259,7 +259,7 @@ def review_delete(request, product_id, review_id):
     product = get_object_or_404(queryset, product_id=product_id)
     review = get_object_or_404(ProductReview, pk=review_id)
 
-    if review.user == request.user:
+    if review.user == request.user or request.user.is_staff:
         review.delete()
         messages.add_message(request, messages.SUCCESS, 'Review deleted!')
     else:

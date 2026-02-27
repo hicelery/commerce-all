@@ -32,7 +32,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # Use the DEBUG environment variable to control debug mode - true is logic check
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*.herokuapp.com',
                  'localhost',

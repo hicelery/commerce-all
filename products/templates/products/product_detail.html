@@ -202,15 +202,17 @@
         {% if reviews %}
             <!-- Reviews List -->
             {% for review in reviews %}                
-                <div id="review{{ review.review_id }}" class="card mb-3 {% if not review.approved and review.user == user %} faded {% elif not review.approved %} d-none{% endif %}">
+                <div id="review{{ review.review_id }}" class="card mb-3 {% if not review.approved and review.user != user and not user.is_staff %} d-none{% elif not review.approved %} faded{% endif %}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2 ">
                             <div>
                                 <h6 class="card-title mb-1" id="review_title{{ review.review_id }}">{{ review.title }}</h6>
-                                {% if not review.approved and review.user == user %}
-                                    <div class="approval small">
-                                        This review is awaiting approval
-                                    </div>
+                                {% if not review.approved %}
+                                    {% if review.user == user or user.is_staff %}
+                                        <div class="approval small">
+                                            This review is awaiting approval
+                                        </div>
+                                    {% endif %}
                                 {% endif %}
                                 <!-- Show rating out of 5 and add corresponding stars -->
                                 <div class="text-warning small mb-2">
@@ -226,13 +228,15 @@
                             </div>
                             <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
                         </div>
-                            {% if user.is_authenticated and review.user == user %}
-                            <span class="review-actions float-end">
-                                <button class="btn btn-delete btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                review_id="{{ review.review_id }}">Delete</button>
-                                <button class="btn btn-edit btn-outline-secondary" review_id="{{ review.review_id }}">Edit</button>
-                            </span>
-                        {% endif %}
+                            {% if user.is_authenticated %}
+                                {% if review.user == user or user.is_staff %}
+                                <span class="review-actions float-end">
+                                    <button class="btn btn-delete btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    review_id="{{ review.review_id }}">Delete</button>
+                                    <button class="btn btn-edit btn-outline-secondary" review_id="{{ review.review_id }}">Edit</button>
+                                </span>
+                                {% endif %}
+                            {% endif %}
                         
                         <p class="card-text text-muted mb-2" id="review_comment{{ review.review_id }}">{{ review.comment|striptags}}</p>
                         <small class="text-muted d-block">by <strong>{{ review.user.username }}</strong></small>
@@ -283,13 +287,6 @@
                             <textarea class="form-control" id="review_comment" name="comment" rows="4" 
                                       placeholder="Share your experience with this product" required></textarea>
                         </div>
-                        <!-- Staff-only approval checkbox -->
-                        {% if user.is_staff %}
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="id_approved" name="approved">
-                            <label class="form-check-label" for="id_approved">Approved</label>
-                        </div>
-                        {% endif %}
                         <button id="submit-review" type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane me-2"></i>Submit Review
                         </button>
