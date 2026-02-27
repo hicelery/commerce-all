@@ -214,7 +214,7 @@
                                 {% endif %}
                                 <!-- Show rating out of 5 and add corresponding stars -->
                                 <div class="text-warning small mb-2">
-                                    <span class="text-muted" id='ratingdisplay{{ review.review_id }}' value="{{ review.rating }}">{{ review.rating }} </span>
+                                    <span class="text-muted" id="ratingdisplay{{ review.review_id }}" data-rating="{{ review.rating }}">{{ review.rating }} </span>
                                     {% for i in "12345" %}
                                         {% if forloop.counter <= review.rating %}
                                             <i class="fas fa-star" aria-hidden="true"></i>

@@ -24,7 +24,7 @@ for (let button of editButtons) {
         // ensure we reference the button the listener is attached to (handles clicks on inner elements)
         const btn = e.currentTarget || button;
         const reviewId = btn.getAttribute('review_id');
-        const rating = document.getElementById(`ratingdisplay${reviewId}`).getAttribute('value'); // get the rating value from the span's value attribute
+        const rating = document.getElementById(`ratingdisplay${reviewId}`).getAttribute('data-rating'); // get the rating value from the span's value attribute
 
          // set the rating based on the review data (assuming rating is stored in a hidden input or similar)
         let reviewCommentText = document.getElementById(`review_comment${reviewId}`).innerText;
