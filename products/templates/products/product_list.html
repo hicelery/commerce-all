@@ -29,9 +29,11 @@
                 <!-- Categories -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Categories</label>
+                    <ul class="list-unstyled">
                      {% for category in categories %}
                             <li><a href="{% url 'products:home' %}{{category.name}}">{{category.name}}</a></li>
                     {% endfor %}
+                    </ul>
                 </div>
 
                 <!-- Price Range -->
