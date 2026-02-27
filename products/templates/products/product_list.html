@@ -72,12 +72,13 @@
         <!-- Show nav and filters as sidebar for large screens-->
             <h6>Quick Links</h6>
                 <ul class="list-unstyled e">
-                    <li><a href="{% url 'products:home' %}">All</a></li>
-                    <ul class="list-unstyled mx-3 ">
-                        {% for category in categories %}
-                            <li><a href="{% url 'products:home' %}{{category.name}}">{{category.name}}</a></li>
-                        {% endfor %}
-                    </ul>    
+                    <li><a href="{% url 'products:home' %}">All</a>
+                        <ul class="list-unstyled mx-3 ">
+                            {% for category in categories %}
+                                <li><a href="{% url 'products:home' %}{{category.name}}">{{category.name}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                 </ul>       
                 <!-- Categories -->
                                 
