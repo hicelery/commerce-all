@@ -179,7 +179,10 @@ For initial creation of the minimum viable project, no git workflow was utilised
 
 **Testing approach:** Automated unit tests for models, views, and forms built with django test module. Manual UX testing with user group feedback. Lighthouse performance audits; WCAG 2.1 accessibility compliance via WAVE (webAIM browser extension).
 HTML, CSS and JS validated with w3schools, jigsaw and https://validatejavascript.com/.
-Responsivity testing for multiple devices and use of am i responsive.
+One CSS issue was raised: that font-optical-auto is an invalid property, however after checking the support for this on caniuse, it has widespread browser support and I have elected to leave this in.
+<img width="783" height="171" alt="image" src="https://github.com/user-attachments/assets/e70329f5-ecbf-497e-aad4-306714d72886" />
+<img width="1384" height="818" alt="image" src="https://github.com/user-attachments/assets/135c17e3-139c-40fa-afaf-dc32025d395e" />
+
 
 **Unit test results:** 316 automated tests with 100% pass rate and 95% code coverage. Coverage was calculated against number of lines in views/models etc that were called in unit test suite.
 
