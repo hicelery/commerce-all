@@ -20,19 +20,6 @@ def ProductList(request, category_name=None, sort_option=None):
     category_key = category_name or request.GET.get('category_name')
     if category_key:
         qs = qs.filter(category__name__iexact=category_key)
-        # from django.core.paginator import (
-        #     Paginator, EmptyPage, PageNotAnInteger
-        # )
-        #
-        # # Use paginator to paginate queryset for template controls.
-        # paginator = Paginator(qs, 24)
-        # page = request.GET.get('page', 1)
-        # try:
-        #     page_obj = paginator.page(page)
-        # except PageNotAnInteger:
-        #     page_obj = paginator.page(1)
-        # except EmptyPage:
-        #     page_obj = paginator.page(paginator.num_pages)
 
     # apply discount to price if discount is active
     discounts = ProductDiscount.objects.filter(
