@@ -5,6 +5,8 @@
 **Test Runner:** Django TestCase  
 **Coverage Tool:** coverage.py
 
+This document contains the detailed testing breakdown referenced by the main README.
+
 ---
 
 ## Executive Summary
